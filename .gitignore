@@ -2,3 +2,4 @@ bin
 include
 lib
 *.pyc
+yldt/development.sqlite3

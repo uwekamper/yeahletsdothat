@@ -1,0 +1,5 @@
+{{ activation_key }}
+The activation key for the new account.
+
+{{ expiration_days }}
+The number of days remaining during which the account may be activated.

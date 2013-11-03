@@ -13,4 +13,7 @@ urlpatterns = patterns('',
 
     # Uncomment the next line to enable the admin:
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^accounts/', include('registration.backends.default.urls')),
+    url(r'^accounts/profile/$', 'activities.views.user_profile', name="user_profile"),
+    url(r'^activities/new/$', 'activities.views.new_activity', name='new_activity'),
 )

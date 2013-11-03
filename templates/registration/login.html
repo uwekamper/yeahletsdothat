@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Login{% endblock %}
+
+{% block container %}
+    <h2>Sign in to your account</h2>
+    <form class="form-horizontal" action="{% url 'auth_login' %}" method="post" role="form">
+        {% csrf_token %}
+        <div class="form-group">
+            <label class="col-lg-2 control-label" for="id_username">Username</label>
+            <div class="col-lg-5">
+                <input id="id_username" name="username" type="text" class="form-control"
+                       placeholder="Username" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-lg-2 control-label" for="id_password">Password</label>
+            <div class="col-lg-5">
+                <input id="id_password" name="password" type="password" class="form-control"
+                       placeholder="Password">
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-lg-offset-2 col-lg-10">
+                <button type="submit" class="btn btn-default">Sign in</button>
+            </div>
+        </div>
+    </form>
+{% endblock %}

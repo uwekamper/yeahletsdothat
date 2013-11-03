@@ -3,3 +3,5 @@ include
 lib
 *.pyc
 yldt/development.sqlite3
+local_settings.py
+static/bower_components/*

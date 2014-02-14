@@ -21,3 +21,15 @@ class Activity(models.Model):
     max_people = models.IntegerField()
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
+
+class Transaction(models.Model):
+    STATE_PLEDGED = (0, _("pledged"))
+    STATE_PAYMENT_CONFIRMED = (1, _('payment confirmed'))
+
+    STATES = (
+        STATE_PLEDGED,
+        STATE_PAYMENT_CONFIRMED
+    )
+
+    activity = models.ForeignKey('Activity')
+    state = models.IntegerField(choices=STATES)

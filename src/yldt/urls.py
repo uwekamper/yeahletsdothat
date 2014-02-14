@@ -16,4 +16,6 @@ urlpatterns = patterns('',
     url(r'^accounts/', include('registration.backends.default.urls')),
     url(r'^accounts/profile/$', 'activities.views.user_profile', name="user_profile"),
     url(r'^activities/new/$', 'activities.views.new_activity', name='new_activity'),
+    url(r'^activities/(?P<pk>\d+)$', 'activities.views.activity', name='activity'),
+    url(r'^activities/(?P<pk>\d+)/pledge/$', 'activities.views.pledge_activity', name='pledge_activity'),
 )

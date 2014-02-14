@@ -9,3 +9,8 @@ import models
 class NewActivityForm(forms.ModelForm):
     class Meta:
         model = models.Activity
+
+
+class TransactionForm(forms.ModelForm):
+    class Meta:
+        model = models.Transaction

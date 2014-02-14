@@ -1,3 +1,6 @@
+.Python
+*.sqlite3
+.idea
 bin
 include
 lib

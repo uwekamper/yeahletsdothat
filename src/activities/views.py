@@ -3,19 +3,46 @@
 
 # Create your views here.
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseNotAllowed
+from django.core.urlresolvers import reverse
+from django.http import HttpResponseNotAllowed, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 
 import forms
+from models import Activity, Transaction, BankAccount
 
-from models import Activity, Transaction
 
 @login_required
 def user_profile(request):
-    return render(request, 'activities/user_profile.html', {})
+    activities = Activity.objects.filter(user=request.user)
+    accounts = BankAccount.objects.filter(user=request.user)
+    return render(request, 'activities/user_profile.html',
+        {'accounts': accounts, 'activities': activities})
 
 def current_activities(request):
     pass
+
+@login_required
+def manage_bankaccounts(request):
+    accounts = BankAccount.objects.filter(user=request.user)
+    return render(request, 'activities/manage_bankaccounts.html', {'accounts': accounts})
+
+@login_required
+def add_bankaccount(request):
+    """
+    TODO: Write docstring
+    """
+    if request.method == 'POST':
+        form = forms.BankAccountForm(request.POST)
+        if form.is_valid():
+            new_account = form.save(commit=False)
+            new_account.user = request.user
+            new_account.save()
+            return HttpResponseRedirect(reverse('manage_bankaccounts'))
+        else:
+            return render(request, 'activities/add_bankaccount.html', {'form': form})
+
+    form = forms.BankAccountForm()
+    return render(request, 'activities/add_bankaccount.html', {'form': form})
 
 @login_required
 def new_activity(request):
@@ -25,14 +52,17 @@ def new_activity(request):
     if request.method == 'POST':
         form = forms.NewActivityForm(request.POST)
         if form.is_valid():
-            form.save()
-            return render(request, 'activities/new_activity_successful.html', {})
+
+            new_activity = form.save(commit=False)
+            new_activity.user = request.user
+            new_activity.save()
+            return HttpResponseRedirect(reverse('activity', args=(new_activity.id,)))
         else:
-            return render(request, 'activities/new_activity_successful.html',
-                {'form': form})
+            print form.errors
+            return render(request, 'activities/new_activity.html', {'form': form})
 
     form = forms.NewActivityForm()
-    return render(request, 'activities/new_activity_wizard.html', {'form': form})
+    return render(request, 'activities/new_activity.html', {'form': form})
 
 def activity(request, pk):
     """

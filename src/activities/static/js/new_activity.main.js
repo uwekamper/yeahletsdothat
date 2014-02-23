@@ -15,19 +15,19 @@ $(function ($) {
         },
 
         kick_off: function() {
-            var view = app.AppView(); //{model: User.profile()});
+            var view = new app.Wizard({initialStep: 'overview'}); //{model: User.profile()});
             React.renderComponent(view, $("#app-view")[0]);
         },
-
         step1: function() {
-            var view = app.BasicInfoView(); //{model: User.profile()});
+            var view = new app.Wizard({initialStep: 2}); //{model: User.profile()});
             React.renderComponent(view, $("#app-view")[0]);
         },
-
         step2: function() {
-            var view = app.HeadCountView(); //{model: User.profile()});
+            var view = new app.AppView({initialStep: 3}); //{model: User.profile()});
             React.renderComponent(view, $("#app-view")[0]);
         }
+
+
     });
 
 

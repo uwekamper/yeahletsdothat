@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block container %}
+    <div class="row">
+        <div class="col-xs-12">
+            <h1>Manage your Accounts</h1>
+            <a class="btn btn-primary" href="{% url 'add_bankaccount' %}">Add Account</a>
+            {% if accounts %}
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Account-ID</th>
+                        <th>Description</th>
+                        <th>BTC Address</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for account in accounts %}
+                        <tr>
+                            <td>{{ account.id }}</td>
+                            <td>{{ account.description }}</td>
+                            <td>{{ account.btc_address }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p>You don't have any accounts yet. Please add an account.</p>
+            {% endif %}
+        </div>
+    </div>
+
+{% endblock %}

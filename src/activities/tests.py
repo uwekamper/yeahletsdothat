@@ -6,15 +6,16 @@ when you run "manage.py test".
 
 Replace this with more appropriate tests for your application.
 """
-from lxml import html
+from __future__ import unicode_literals
 
+from lxml import html
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.test import TestCase
 from django.test.client import Client
 from model_mommy import mommy
 
-from activities.models import Activity
+from activities.models import Activity, BankAccount, Transaction
 
 
 class CommonMethods():
@@ -38,12 +39,83 @@ class CommonMethods():
         self.user = User.objects.create_user(username, self.TEST_EMAIL, password)
         return self.user
 
+    def get_dom_by_name(self, name, args=(), client=None):
+        """
+        Returns the DOM.
+        """
+        if not client:
+            client = Client()
+        url = reverse(name, args=args)
+        response = client.get(url)
+
+        self.assertEqual(200, response.status_code)
+        return html.fromstring(response.content)
+
+    def get_logged_in_client(self, username=None, password=None):
+        if not username: username = self.TEST_USERNAME
+        if not password: password = self.TEST_PASSWORD
+
+        client = Client()
+        client.login(username=username, password=password)
+        return client
+
+
+class UserProfileTest(TestCase, CommonMethods):
+    """
+    Test the user profile functions
+    """
+    def setUp(self):
+        self.create_user()
+
+    def test_show_user_profile(self):
+        """
+        Go to the user profile and check if the accounts are shown.
+        """
+        dom = self.get_dom_by_name('user_profile', client=self.get_logged_in_client())
+        header = dom.cssselect('h1')[0].text
+        header2 = dom.cssselect('h2')[0].text
+        self.assertEqual(header, 'User Profile')
+        self.assertEqual(header2, 'Your Bank Accounts')
+
+        acc_list = dom.cssselect('#account-list li')
+        self.assertEqual(0, len(acc_list))
+
+    def test_manage_bitcoin_account(self):
+        """
+        Go to the user profile and create a now account
+        """
+        dom = self.get_dom_by_name('manage_bankaccounts', client=self.get_logged_in_client())
+
+    def test_add_bitcoin_account(self):
+        """
+        Go to the user profile and create a now account
+        """
+        dom = self.get_dom_by_name('add_bankaccount', client=self.get_logged_in_client())
+
+
+
+class BankAccountTest(TestCase):
+
+    TEST_DESCRIPTION = 'testaccount'
+
+    def setUp(self):
+        self.acc = mommy.make(BankAccount, description=self.TEST_DESCRIPTION)
+
+    def test_can_create_account(self):
+        self.assertIsInstance(self.acc, BankAccount)
+
+    def test_get_unicode(self):
+        self.assertEqual(str(self.acc), self.TEST_DESCRIPTION)
+
 
 class ActivitiesTest(TestCase, CommonMethods):
     """
     Tests for activity related things.
     """
     TEST_ACTIVITY_NAME = 'test activity'
+
+    def setUp(self):
+        self.user = self.create_user()
 
     def test_activity_creation(self):
         """
@@ -56,10 +128,7 @@ class ActivitiesTest(TestCase, CommonMethods):
         """
         Test if a logged in user can create an activity.
         """
-        self.create_user()
-        client = Client()
-        logged_in = client.login(**self.TEST_CREDENTIALS)
-        self.assertTrue(logged_in)
+        client = self.get_logged_in_client()
         url = reverse('new_activity')
         response = client.post(url, data={'name': self.TEST_ACTIVITY_NAME})
         self.assertEqual(response.status_code, 200)
@@ -90,6 +159,12 @@ class ActivitiesTest(TestCase, CommonMethods):
             data=data)
         self.assertEqual(response.status_code, 200)
 
+    def test_get_number_of_participants(self):
+        """
+        Check the function that returns the number of participants for an activity.
+        """
+        activity = mommy.make(Activity)
+        transact = mommy.make(Transaction)
 
 
 

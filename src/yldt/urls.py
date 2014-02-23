@@ -15,6 +15,10 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
     url(r'^accounts/', include('registration.backends.default.urls')),
     url(r'^accounts/profile/$', 'activities.views.user_profile', name="user_profile"),
+
+    url(r'^bankaccounts/$', 'activities.views.manage_bankaccounts', name='manage_bankaccounts'),
+    url(r'^bankaccounts/add/$', 'activities.views.add_bankaccount', name='add_bankaccount'),
+
     url(r'^activities/new/$', 'activities.views.new_activity', name='new_activity'),
     url(r'^activities/(?P<pk>\d+)$', 'activities.views.activity', name='activity'),
     url(r'^activities/(?P<pk>\d+)/pledge/$', 'activities.views.pledge_activity', name='pledge_activity'),

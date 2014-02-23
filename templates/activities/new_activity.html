@@ -3,11 +3,130 @@
 {% block title %}New Activity{% endblock %}
 
 {% block container %}
-    <form role="form">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <input type="submit" class="btn" value="Submit" />
-    </form>
+    <div class="row">
+    <div class="col-xs-12">
+        <h2>Create a New Activity</h2>
+            <form role="form" class="form" method="post">
+            <div class="well">
+                {% for error in form.non_field_errors %}
+                    <div class="alert alert-danger">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+                {% csrf_token %}
+                {{ form.media }}
+
+
+                {% if form.non_field_errors %}
+                    {% for error in form.non_field_errors %}
+                        <div class="alert alert-danger">{{ error }}</div>
+                    {% endfor %}
+                     <hr/>
+
+                {% endif %}
+
+
+                <h3>What are you going to do?</h3>
+
+                <!-- Name -->
+                <div class="form-group">
+                    <label for="id_name">Name the Activity</label>
+                    <input type="text" class="form-control" id="id_name" name="name"
+                        placeholder="Enter a name for the activity"
+                        value="{{ form.name.value|default:'' }}">
+                    {% if form.name.errors %}<span class="help-inline">{{ form.name.errors.as_text }}</span>{% endif %}
+                </div>
+
+                {% if form.description.errors %}
+                    <div class="alert-danger alert">{{ form.description.errors }}</div>
+                {% endif %}
+                <div class="form-group">
+                    <label for="id_description">Short Description</label>
+                    <textarea type="text" class="form-control" id="id_description" name="description" rows="4"
+                        placeholder="Enter a short description about your activity.">{{ form.description.value|default:'' }}</textarea>
+                </div>
+
+                <hr />
+
+                <h3>How much money are you raising?</h3>
+
+                <div class="row">
+                    <div class="col-xs-6">
+                        <div class="form-group">
+                            <label for="id_goal">Your goal (total amount)</label>
+                            <input type="text" class="form-control" id="id_goal"
+                                   placeholder="0.00" name="goal"
+                                   value="{{ form.goal.value|default:'' }}">
+                            {% if form.goal.errors %}<span class="help-inline">
+                                {{ form.goal.errors.as_text }}</span>{% endif %}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="id_pledge_value">Minimum amount per pledge</label>
+                            <input type="text" class="form-control" id="id_pledge_value"
+                                   placeholder="0.00" name="pledge_value"
+                                   value="{{ form.pledge_value.value|default:'' }}">
+                            {% if form.goal.errors %}<span class="help-inline">
+                                {{ form.goal.errors.as_text }}</span>{% endif %}
+                        </div>
+
+                    </div><!-- /.col -->
+
+
+                    <div class="col-xs-6">
+                        <div class="form-group">
+                            <label for="id_currency">Currency</label>
+                            {{ form.currency }}
+                        </div>
+                    </div><!-- /.col -->
+                </div><!-- /.row -->
+
+                <div class="form-group">
+                    <label for="id_min_people">Minimum Number of People</label>
+                    <input type="text" class="form-control" id="id_min_people"
+                           placeholder="0" name="min_people"
+                           value="{{ form.min_people.value|default:'' }}">
+                    {% if form.min_people.errors %}<span class="help-inline">
+                        {{ form.min_people.errors.as_text }}</span>{% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="id_max_people">Maximum Number of People</label>
+                    <input type="text" class="form-control" id="id_max_people"
+                           placeholder="0" name="max_people"
+                           value="{{ form.max_people.value|default:'' }}">
+                    {% if form.max_people.errors %}<span class="help-inline">
+                        {{ form.max_people.errors.as_text }}</span>{% endif %}
+                </div>
+                <hr />
+
+                <h3>start and end time</h3>
+
+                <div class="form-group">
+                    <label for="id_min_people">Start Date and Time</label>
+                    <input type="text" class="form-control" id="id_start_date"
+                           placeholder="0" name="start_date"
+                           value="{{ form.start_date.value|default:'' }}">
+                    {% if form.start_date.errors %}<span class="help-inline">
+                        {{ form.start_date.errors.as_text }}</span>{% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="id_end_date">End Date and Time</label>
+                    <input type="text" class="form-control" id="id_end_date"
+                           placeholder="0" name="end_date"
+                           value="{{ form.end_data.value|default:'' }}">
+                    {% if form.end_date.errors %}<span class="help-inline">
+                        {{ form.end_date.errors.as_text }}</span>{% endif %}
+                </div>
+
+            </div><!-- /.well -->
+                <input type="submit" class="btn btn-primary" value="Submit"/>
+
+            </form>
+
+    </div><!-- /.col -->
+    </div><!-- /.row -->
 {% endblock %}
 
 {% block templates %}
@@ -16,4 +135,4 @@
 
 {% block extra_scripts %}
     <script src="{{ STATIC_URL }}js/new_activity.main.js" type="text/javascript"></script>
-{% endblock extra_scripts%}
+{% endblock extra_scripts %}

@@ -3,7 +3,34 @@
 {% block title %}New Activity{% endblock %}
 
 {% block container %}
-    <h1>{{ activity.name }}</h1>
+    <div class="activity-title">
+        <h1>{{ activity.name }}</h1>
+        <div class="activity-creator">by {{ activity.user.username }}</div>
+    </div>
+    <div class="activity-body">
+        <div class="row">
+            <div class="col-xs-8">
+                <p>{{ activity.description }}</p>
+            </div><!-- /.col -->
+            <div class="col-xs-4 activity-right">
+                <div class="activity-right-body">
+                    <div class="activity-value">#</div>
+                    <div class="activity-unit">participants</div>
+                    <div class="activity-value"># {{ activity.get_currency_display }}</div>
+                    <div class="activity-unit">pledged of {{ activity.goal }}
+                    {{ activity.get_currency_display }} goal</div>
+                    <div class="activity-value">#</div>
+                    <div class="activity-unit">days to go</div>
+
+                    <div class="text-center">
+                        <a href="#" class="pledge-btn btn btn-primary">Pledge now!</a>
+                        {{ activity.pledge_value }} {{ activity.get_currency_display }}
+                        minimum pledge
+                    </div>
+                </div>
+            </div><!-- /.col -->
+        </div><!-- /.row -->
+    </div><!-- /.well -->
 {% endblock container %}
 
 {% block templates %}{% endblock templates %}

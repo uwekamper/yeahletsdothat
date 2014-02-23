@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block container %}
+    <div class="row">
+        <div class="col-xs-12">
+            <h1>Add an Account</h1>
+            <form method="post" role="form">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <input type="submit" />
+            </form>
+        </div>
+    </div>
+
+{% endblock %}

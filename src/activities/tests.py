@@ -7,6 +7,8 @@ when you run "manage.py test".
 Replace this with more appropriate tests for your application.
 """
 from __future__ import unicode_literals
+import json
+import jsonrpclib
 
 from lxml import html
 from django.contrib.auth.models import User
@@ -15,6 +17,7 @@ from django.test import TestCase
 from django.test.client import Client
 from model_mommy import mommy
 
+from activities import views
 from activities.models import Activity, BankAccount, Transaction
 
 
@@ -50,6 +53,18 @@ class CommonMethods():
 
         self.assertEqual(200, response.status_code)
         return html.fromstring(response.content)
+
+    def get_json_by_name(self, name, args=(), client=None):
+        """
+        Returns the DOM.
+        """
+        if not client:
+            client = Client()
+        url = reverse(name, args=args)
+        response = client.get(url)
+
+        self.assertEqual(200, response.status_code)
+        return json.loads(response.content)
 
     def get_logged_in_client(self, username=None, password=None):
         if not username: username = self.TEST_USERNAME
@@ -115,6 +130,15 @@ class ActivitiesTest(TestCase, CommonMethods):
     TEST_ACTIVITY_NAME = 'test activity'
 
     def setUp(self):
+        from collections import namedtuple
+        settings_obj = namedtuple('settings', 'BTC_HOST BTC_PORT BTC_USER BTC_PASS')
+        self.conf = settings_obj(
+            BTC_HOST='localhost',
+            BTC_PORT=18332,
+            BTC_USER='bitcoinrpc',
+            BTC_PASS='B726rKcomZz7rWVckYX2GsJfhRh7H6AfkDNrPHTByHRw'
+        )
+
         self.user = self.create_user()
 
     def test_activity_creation(self):
@@ -164,8 +188,33 @@ class ActivitiesTest(TestCase, CommonMethods):
         Check the function that returns the number of participants for an activity.
         """
         activity = mommy.make(Activity)
-        transact = mommy.make(Transaction)
+        self.assertEqual(0, activity.get_number_of_participants())
+        transact = mommy.make(Transaction, state=Transaction.STATE_PAYMENT_CONFIRMED)
+        self.assertEqual(1, activity.get_number_of_participants())
 
+    def test_get_rpc_address(self):
+        result = views.get_rpc_address(self.conf)
+        self.assertEqual(result, 'http://bitcoinrpc:B726rKcomZz7rWVckYX2GsJfhRh7H6AfkDNrPHTByHRw@localhost:18332/')
 
+    def test_create_bitcoin_address(self):
+        """
+        TODO
+        """
+        s = jsonrpclib.Server(views.get_rpc_address(self.conf))
+        before = len(s.listreceivedbyaddress(0, True))
+        result = views.create_bitcoin_address()
+        print('New address: {}'.format(result))
+        after = len(s.listreceivedbyaddress(0, True))
+        self.assertGreater(after, before)
 
+    def test_transaction_api(self):
+        """
+        TODO
+        """
+        addr = views.create_bitcoin_address()
+        t = mommy.make(Transaction, state=Transaction.STATE_PLEDGED, btc_address=addr,
+            amount=0.001)
+        data = self.get_json_by_name('transaction_api', args=(t.id,))
+        print(data)
+        self.assertEqual(Transaction.STATE_PLEDGED, data['state'])
 

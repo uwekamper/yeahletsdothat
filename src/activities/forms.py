@@ -20,6 +20,7 @@ class NewActivityForm(forms.ModelForm):
 
 class TransactionForm(forms.ModelForm):
     class Meta:
+        fields = ('amount', 'return_btc_address', 'email')
         model = models.Transaction
 
 

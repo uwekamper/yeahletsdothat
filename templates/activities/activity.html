@@ -14,19 +14,26 @@
             </div><!-- /.col -->
             <div class="col-xs-4 activity-right">
                 <div class="activity-right-body">
-                    <div class="activity-value">#</div>
-                    <div class="activity-unit">participants</div>
-                    <div class="activity-value"># {{ activity.get_currency_display }}</div>
+                    <div class="activity-value">{{ activity.get_number_of_participants }}</div>
+                    <div class="activity-unit">participant(s)</div>
+                    <div class="activity-value">{% if activity.get_total_pledge_amount %}{{ activity.get_total_pledge_amount }}{% else %}0{% endif %} {{ activity.get_currency_display }}</div>
                     <div class="activity-unit">pledged of {{ activity.goal }}
                     {{ activity.get_currency_display }} goal</div>
-                    <div class="activity-value">#</div>
+                    <div class="activity-value">{{ activity.days_left }}</div>
                     <div class="activity-unit">days to go</div>
 
+                    {% if not activity.completed %}
                     <div class="text-center">
-                        <a href="#" class="pledge-btn btn btn-primary">Pledge now!</a>
+                        <a href="{% url 'pledge_activity' activity.id %}" class="pledge-btn btn btn-primary">Pledge now!</a>
                         {{ activity.pledge_value }} {{ activity.get_currency_display }}
                         minimum pledge
                     </div>
+                    {% else %}
+                        <div class="text-center">
+                        <a href="" disabled="disabled" class="pledge-btn btn btn-primary">Pledge now!</a>
+                        This activity was completed. Pledging is disabled.
+                    </div>
+                    {% endif %}
                 </div>
             </div><!-- /.col -->
         </div><!-- /.row -->

@@ -19,10 +19,22 @@ body {
     margin-top: 20px;
     border-radius: 10px;
     background-color: #fff;
+    min-height: 50px;
+    padding: 10px;
 }
 
-.activity-body p {
-    padding: 5px;
+.activity-body p, .activity-body h1, .activity-body h2 {
+    margin-left: 10px;
+}
+
+.activity-center {
+   margin: 0 auto;
+   width: 256px;
+}
+
+p.activity-name {
+    font-size: 24px;
+    font-style: italic;
 }
 
 .activity-right {
@@ -66,3 +78,5 @@ body {
     font-size: 36px;
     font-weight: bold;
 }
+
+.activiti

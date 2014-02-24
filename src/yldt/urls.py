@@ -19,7 +19,10 @@ urlpatterns = patterns('',
     url(r'^bankaccounts/$', 'activities.views.manage_bankaccounts', name='manage_bankaccounts'),
     url(r'^bankaccounts/add/$', 'activities.views.add_bankaccount', name='add_bankaccount'),
 
+    url(r'^transaction/(?P<pk>\d+)/$', 'activities.views.transaction', name='transaction'),
+    url(r'^api/transaction/(?P<pk>\d+)/$', 'activities.views.transaction_api', name='transaction_api'),
     url(r'^activities/new/$', 'activities.views.new_activity', name='new_activity'),
-    url(r'^activities/(?P<pk>\d+)$', 'activities.views.activity', name='activity'),
-    url(r'^activities/(?P<pk>\d+)/pledge/$', 'activities.views.pledge_activity', name='pledge_activity'),
+    url(r'^activities/(?P<pk>\d+)/$', 'activities.views.activity', name='activity'),
+    url(r'^activities/(?P<pk>\d+)/pledge/$', 'activities.views.pledge_activity',
+        name='pledge_activity'),
 )

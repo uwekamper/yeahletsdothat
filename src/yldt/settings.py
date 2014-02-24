@@ -174,3 +174,8 @@ try:
     from local_settings import *
 except ImportError, e:
     print 'Unable to load local_settings.py:', e
+
+BTC_HOST = 'localhost'
+BTC_PORT = 18332
+BTC_USER = 'bitcoinrpc'
+BTC_PASS = 'B726rKcomZz7rWVckYX2GsJfhRh7H6AfkDNrPHTByHRw'

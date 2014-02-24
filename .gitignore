@@ -8,3 +8,4 @@ lib
 yldt/development.sqlite3
 local_settings.py
 static/bower_components/*
+src/activities/static/js/_jsx/*

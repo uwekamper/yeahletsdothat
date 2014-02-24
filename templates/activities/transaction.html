@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block title %}Transaction{% endblock %}
+
+{% block container %}
+    <div class="row">
+        <div class="col-xs-12">
+            <h1>Transaction #{{ transaction.id }}</h1>
+
+            <div class="activity-body">
+                <h2>Please send your money now! We are waiting.</h2>
+                <p>Please send the amount of {{ transaction.amount }} {{ activity.get_currency_display }}
+                to the address <a href="bitcoin:{{ transaction.btc_address }}?amount={{ transaction.amount }}&label=yldt-{{ activity.name|slugify }}-{{ transaction.id }}">{{ transaction.btc_address }}</a>.</p>
+                <div class="activity-center">
+                    <div id="qrcode"></div>
+
+                </div>
+
+                <div id="progress" style="margin-top: 30px; height:100px;"></div>
+            </div>
+        </div><!-- /.col -->
+    </div><!-- /.row -->
+{% endblock container %}
+
+{% block extra_scripts %}
+    <script type="text/javascript" src="{{ STATIC_URL }}qrcodejs/qrcode.min.js"></script>
+    {% verbatim %}
+    <script type="text/x-handlebars-template" id="progress-template">
+        Progress:
+        {{#if received}}
+            <audio src="/static/mp3/coins_received.mp3" preload="auto" autoplay="true" />
+        {{/if }}
+        {{#if confirmed}}
+            <audio src="/static/mp3/complete.mp3" preload="auto" autoplay="true" />
+        {{/if }}
+        {{#if pledged }}You have pledged, we are waiting to receive the amount.{{/if}}
+        {{#if received }}We have received the amount. We are now waiting for the confirmation.{{/if}}
+        {{#if confirmed }}Your payment has been confirmed. Thank you!{{/if}}
+        <div class="progress progress-striped {{#unless confirmed}}active{{/unless}}">
+          <div class="progress-bar"  role="progressbar" aria-valuenow="100" aria-valuemin="0"
+            aria-valuemax="100" style="width: {{#if pledged }}5%{{/if}}{{#if received }}50%{{/if}}{{#if confirmed }}100%{{/if}};">
+            <span class="sr-only">5% Complete</span>
+          </div>
+        </div>
+        <a href="/activities/{{ activity }}/"  class="btn btn-primary pull-right"
+            {{#unless confirmed }}disabled{{/unless }}>Continue
+            <span class="glyphicon glyphicon-chevron-right"></span></a>
+    </script>
+    {% endverbatim %}
+    <script type="text/javascript">
+        TransactionModel = Backbone.Model.extend({
+            urlRoot: '/api/transaction',
+            defaults: {
+                'state': 0,
+                'pledged': false,
+                'received': false,
+                'confirmed': false
+            }
+        });
+
+        ProgressView = Backbone.View.extend({
+            el: '#progress',
+            initialize: function(options) {
+                this.model = options.model;
+                this.model.on('change', this.render, this);
+                _.bindAll(this, 'render');
+            },
+            render: function() {
+                var template = Handlebars.compile($('#progress-template').html());
+                this.$el.html((template( this.model.toJSON() )));
+                return this;
+            }
+        });
+
+        transaction = new TransactionModel({id: {{transaction.id}} });
+        view = new ProgressView({model: transaction});
+        view.render();
+
+        $(document).ready(function(){
+            new QRCode(document.getElementById("qrcode"), "bitcoin:{{ transaction.btc_address }}?amount={{ transaction.amount }}&label=yldt-{{ activity.name|slugify }}-{{ transaction.id }}");
+
+            window.setInterval(function() {
+                transaction.fetch();
+            }, 1000);
+        });
+
+</script>
+
+{% endblock extra_scripts %}

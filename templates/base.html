@@ -16,6 +16,7 @@
     <![endif]-->
 
     <link href="{{ STATIC_URL }}css/style.css" rel="stylesheet" media="screen">
+    {% block extra_css %}{% endblock %}
     </head>
     <body>
     {% block body %}

@@ -62,10 +62,10 @@ class Activity(models.Model):
         return delta.days
 
     def get_number_of_participants(self):
-        return Transaction.objects.filter(state=Transaction.STATE_PAYMENT_CONFIRMED).count()
+        return self.transaction_set.filter(state=Transaction.STATE_PAYMENT_CONFIRMED).count()
 
     def get_total_pledge_amount(self):
-        return Transaction.objects.filter(activity=self,
+        return self.transaction_set.filter(activity=self,
             state=Transaction.STATE_PAYMENT_CONFIRMED).aggregate(Sum('amount'))['amount__sum']
 
 

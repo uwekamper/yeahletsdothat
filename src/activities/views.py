@@ -55,7 +55,7 @@ def new_activity(request):
     View for creating new activities.
     """
     if request.method == 'POST':
-        form = forms.NewActivityForm(request.POST)
+        form = forms.NewActivityForm(request.POST, request.user)
         if form.is_valid():
 
             new_activity = form.save(commit=False)
@@ -66,7 +66,7 @@ def new_activity(request):
             print form.errors
             return render(request, 'activities/new_activity.html', {'form': form})
 
-    form = forms.NewActivityForm()
+    form = forms.NewActivityForm(user=request.user)
     return render(request, 'activities/new_activity.html', {'form': form})
 
 def activity(request, pk):

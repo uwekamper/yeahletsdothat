@@ -2,6 +2,10 @@
 
 {% block title %}New Activity{% endblock %}
 
+{% block extra_css %}
+    <link href="{{ STATIC_URL }}css/bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen">
+{% endblock %}
+
 {% block container %}
     <div class="row">
     <div class="col-xs-12">
@@ -78,6 +82,11 @@
                             <label for="id_currency">Currency</label>
                             {{ form.currency }}
                         </div>
+                        <div class="form-group">
+                            <label for="id_target_account">Target account</label>
+                            {{ form.target_account }}
+                        </div>
+
                     </div><!-- /.col -->
                 </div><!-- /.row -->
 
@@ -100,25 +109,38 @@
                 </div>
                 <hr />
 
-                <h3>start and end time</h3>
+                <h3>When should it start and when does it end?</h3>
 
                 <div class="form-group">
-                    <label for="id_min_people">Start Date and Time</label>
-                    <input type="text" class="form-control" id="id_start_date"
-                           placeholder="0" name="start_date"
-                           value="{{ form.start_date.value|default:'' }}">
+                    <label for="id_start_date">Start Date and Time</label>
+                    <div id="startdate-datepicker" class="input-group date">
+                        <input data-format="YYYY-MM-DD hh:mm" type="text" class="form-control" id="id_start_date"
+                               placeholder="" name="start_date"
+                               value="{{ form.start_date.value|default:'' }}">
+
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span>
+                        </span>
+                    </div>
                     {% if form.start_date.errors %}<span class="help-inline">
                         {{ form.start_date.errors.as_text }}</span>{% endif %}
                 </div>
 
-                <div class="form-group">
+                 <div class="form-group">
                     <label for="id_end_date">End Date and Time</label>
-                    <input type="text" class="form-control" id="id_end_date"
-                           placeholder="0" name="end_date"
-                           value="{{ form.end_data.value|default:'' }}">
-                    {% if form.end_date.errors %}<span class="help-inline">
-                        {{ form.end_date.errors.as_text }}</span>{% endif %}
+                    <div id="enddate-datepicker" class="input-group date">
+                        <input data-format="YYYY-MM-DD hh:mm" type="text" class="form-control" id="id_start_date"
+                               placeholder="" name="end_date"
+                               value="{{ form.end_date.value|default:'' }}">
+
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span>
+                        </span>
+                    </div>
+                    {% if form.start_date.errors %}<span class="help-inline">
+                        {{ form.start_date.errors.as_text }}</span>{% endif %}
                 </div>
+
+
+
 
             </div><!-- /.well -->
                 <input type="submit" class="btn btn-primary" value="Submit"/>
@@ -135,4 +157,14 @@
 
 {% block extra_scripts %}
     <script src="{{ STATIC_URL }}js/new_activity.main.js" type="text/javascript"></script>
+
+    <script src="{{ STATIC_URL }}bower_components/moment/moment.js" type="text/javascript"></script>
+    <script src="{{ STATIC_URL }}js/bootstrap-datetimepicker.min.js" type="text/javascript"></script>
+    <script type="text/javascript">
+    $(function () {
+        $('#startdate-datepicker').datetimepicker();
+        $('#enddate-datepicker').datetimepicker();
+    });
+
+    </script>
 {% endblock extra_scripts %}

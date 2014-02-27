@@ -1,5 +1,7 @@
 body {
+    margin-top: 50px;
     background: #F79C33;
+    margin-bottom: 50px;
 }
 
 .activity-title {
@@ -79,4 +81,6 @@ p.activity-name {
     font-weight: bold;
 }
 
-.activiti
+.date {
+    width: 250px;
+}

@@ -16,6 +16,10 @@ import forms
 from models import Activity, Transaction, BankAccount
 from django.conf import settings
 
+
+def index(request):
+    return render(request, 'activities/index.html', {})
+
 @login_required
 def user_profile(request):
     activities = Activity.objects.filter(user=request.user)
@@ -74,7 +78,12 @@ def activity(request, pk):
     View that shows a single activity.
     """
     activity = get_object_or_404(Activity, pk=pk)
-    context = {'activity': activity, }
+    methods = []
+    for method_name in settings.YLDT_PAYMENT_METHODS:
+        module = __import__(method_name)
+        methods.append(module.PaymentMethod())
+
+    context = {'activity': activity, 'methods': methods}
     return render(request, 'activities/activity.html', context)
 
 def abort_activity(request, pk):

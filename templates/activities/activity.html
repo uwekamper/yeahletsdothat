@@ -34,6 +34,10 @@
                         This activity was completed. Pledging is disabled.
                     </div>
                     {% endif %}
+
+                    {% for method in methods %}
+                        {{ method.name }}
+                    {% endfor %}
                 </div>
             </div><!-- /.col -->
         </div><!-- /.row -->

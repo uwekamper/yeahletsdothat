@@ -19,6 +19,7 @@ from model_mommy import mommy
 
 from activities import views
 from activities.models import Activity, BankAccount, Transaction
+from activities.payment_method import PaymentMethodDoesNotHaveName, BasePaymentMethod, method_registry
 
 
 class CommonMethods():
@@ -106,7 +107,6 @@ class UserProfileTest(TestCase, CommonMethods):
         Go to the user profile and create a now account
         """
         dom = self.get_dom_by_name('add_bankaccount', client=self.get_logged_in_client())
-
 
 
 class BankAccountTest(TestCase):
@@ -218,3 +218,23 @@ class ActivitiesTest(TestCase, CommonMethods):
         print(data)
         self.assertEqual(Transaction.STATE_PLEDGED, data['state'])
 
+
+class PaymentMethodTest(TestCase):
+
+    def test_payment_method_without_name(self):
+        """
+        Creating a payment class without a 'name' member variable should raise
+        an exception.
+        """
+        self.assertRaises(PaymentMethodDoesNotHaveName, BasePaymentMethod)
+
+    def test_concrete_payment_method_creation(self):
+        """
+        Create a concrete example of a payment method.
+        """
+        class SuperPay(BasePaymentMethod):
+            name = 'superpay'
+
+        instance = SuperPay()
+        self.assertIsInstance(instance, SuperPay)
+        self.assertEqual(method_registry['superpay'], instance)

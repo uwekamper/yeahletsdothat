@@ -1,7 +1,11 @@
 body {
-    margin-top: 50px;
+    margin-top: 60px;
     background: #F79C33;
     margin-bottom: 50px;
+}
+
+.jumbotron {
+    margin-top: 50px;
 }
 
 .activity-title {

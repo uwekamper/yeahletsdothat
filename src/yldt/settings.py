@@ -179,3 +179,19 @@ BTC_HOST = 'localhost'
 BTC_PORT = 18332
 BTC_USER = 'bitcoinrpc'
 BTC_PASS = 'B726rKcomZz7rWVckYX2GsJfhRh7H6AfkDNrPHTByHRw'
+
+YLDT_PAYMENT_METHODS = ['yldt_braintree', 'yldt_payshibe']
+YLDT_PAYMENT = {
+    'bitcoin': {
+        'host': BTC_HOST,
+        'port': BTC_PORT,
+        'username': BTC_USER,
+        'password': BTC_PASS
+    },
+    'braintree': {
+        'merchant_id': 'nffgm36gc44f4yr7',
+        'public_key': 'zybbzr6mh65pq4jt',
+        'private_key': 'df93c19f950ad1ca5c34e16f5ebfe5fc',
+        'cse_key': 'MIIBCgKCAQEAzVUQOH59o4G1ek1Y+kLOLgeCxQ8CkN3C0y1zYoH7Hw2gjRskxsKL4YLVsK6v5WScqOG++J8fwQ/rYR2Rl3fymwgJv+KfOgu72IFJ8zCf6jXobg75cZ1i7zNFey7HpCiVYeLHh5ausy2/PVcojTnnhcDgtdnYnweJ9ii72xwlHSmyS7DOidverR1kEI887ZX/lb22zsg6Cr6xwS0WyuYTJLplYplUIWbEncqLQ8kvJFmyWl8o98sNFPu7qTnZMmKa1SG2NgNvrhELMv0whicKJE0OZR8+P/2/KNINvXTPerc4yIR+Gp4Omm8c/Hp5i5AWjf0XaSqXsI+weUC5A5NJvwIDAQAB'
+    },
+}

@@ -35,5 +35,8 @@ class BasePaymentMethod():
             raise PaymentMethodDoesNotHaveName(msg)
 
 
+    def create_payment(self, transaction):
+        return True
+
     def step1(self, request):
         return render(request, 'yldt_braintree/step1.html', {})

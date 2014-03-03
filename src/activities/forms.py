@@ -5,6 +5,13 @@ from django import forms
 
 import models
 
+class ActivityForm(forms.ModelForm):
+    v = forms.CharField(required=False)
+
+    class Meta:
+        model = models.Activity
+        fields = ('v',)
+
 
 class NewActivityForm(forms.ModelForm):
     currency = forms.ChoiceField(choices=models.Activity.CURRENCIES,
@@ -20,7 +27,7 @@ class NewActivityForm(forms.ModelForm):
         fields = ('name', 'description', 'goal', 'pledge_value', 'currency',
             'target_account',
             'min_people', 'max_people',
-            'start_date', 'end_date')
+            'start_date', 'end_date', 'is_private')
         model = models.Activity
 
 

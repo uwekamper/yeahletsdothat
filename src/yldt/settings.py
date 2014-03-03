@@ -181,6 +181,8 @@ BTC_USER = 'bitcoinrpc'
 BTC_PASS = 'B726rKcomZz7rWVckYX2GsJfhRh7H6AfkDNrPHTByHRw'
 
 YLDT_PAYMENT_METHODS = ['yldt_braintree', 'yldt_payshibe']
+
+
 YLDT_PAYMENT = {
     'bitcoin': {
         'host': BTC_HOST,

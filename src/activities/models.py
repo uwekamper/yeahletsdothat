@@ -1,6 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+import base64
+import os
 
 from django.db import models
 from django.contrib.auth.models import User
@@ -27,6 +29,15 @@ class BankAccount(models.Model):
             return _('Unnamed account')
 
 
+def pkgen():
+    """
+    Generates the primary key codes for the Activity class.
+    """
+    code = os.urandom(12)
+    # TODO: Filter rude words from generated
+    return base64.urlsafe_b64encode(code)
+
+
 class Activity(models.Model):
     CURRENCY_EUR = (0, _('EUR'))
     CURRENCY_USD = (1, _('USD'))
@@ -38,6 +49,8 @@ class Activity(models.Model):
         CURRENCY_BITCOIN
     )
 
+    code = models.CharField(max_length=16, default=pkgen)
+    is_private = models.BooleanField(default=True)
     user = models.ForeignKey(User, null=True, blank=True)
     name = models.CharField(max_length=200)
     description = models.TextField(blank=True)
@@ -49,7 +62,6 @@ class Activity(models.Model):
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
     target_account = models.ForeignKey('BankAccount', null=True)
-
     completed = models.BooleanField(default=False)
 
     @property

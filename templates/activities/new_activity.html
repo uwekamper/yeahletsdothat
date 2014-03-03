@@ -139,7 +139,15 @@
                         {{ form.start_date.errors.as_text }}</span>{% endif %}
                 </div>
 
-
+                <!-- Name -->
+                <div class="form-group">
+                    <label for="id_is_private">Is private?</label>
+                    <label class="checkbox-inline" for="id_is_private">
+                      <input type="checkbox" name="is_private" id="id_is_private" value="1">
+                      Private
+                    </label>
+                    {% if form.is_private.errors %}<span class="help-inline">{{ form.is_private.errors.as_text }}</span>{% endif %}
+                </div>
 
 
             </div><!-- /.well -->

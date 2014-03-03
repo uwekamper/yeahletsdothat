@@ -18,7 +18,7 @@ from django.test.client import Client
 from model_mommy import mommy
 
 from activities import views
-from activities.models import Activity, BankAccount, Transaction
+from activities.models import Activity, BankAccount, Transaction, pkgen
 from activities.payment_method import PaymentMethodDoesNotHaveName, BasePaymentMethod, method_registry
 
 
@@ -161,9 +161,10 @@ class ActivitiesTest(TestCase, CommonMethods):
         """
         Check if a user can view the details of an activity.
         """
-        activity = mommy.make(Activity)
+        TEST_CODE = 'WJLuiiI8NQWcJQ=='
+        activity = mommy.make(Activity, code=TEST_CODE)
         client = Client()
-        response = client.get(reverse('activity', args=(activity.id, )))
+        response = client.get(reverse('activity', args=(activity.id, TEST_CODE)))
         self.assertEqual(response.status_code, 200)
         dom = html.fromstring(response.content)
         header = dom.cssselect('h1')[0]
@@ -217,6 +218,11 @@ class ActivitiesTest(TestCase, CommonMethods):
         data = self.get_json_by_name('transaction_api', args=(t.id,))
         print(data)
         self.assertEqual(Transaction.STATE_PLEDGED, data['state'])
+
+    def test_pkgen(self):
+        code = pkgen()
+        self.assertEqual(len(code), 16)
+
 
 
 class PaymentMethodTest(TestCase):

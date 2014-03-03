@@ -4,8 +4,10 @@ from __future__ import unicode_literals
 
 # Create your views here.
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseNotAllowed, HttpResponse, HttpResponseRedirect
+from django.http import HttpResponseNotAllowed, HttpResponse, HttpResponseRedirect, \
+    HttpResponseForbidden
 from django.shortcuts import render, get_object_or_404
 import jsonrpclib
 from rest_framework.decorators import api_view
@@ -59,13 +61,16 @@ def new_activity(request):
     View for creating new activities.
     """
     if request.method == 'POST':
-        form = forms.NewActivityForm(request.POST, request.user)
+        form = forms.NewActivityForm(request.user, request.POST)
         if form.is_valid():
 
             new_activity = form.save(commit=False)
             new_activity.user = request.user
             new_activity.save()
-            return HttpResponseRedirect(reverse('activity', args=(new_activity.id,)))
+            url = reverse('activity', args=(new_activity.id,))
+            if new_activity.is_private:
+                url += '?k={}'.format(new_activity.code)
+            return HttpResponseRedirect(url)
         else:
             print form.errors
             return render(request, 'activities/new_activity.html', {'form': form})
@@ -78,6 +83,12 @@ def activity(request, pk):
     View that shows a single activity.
     """
     activity = get_object_or_404(Activity, pk=pk)
+    code = request.GET.get('k', None)
+
+    if activity.is_private:
+        if activity.code != code:
+            raise PermissionDenied()
+
     methods = []
     for method_name in settings.YLDT_PAYMENT_METHODS:
         module = __import__(method_name)

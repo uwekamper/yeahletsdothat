@@ -3,7 +3,7 @@
 
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
-import activities
+import campaigns
 
 admin.autodiscover()
 
@@ -16,16 +16,16 @@ urlpatterns = patterns('',
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
     # Uncomment the next line to enable the admin:
-    url(r'^$', 'activities.views.index', name='index'),
+    url(r'^$', 'campaigns.views.index', name='index'),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^accounts/', include('registration.backends.default.urls')),
-    url(r'^accounts/profile/$', 'activities.views.user_profile', name="user_profile"),
+    url(r'^accounts/profile/$', 'campaigns.views.user_profile', name="user_profile"),
 
-    url(r'^bankaccounts/$', 'activities.views.manage_bankaccounts', name='manage_bankaccounts'),
-    url(r'^bankaccounts/add/$', 'activities.views.add_bankaccount', name='add_bankaccount'),
+    url(r'^bankaccounts/$', 'campaigns.views.manage_bankaccounts', name='manage_bankaccounts'),
+    url(r'^bankaccounts/add/$', 'campaigns.views.add_bankaccount', name='add_bankaccount'),
 
-    url(r'^transaction/(?P<pk>\d+)/$', 'activities.views.transaction', name='transaction'),
-    url(r'^api/transaction/(?P<pk>\d+)/$', 'activities.views.transaction_api', name='transaction_api'),
+    url(r'^transaction/(?P<pk>\d+)/$', 'campaigns.views.transaction', name='transaction'),
+    url(r'^api/transaction/(?P<pk>\d+)/$', 'campaigns.views.transaction_api', name='transaction_api'),
 
-    url(r'^activities/', include('activities.urls')),
+    url(r'^yeah/', include('campaigns.urls')),
 )

@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 from django.utils.translation import gettext_lazy as _
-from activities.payment_method import BasePaymentMethod
+from campaigns.payment_method import BasePaymentMethod
 
 
 class BrainTree(BasePaymentMethod):

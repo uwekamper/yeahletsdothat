@@ -100,7 +100,7 @@ INSTALLED_APPS = (
     'rest_framework',
     'south',
     'registration',
-    'activities',
+    'campaigns',
 )
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.

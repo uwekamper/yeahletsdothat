@@ -21,7 +21,7 @@ body {
 
 }
 
-.activity-body {
+.main-content {
     margin-top: 20px;
     border-radius: 10px;
     background-color: #fff;
@@ -29,9 +29,19 @@ body {
     padding: 10px;
 }
 
-.activity-body p, .activity-body h1, .activity-body h2 {
+.main-content p, .main-content h1, .main-content h2 {
     margin-left: 10px;
 }
+
+.payment-method {
+
+}
+
+.payment-method:hover {
+    background-color: #ccc;
+}
+
+pay
 
 .activity-center {
    margin: 0 auto;

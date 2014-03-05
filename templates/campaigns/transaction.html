@@ -7,7 +7,7 @@
         <div class="col-xs-12">
             <h1>Transaction #{{ transaction.id }}</h1>
 
-            <div class="activity-body">
+            <div class="main-content">
                 <h2>Please send your money now! We are waiting.</h2>
                 <p>Please send the amount of {{ transaction.amount }} {{ activity.get_currency_display }}
                 to the address <a href="bitcoin:{{ transaction.btc_address }}?amount={{ transaction.amount }}&label=yldt-{{ activity.name|slugify }}-{{ transaction.id }}">{{ transaction.btc_address }}</a>.</p>

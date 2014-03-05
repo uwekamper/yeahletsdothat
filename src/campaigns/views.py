@@ -20,14 +20,14 @@ from django.conf import settings
 
 
 def index(request):
-    return render(request, 'activities/index.html', {})
+    return render(request, 'campaigns/index.html', {})
 
 @login_required
 def user_profile(request):
-    activities = Campaign.objects.filter(user=request.user)
+    campaigns = Campaign.objects.filter(user=request.user)
     accounts = BankAccount.objects.filter(user=request.user)
-    return render(request, 'activities/user_profile.html',
-        {'accounts': accounts, 'activities': activities})
+    return render(request, 'campaigns/user_profile.html',
+        {'accounts': accounts, 'campaigns': campaigns})
 
 def current_activities(request):
     pass
@@ -35,7 +35,7 @@ def current_activities(request):
 @login_required
 def manage_bankaccounts(request):
     accounts = BankAccount.objects.filter(user=request.user)
-    return render(request, 'activities/manage_bankaccounts.html', {'accounts': accounts})
+    return render(request, 'campaigns/manage_bankaccounts.html', {'accounts': accounts})
 
 @login_required
 def add_bankaccount(request):
@@ -50,10 +50,10 @@ def add_bankaccount(request):
             new_account.save()
             return HttpResponseRedirect(reverse('manage_bankaccounts'))
         else:
-            return render(request, 'activities/add_bankaccount.html', {'form': form})
+            return render(request, 'campaigns/add_bankaccount.html', {'form': form})
 
     form = forms.BankAccountForm()
-    return render(request, 'activities/add_bankaccount.html', {'form': form})
+    return render(request, 'campaigns/add_bankaccount.html', {'form': form})
 
 @login_required
 def new_activity(request):
@@ -71,10 +71,10 @@ def new_activity(request):
             return HttpResponseRedirect(url)
         else:
             print form.errors
-            return render(request, 'activities/new_activity.html', {'form': form})
+            return render(request, 'campaigns/new_activity.html', {'form': form})
 
     form = forms.NewActivityForm(user=request.user)
-    return render(request, 'activities/new_activity.html', {'form': form})
+    return render(request, 'campaigns/new_activity.html', {'form': form})
 
 
 def get_activity(request, key):
@@ -84,19 +84,25 @@ def get_activity(request, key):
     activity = get_object_or_404(Campaign, key=key)
     return activity
 
-def activity(request, key):
+
+def get_payment_methods():
+    methods = []
+    for method_name in settings.YLDT_PAYMENT_METHODS:
+        module = __import__(method_name)
+        methods.append(module.PaymentMethod())
+    return methods
+
+
+def campaign_details(request, key):
     """
     View that shows a single activity.
     """
     activity = get_activity(request, key)
 
-    methods = []
-    for method_name in settings.YLDT_PAYMENT_METHODS:
-        module = __import__(method_name)
-        methods.append(module.PaymentMethod())
+    methods = get_payment_methods()
 
     context = {'activity': activity, 'methods': methods}
-    return render(request, 'activities/activity.html', context)
+    return render(request, 'campaigns/activity.html', context)
 
 def abort_activity(request, pk):
     """
@@ -118,34 +124,45 @@ def create_bitcoin_address(address=None):
     new_addr = server.getnewaddress()
     return new_addr
 
-def pledge_activity(request, pk):
-    """
-    This view lets users pledge on activities.
-    """
-    activity = get_object_or_404(Campaign, pk=pk)
-    if request.method == 'POST':
-        form = forms.TransactionForm(request.POST)
-        if form.is_valid():
-            transaction = form.save(commit=False)
+# def pledge_activity(request, pk):
+#     """
+#     This view lets users pledge on activities.
+#     """
+#     activity = get_object_or_404(Campaign, pk=pk)
+#     if request.method == 'POST':
+#         form = forms.TransactionForm(request.POST)
+#         if form.is_valid():
+#             transaction = form.save(commit=False)
+#
+#             # Create new bitcoin address for the transaction
+#             transaction.btc_address = create_bitcoin_address()
+#             transaction.activity = activity
+#             transaction.state = Transaction.STATE_PLEDGED
+#             transaction.save()
+#             return HttpResponseRedirect(reverse('transaction', args=(transaction.id,)))
+#         else:
+#             return render(request, 'campaigns/pledge_activity.html',
+#                     {'form': form, 'activity': activity})
+#
+#     form = forms.TransactionForm(initial={'amount': activity.pledge_value})
+#     return render(request, 'campaigns/pledge_activity.html',
+#             {'form': form, 'activity': activity})
 
-            # Create new bitcoin address for the transaction
-            transaction.btc_address = create_bitcoin_address()
-            transaction.activity = activity
-            transaction.state = Transaction.STATE_PLEDGED
-            transaction.save()
-            return HttpResponseRedirect(reverse('transaction', args=(transaction.id,)))
-        else:
-            return render(request, 'activities/pledge_activity.html',
-                    {'form': form, 'activity': activity})
+def select_payment(request, key):
+    """
+    The user has clicked the "Pledge now" button. Let's show him the list of
+    available Payment menthods
+    """
+    campaign = get_activity(request, key)
+    methods = get_payment_methods()
 
-    form = forms.TransactionForm(initial={'amount': activity.pledge_value})
-    return render(request, 'activities/pledge_activity.html',
-            {'form': form, 'activity': activity})
+    return render(request, 'campaigns/select_payment.html',
+            {'campaign': campaign, 'methods': methods})
 
 
 def transaction(request, pk):
     transaction = get_object_or_404(Transaction, pk=pk)
-    return render(request, 'activities/transaction.html',
+    return render(request, 'campaigns/transaction.html',
             {'transaction': transaction, 'activity': transaction.activity})
 
 def check_completion(activity):

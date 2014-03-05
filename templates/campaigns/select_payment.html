@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}{{ activity.name }}{% endblock %}
+
+{% block container %}
+    <div class="row">
+        <div class="col-xs-12">
+            <h1>Select Your Preferred Payment Method</h1>
+        </div><!-- /.col -->
+    </div><!-- /.row -->
+    <div class="main-content">
+        <div class="row">
+            <div class="col-xs-12">
+                <p>You are about to pledge the amount of
+                    <strong>{{ campaign.pledge_value }} {{ campaign.get_currency_display }}</strong>
+                    for <strong>{{ campaign.name }}</strong>. </p>
+
+                    <div class="row">
+                    {% for method in methods %}
+{#                    {% if forloop.first %}<div class="row">{% endif %}#}
+
+                        <div class="payment-method col-xs-12 col-sm-6 col-md-4 col-lg-4">
+
+                            <label for="id_radio_{{ forloop.counter }}">
+                                 <h3>{{ method.name }}</h3>
+                            <div class="radio">
+
+
+                                    <input type="radio" name="radios" id="id_radio_{{ forloop.counter }}" value="1" checked="checked">
+                                    Pay with {{ method.name }}
+
+                            </div><!-- /.radio -->
+                            </label>
+                        </div>
+
+{#                    {% if forloop.counter|divisibleby:3 and not forloop.last %}#}
+{#                        </div><!-- /.row -->#}
+{#                        <div class="row">#}
+{#                    {% endif %}#}
+{##}
+{#                    {% if forloop.last %}</div><!-- /.row -->{% endif %}#}
+                    {% endfor %}
+                    </div>
+
+            </div><!-- /.col -->
+        </div><!-- /.row -->
+    </div><!-- /.main-content -->
+{% endblock container %}

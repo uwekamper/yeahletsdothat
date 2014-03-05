@@ -22,10 +22,11 @@
 
             <h2>Activities That You Started</h2>
 
-            {% if activities %}
+            {% if campaigns %}
                 <ul id="account-list">
-                {% for activity in activities %}
-                    <li><a href="{% url 'activity' activity.id %}?key={{ activity.code }}">{{ activity.name }}</a></li>
+                {% for campaign in campaigns %}
+                    <li><a href="{% url 'campaign_details' campaign.key %}">{{ campaign.name }}</a>
+                    {% if campaign.is_private %}<abbr title="This campaign is private"><span class="glyphicon glyphicon-lock"></span></abbr>{% endif %}</li>
                 {% endfor %}
                 </ul>
             {% else %}

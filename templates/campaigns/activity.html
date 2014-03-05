@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 
-{% block title %}New Activity{% endblock %}
+{% block title %}{{ activity.name }}{% endblock %}
 
 {% block container %}
     <div class="activity-title">
         <h1>{{ activity.name }}</h1>
         <div class="activity-creator">by {{ activity.user.username }}</div>
     </div>
-    <div class="activity-body">
+    <div class="main-content">
         <div class="row">
             <div class="col-xs-8">
                 <p>{{ activity.description }}</p>
@@ -24,7 +24,7 @@
 
                     {% if not activity.completed %}
                     <div class="text-center">
-                        <a href="{% url 'pledge_activity' activity.id %}" class="pledge-btn btn btn-primary">Pledge now!</a>
+                        <a href="{% url 'select_payment' activity.key %}" class="pledge-btn btn btn-primary">Pledge now!</a>
                         {{ activity.pledge_value }} {{ activity.get_currency_display }}
                         minimum pledge
                     </div>

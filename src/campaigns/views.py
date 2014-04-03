@@ -13,6 +13,7 @@ import jsonrpclib
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from campaigns.serializers import TransactionSerializer
+from campaigns.utils import get_campaign_or_404, get_payment_methods
 
 import forms
 from models import Campaign, Transaction, BankAccount
@@ -77,27 +78,11 @@ def new_activity(request):
     return render(request, 'campaigns/new_activity.html', {'form': form})
 
 
-def get_activity(request, key):
-    """
-
-    """
-    activity = get_object_or_404(Campaign, key=key)
-    return activity
-
-
-def get_payment_methods():
-    methods = []
-    for method_name in settings.YLDT_PAYMENT_METHODS:
-        module = __import__(method_name)
-        methods.append(module.PaymentMethod())
-    return methods
-
-
 def campaign_details(request, key):
     """
     View that shows a single activity.
     """
-    activity = get_activity(request, key)
+    activity = get_campaign_or_404(request, key)
 
     methods = get_payment_methods()
 
@@ -124,41 +109,31 @@ def create_bitcoin_address(address=None):
     new_addr = server.getnewaddress()
     return new_addr
 
-# def pledge_activity(request, pk):
-#     """
-#     This view lets users pledge on activities.
-#     """
-#     activity = get_object_or_404(Campaign, pk=pk)
-#     if request.method == 'POST':
-#         form = forms.TransactionForm(request.POST)
-#         if form.is_valid():
-#             transaction = form.save(commit=False)
-#
-#             # Create new bitcoin address for the transaction
-#             transaction.btc_address = create_bitcoin_address()
-#             transaction.activity = activity
-#             transaction.state = Transaction.STATE_PLEDGED
-#             transaction.save()
-#             return HttpResponseRedirect(reverse('transaction', args=(transaction.id,)))
-#         else:
-#             return render(request, 'campaigns/pledge_activity.html',
-#                     {'form': form, 'activity': activity})
-#
-#     form = forms.TransactionForm(initial={'amount': activity.pledge_value})
-#     return render(request, 'campaigns/pledge_activity.html',
-#             {'form': form, 'activity': activity})
-
 def select_payment(request, key):
     """
     The user has clicked the "Pledge now" button. Let's show him the list of
-    available Payment menthods
+    available Payment methods
     """
-    campaign = get_activity(request, key)
+    campaign = get_campaign_or_404(request, key)
     methods = get_payment_methods()
 
-    return render(request, 'campaigns/select_payment.html',
-            {'campaign': campaign, 'methods': methods})
+    if request.method == 'POST':
+        form = forms.SelectPaymentForm(campaign, request.POST)
+        if form.is_valid():
+            amount = form.cleaned_data.get('amount')
+            # Create a new payment transaction
+            #Transaction.objects.create(amount=
+            #state=Transaction.STATE_PLEDGED, )
+            # Redirect the user to the new transaction depending on the selected
+            # payment method
+            return HttpResponseRedirect('/')
+        else:
+            return render(request, 'campaigns/select_payment.html',
+                    {'campaign': campaign, 'methods': methods, 'form': form})
 
+    else:
+        return render(request, 'campaigns/select_payment.html',
+                {'campaign': campaign, 'methods': methods})
 
 def transaction(request, pk):
     transaction = get_object_or_404(Transaction, pk=pk)

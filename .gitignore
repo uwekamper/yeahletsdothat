@@ -3,6 +3,7 @@
 .idea
 bin
 include
+share
 lib
 *.pyc
 yldt/development.sqlite3

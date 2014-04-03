@@ -1,9 +1,26 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 
 from django import forms
+from campaigns.utils import get_payment_methods
 
 import models
+
+class SelectPaymentForm(forms.Form):
+    def __init__(self, campaign, *args, **kwargs):
+        super(SelectPaymentForm, self).__init__(*args, **kwargs)
+        self._campaign = campaign
+
+    payment_method = forms.ChoiceField(choices=get_payment_methods())
+    amount = forms.DecimalField()
+
+    def clean(self):
+        cleaned_data = super(SelectPaymentForm, self).clean()
+        min_amount = self._campaign.pledge_value
+        if cleaned_data.get('amount') < min_amount:
+            raise forms.ValidationError('Amount must be at least {}.'.format(min_amount))
+        return cleaned_data
 
 class ActivityForm(forms.ModelForm):
     v = forms.CharField(required=False)

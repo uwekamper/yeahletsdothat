@@ -1,48 +1,72 @@
 {% extends "base.html" %}
 
-{% block title %}{{ activity.name }}{% endblock %}
+{% block title %}{{ campaign.name }}{% endblock %}
 
 {% block container %}
     <div class="row">
         <div class="col-xs-12">
-            <h1>Select Your Preferred Payment Method</h1>
+            <h1>Select Amount and Payment Method</h1>
         </div><!-- /.col -->
     </div><!-- /.row -->
     <div class="main-content">
+    <form method="post">
+        {% csrf_token %}
         <div class="row">
             <div class="col-xs-12">
+                <h2>Your pledge amount</h2>
+
                 <p>You are about to pledge the amount of
                     <strong>{{ campaign.pledge_value }} {{ campaign.get_currency_display }}</strong>
                     for <strong>{{ campaign.name }}</strong>. </p>
 
-                    <div class="row">
+                {% if form.errors %}
+                <div class="alert alert-danger">
+                    {{ form.errors }}
+                </div>
+                {% endif %}
+
+                <div class="row">
+                    <div class="col-xs-12"
+                        <div class="form-group">
+                            <label class="col-xs-12 col-sm-12 col-md-3 col-lg-3 control-label" for="id_amount">
+                                Your pledge amount
+                            </label>
+
+                            <div class="col-md-4">
+                                <div class="input-group">
+                                    <input id="id_amount" name="amount" class="form-control"
+                                           placeholder="placeholder" value="{{ campaign.pledge_value }}" type="number">
+                                    <span class="input-group-addon">{{ campaign.get_currency_display }}</span>
+                                </div>
+                                <p class="help-block">You can pledge a higher amount if you wish to do so.</p>
+                            </div>
+                        </div>
+                    <!-- /.form-group -->
+                    </div><!-- /.col -->
+                </div><!-- /.row -->
+
+                <h2>Select your payment method</h2>
+
+                <div class="row">
                     {% for method in methods %}
-{#                    {% if forloop.first %}<div class="row">{% endif %}#}
-
                         <div class="payment-method col-xs-12 col-sm-6 col-md-4 col-lg-4">
-
                             <label for="id_radio_{{ forloop.counter }}">
                                  <h3>{{ method.name }}</h3>
                             <div class="radio">
-
-
-                                    <input type="radio" name="radios" id="id_radio_{{ forloop.counter }}" value="1" checked="checked">
-                                    Pay with {{ method.name }}
-
+                                <input type="radio" name="payment_method" id="id_radio_{{ forloop.counter }}" value="{{ method.name }}" checked="checked">
+                                Pay with {{ method.name }}
                             </div><!-- /.radio -->
                             </label>
                         </div>
-
-{#                    {% if forloop.counter|divisibleby:3 and not forloop.last %}#}
-{#                        </div><!-- /.row -->#}
-{#                        <div class="row">#}
-{#                    {% endif %}#}
-{##}
-{#                    {% if forloop.last %}</div><!-- /.row -->{% endif %}#}
                     {% endfor %}
-                    </div>
+                </div><!-- /.row -->
 
             </div><!-- /.col -->
         </div><!-- /.row -->
+        <div class="row">
+            <a class="btn btn-default" href="{% url 'campaign_details' campaign.key %}">Cancel</a>
+            <button type="submit" class="btn btn-primary">Go on and pay</button>
+        </div><!-- /.row -->
+    </form>
     </div><!-- /.main-content -->
 {% endblock container %}

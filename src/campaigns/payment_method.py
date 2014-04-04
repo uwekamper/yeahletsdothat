@@ -34,9 +34,10 @@ class BasePaymentMethod():
             msg = '{} does not have a "name" member'.format(self.__class__)
             raise PaymentMethodDoesNotHaveName(msg)
 
+    def pay(self, campaign, transaction):
+        """
+        Base payment method. We will call this method whenever a payment transaction
+        is created.
+        """
+        raise NotImplementedError()
 
-    def create_payment(self, transaction):
-        return True
-
-    def step1(self, request):
-        return render(request, 'yldt_braintree/step1.html', {})

@@ -7,3 +7,7 @@ from campaigns.payment_method import BasePaymentMethod
 class BrainTree(BasePaymentMethod):
     name = 'braintree'
     display_name = _('Braintree')
+
+    def pay(self, campaign, transaction):
+
+        pass

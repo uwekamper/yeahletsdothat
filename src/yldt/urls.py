@@ -3,7 +3,9 @@
 
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
-import campaigns
+from django.conf import settings
+
+# import campaigns
 
 admin.autodiscover()
 
@@ -29,3 +31,13 @@ urlpatterns = patterns('',
 
     url(r'^yeah/', include('campaigns.urls')),
 )
+
+for payment_plugin in settings.YLDT_PAYMENT_METHODS:
+    method = __import__(payment_plugin)
+    print('Found payment method %s' % payment_plugin)
+    # create a url pattern for the plugin.
+    pattern = r'^pay/' + method.PaymentMethod.name.encode('string-escape') + r'/'
+    include_module = payment_plugin + '.urls'
+    urlpatterns.append( url(pattern, include(include_module)) )
+
+print urlpatterns

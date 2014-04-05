@@ -98,7 +98,7 @@ class Transaction(models.Model):
         (STATE_PAYMENT_CONFIRMED, _('payment confirmed'))
     )
     amount = models.DecimalField(max_digits=10, decimal_places=8, null=True)
-    activity = models.ForeignKey('Campaign')
+    campaign = models.ForeignKey('Campaign', default=0)
     state = models.IntegerField(choices=STATES)
 
     btc_address = models.CharField(max_length=1024, blank=True, null=True)

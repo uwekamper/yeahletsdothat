@@ -6,21 +6,42 @@ TODO: Blabla
 """
 
 from __future__ import unicode_literals
-from django.shortcuts import render
-from campaigns.models import Transaction
+from django.conf import settings
 
+# TODO: Remove the registry, probably don't need it anyway
 method_registry = {}
 
-
-class PaymentMethodDoesNotHaveName(Exception):
+def get_method_by_name(name):
     """
-    TODO: BLabla
+    Returns a PaymentMethod instance for the payment method with the given
+    name and returns None if the
+    """
+    for payment_plugin in settings.YLDT_PAYMENT_METHODS:
+        method = __import__(payment_plugin)
+        if method.PaymentMethod.name == name:
+            return method.PaymentMethod()
+
+    # This means someone is trying to access a method that does not work.
+    raise PaymentMethodDoseNotExist
+
+
+class PaymentException(Exception):
+    """
+    Base class for all payment related exceptions.
     """
     def __init__(self, value=''):
         self.value = value
 
     def __str__(self):
         return repr(self.value)
+
+
+class PaymentMethodDoesNotHaveName(PaymentException):
+    pass
+
+
+class PaymentMethodDoseNotExist(PaymentException):
+    pass
 
 
 class BasePaymentMethod():

@@ -4,28 +4,28 @@
 
 {% block container %}
     <div class="activity-title">
-        <h1>{{ activity.name }}</h1>
-        <div class="activity-creator">by {{ activity.user.username }}</div>
+        <h1>{{ campaign.name }}</h1>
+        <div class="activity-creator">by {{ campaign.user.username }}</div>
     </div>
     <div class="main-content">
         <div class="row">
             <div class="col-xs-8">
-                <p>{{ activity.description }}</p>
+                <p>{{ campaign.description }}</p>
             </div><!-- /.col -->
             <div class="col-xs-4 activity-right">
                 <div class="activity-right-body">
-                    <div class="activity-value">{{ activity.get_number_of_participants }}</div>
+                    <div class="activity-value">{{ campaign.get_number_of_participants }}</div>
                     <div class="activity-unit">participant(s)</div>
-                    <div class="activity-value">{% if activity.get_total_pledge_amount %}{{ activity.get_total_pledge_amount }}{% else %}0{% endif %} {{ activity.get_currency_display }}</div>
-                    <div class="activity-unit">pledged of {{ activity.goal }}
-                    {{ activity.get_currency_display }} goal</div>
-                    <div class="activity-value">{{ activity.days_left }}</div>
+                    <div class="activity-value">{% if campaign.get_total_pledge_amount %}{{ campaign.get_total_pledge_amount }}{% else %}0{% endif %} {{ campaign.get_currency_display }}</div>
+                    <div class="activity-unit">pledged of {{ campaign.goal }}
+                    {{ campaign.get_currency_display }} goal</div>
+                    <div class="activity-value">{{ campaign.days_left }}</div>
                     <div class="activity-unit">days to go</div>
 
-                    {% if not activity.completed %}
+                    {% if not campaign.completed %}
                     <div class="text-center">
-                        <a href="{% url 'select_payment' activity.key %}" class="pledge-btn btn btn-primary">Pledge now!</a>
-                        {{ activity.pledge_value }} {{ activity.get_currency_display }}
+                        <a href="{% url 'select_payment' campaign.key %}" class="pledge-btn btn btn-primary">Pledge now!</a>
+                        {{ campaign.pledge_value }} {{ campaign.get_currency_display }}
                         minimum pledge
                     </div>
                     {% else %}

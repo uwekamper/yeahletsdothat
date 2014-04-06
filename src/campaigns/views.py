@@ -12,6 +12,7 @@ from django.shortcuts import render, get_object_or_404
 import jsonrpclib
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from campaigns.payment_method import get_method_by_name
 from campaigns.serializers import TransactionSerializer
 from campaigns.utils import get_campaign_or_404, get_payment_methods
 
@@ -65,10 +66,10 @@ def new_activity(request):
         form = forms.NewActivityForm(request.user, request.POST)
         if form.is_valid():
 
-            new_activity = form.save(commit=False)
-            new_activity.user = request.user
-            new_activity.save()
-            url = reverse('activity', args=(new_activity.key,))
+            new_campaign = form.save(commit=False)
+            new_campaign.user = request.user
+            new_campaign.save()
+            url = reverse('campaign_details', args=(new_campaign.key,))
             return HttpResponseRedirect(url)
         else:
             print form.errors
@@ -82,11 +83,11 @@ def campaign_details(request, key):
     """
     View that shows a single activity.
     """
-    activity = get_campaign_or_404(request, key)
+    campaign = get_campaign_or_404(request, key)
 
     methods = get_payment_methods()
 
-    context = {'activity': activity, 'methods': methods}
+    context = {'campaign': campaign, 'methods': methods}
     return render(request, 'campaigns/activity.html', context)
 
 def abort_activity(request, pk):
@@ -115,18 +116,25 @@ def select_payment(request, key):
     available Payment methods
     """
     campaign = get_campaign_or_404(request, key)
+
+    # TODO: is this necessary?
     methods = get_payment_methods()
 
     if request.method == 'POST':
         form = forms.SelectPaymentForm(campaign, request.POST)
         if form.is_valid():
             amount = form.cleaned_data.get('amount')
-            # Create a new payment transaction
-            #Transaction.objects.create(amount=
-            #state=Transaction.STATE_PLEDGED, )
-            # Redirect the user to the new transaction depending on the selected
-            # payment method
-            return HttpResponseRedirect('/')
+            method = get_method_by_name(form.cleaned_data.get('payment_method'))
+
+            # Create a new payment transaction, STATE_PLEDGE means that the user wants
+            # to pay but has not payed, yet.
+            transact = Transaction.objects.create(amount=amount, state=Transaction.STATE_PLEDGED, )
+
+            # Delegate the payment transaction to the pay() method of the selected
+            # payment method. The method will then redirect the user to the page it needs
+            # to complete the payment.
+            return method.pay(campaign, transact)
+
         else:
             return render(request, 'campaigns/select_payment.html',
                     {'campaign': campaign, 'methods': methods, 'form': form})
@@ -138,7 +146,7 @@ def select_payment(request, key):
 def transaction(request, pk):
     transaction = get_object_or_404(Transaction, pk=pk)
     return render(request, 'campaigns/transaction.html',
-            {'transaction': transaction, 'activity': transaction.activity})
+            {'transaction': transaction, 'activity': transaction.campaign})
 
 def check_completion(activity):
     amount = activity.get_total_pledge_amount()
@@ -176,7 +184,7 @@ def transaction_api(request, pk):
             transaction.state = Transaction.STATE_PAYMENT_CONFIRMED
             transaction.save()
 
-    check_completion(transaction.activity)
+    check_completion(transaction.campaign)
 
     # transaction.state = 0
     ser = TransactionSerializer(transaction)

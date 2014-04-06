@@ -79,7 +79,7 @@ class Campaign(models.Model):
         return self.transaction_set.filter(state=Transaction.STATE_PAYMENT_CONFIRMED).count()
 
     def get_total_pledge_amount(self):
-        return self.transaction_set.filter(activity=self,
+        return self.transaction_set.filter(campaign=self,
             state=Transaction.STATE_PAYMENT_CONFIRMED).aggregate(Sum('amount'))['amount__sum']
 
     def __str__(self):

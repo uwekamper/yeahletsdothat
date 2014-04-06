@@ -20,7 +20,7 @@ class Migration(SchemaMigration):
         # Adding model 'Campaign'
         db.create_table(u'campaigns_campaign', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('key', self.gf('django.db.models.fields.CharField')(default=u'bla', max_length=16, null=True)),
+            ('key', self.gf('django.db.models.fields.CharField')(default='j4S2NXROwt1Dk7UK', max_length=16, null=True)),
             ('is_private', self.gf('django.db.models.fields.BooleanField')(default=True)),
             ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'], null=True, blank=True)),
             ('name', self.gf('django.db.models.fields.CharField')(max_length=200)),
@@ -41,7 +41,7 @@ class Migration(SchemaMigration):
         db.create_table(u'campaigns_transaction', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('amount', self.gf('django.db.models.fields.DecimalField')(null=True, max_digits=10, decimal_places=8)),
-            ('activity', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['campaigns.Campaign'])),
+            ('campaign', self.gf('django.db.models.fields.related.ForeignKey')(default=0, to=orm['campaigns.Campaign'])),
             ('state', self.gf('django.db.models.fields.IntegerField')()),
             ('btc_address', self.gf('django.db.models.fields.CharField')(max_length=1024, null=True, blank=True)),
             ('return_btc_address', self.gf('django.db.models.fields.CharField')(max_length=1024, null=True, blank=True)),
@@ -107,7 +107,7 @@ class Migration(SchemaMigration):
             'goal': ('django.db.models.fields.DecimalField', [], {'max_digits': '10', 'decimal_places': '8'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'is_private': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
-            'key': ('django.db.models.fields.CharField', [], {'default': "u'bla'", 'max_length': '16', 'null': 'True'}),
+            'key': ('django.db.models.fields.CharField', [], {'default': "'yrI11wYdVfxx-ESj'", 'max_length': '16', 'null': 'True'}),
             'max_people': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
             'min_people': ('django.db.models.fields.IntegerField', [], {}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '200'}),
@@ -118,9 +118,9 @@ class Migration(SchemaMigration):
         },
         u'campaigns.transaction': {
             'Meta': {'object_name': 'Transaction'},
-            'activity': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['campaigns.Campaign']"}),
             'amount': ('django.db.models.fields.DecimalField', [], {'null': 'True', 'max_digits': '10', 'decimal_places': '8'}),
             'btc_address': ('django.db.models.fields.CharField', [], {'max_length': '1024', 'null': 'True', 'blank': 'True'}),
+            'campaign': ('django.db.models.fields.related.ForeignKey', [], {'default': '0', 'to': u"orm['campaigns.Campaign']"}),
             'email': ('django.db.models.fields.EmailField', [], {'max_length': '1024', 'null': 'True', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'return_btc_address': ('django.db.models.fields.CharField', [], {'max_length': '1024', 'null': 'True', 'blank': 'True'}),

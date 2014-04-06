@@ -1,5 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+
+from django.http import HttpResponseRedirect
 from django.utils.translation import gettext_lazy as _
 from campaigns.payment_method import BasePaymentMethod
 
@@ -9,5 +11,6 @@ class BrainTree(BasePaymentMethod):
     display_name = _('Braintree')
 
     def pay(self, campaign, transaction):
+        return HttpResponseRedirect('/bla')
 
-        pass
+

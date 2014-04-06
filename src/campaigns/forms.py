@@ -3,7 +3,7 @@
 from __future__ import unicode_literals
 
 from django import forms
-from campaigns.utils import get_payment_methods
+from campaigns.utils import get_payment_methods, get_payment_method_names
 
 import models
 
@@ -12,7 +12,7 @@ class SelectPaymentForm(forms.Form):
         super(SelectPaymentForm, self).__init__(*args, **kwargs)
         self._campaign = campaign
 
-    payment_method = forms.ChoiceField(choices=get_payment_methods())
+    payment_method = forms.ChoiceField(choices=get_payment_method_names())
     amount = forms.DecimalField()
 
     def clean(self):

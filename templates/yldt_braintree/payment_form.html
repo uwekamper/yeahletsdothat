@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Step 1-Title{% endblock %}
+
+{% block container %}
+    <h1>Braintree Credit Card Transaction Form</h1>
+    <div>
+      <form method="POST" id="braintree-payment-form">
+        {% csrf_token %}
+          {% if form.errors %}
+          {{ form.errors }}
+          {% endif %}
+
+        <p>
+          <label>Card Number</label>
+          <input value="{{ form.number.value }}" type="text" size="20" autocomplete="off" data-encrypted-name="number" />
+        </p>
+        <p>
+          <label>CVV</label>
+          <input value="{{ form.cvv.value }}" type="text" size="4" autocomplete="off" data-encrypted-name="cvv" />
+        </p>
+        <p>
+          <label>Expiration (MM/YYYY)</label>
+          <input value="{{ form.month.value }}" type="text" size="2" data-encrypted-name="month" />
+            / <input value="{{ form.year.value }}"  type="text" size="4" data-encrypted-name="year" />
+        </p>
+        <input class="btn btn-primary" type="submit" id="submit" />
+      </form>
+    </div>
+{% endblock container %}
+
+{% block templates %}{% endblock templates %}
+
+{% block extra_scripts %}
+<script type="text/javascript" src="https://js.braintreegateway.com/v1/braintree.js"></script>
+<script type="text/javascript">
+    var braintree = Braintree.create("{{ client_side_encryption_key }}");
+    braintree.onSubmitEncryptForm('braintree-payment-form');
+</script>
+{% endblock extra_scripts%}

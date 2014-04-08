@@ -1,5 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+from django.core.urlresolvers import reverse
 
 from django.http import HttpResponseRedirect
 from django.utils.translation import gettext_lazy as _
@@ -11,6 +12,7 @@ class BrainTree(BasePaymentMethod):
     display_name = _('Braintree')
 
     def pay(self, campaign, transaction):
-        return HttpResponseRedirect('/bla')
+        url = reverse('yldt_braintree_payment_form', args=(transaction.id, ))
+        return HttpResponseRedirect(url)
 
 

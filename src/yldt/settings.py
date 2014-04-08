@@ -101,6 +101,7 @@ INSTALLED_APPS = (
     'south',
     'registration',
     'campaigns',
+    'yldt_braintree',
 )
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.

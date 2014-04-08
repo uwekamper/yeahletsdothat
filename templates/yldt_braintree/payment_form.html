@@ -8,9 +8,8 @@
       <form method="POST" id="braintree-payment-form">
         {% csrf_token %}
           {% if form.errors %}
-          {{ form.errors }}
+            {{ form.errors }}
           {% endif %}
-
         <p>
           <label>Card Number</label>
           <input value="{{ form.number.value }}" type="text" size="20" autocomplete="off" data-encrypted-name="number" />

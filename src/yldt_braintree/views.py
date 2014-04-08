@@ -4,11 +4,13 @@ from __future__ import unicode_literals
 
 import braintree
 from django.conf import settings
-from django.http import HttpResponse
+from django.core.urlresolvers import reverse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 
 from campaigns.models import Transaction
 from forms import BrainTreeForm
+from yldt_braintree.models import BrainTreeTransaction
 
 
 braintree_config = settings.YLDT_PAYMENT['braintree']
@@ -18,35 +20,50 @@ braintree.Configuration.configure(braintree.Environment.Sandbox,
         public_key=braintree_config['public_key'],
         private_key=braintree_config['private_key'])
 
+def do_transaction(transaction, form):
+    result = braintree.Transaction.sale({
+        'amount': "{0:.2f}".format(transaction.amount),
+        'credit_card': {
+            'number': form.cleaned_data['number'],
+            'cvv': form.cleaned_data['cvv'],
+            'expiration_month': form.cleaned_data['month'],
+            'expiration_year': form.cleaned_data['year']
+        },
+        'options': {
+            'submit_for_settlement': True
+        }
+    })
+
+    return result
+
 def payment_form(request, transaction_pk):
     """
-    TODO: Write docs
+    Show a payment form to the user.
     """
     transact = get_object_or_404(Transaction, pk=transaction_pk)
-
     client_side_encryption_key = braintree_config['cse_key']
 
+    # process the payment data and show the results.
     if request.method == "POST":
         form = BrainTreeForm(request.POST)
         if form.is_valid():
-
-            result = braintree.Transaction.sale({
-                "amount": "1000.00",
-                "credit_card": {
-                    "number": form.cleaned_data["number"],
-                    "cvv": form.cleaned_data["cvv"],
-                    "expiration_month": form.cleaned_data["month"],
-                    "expiration_year": form.cleaned_data["year"]
-                },
-                "options": {
-                    "submit_for_settlement": True
-                }
-            })
+            result = do_transaction(transact, form)
 
             if result.is_success:
-                return HttpResponse("<h1>Success! Transaction ID: {0}</h1>".format(result.transaction.id))
+                BrainTreeTransaction.objects.create(transaction=transact,
+                        braintree_transaction_id=result.transaction.id)
+                transact.state = Transaction.STATE_PAYMENT_RECEIVED
+                transact.save()
+                return HttpResponseRedirect(reverse('yldt_braintree_payment_success'))
+                # return HttpResponse("<h1>Success! Transaction ID: {0}</h1>".format(result.transaction.id))
             else:
-                return HttpResponse("<h1>Error: {0}</h1>".format(result.message))
+                # return HttpResponse("<h1>Error: {0}</h1>".format(result.message))
+                context = {
+                    'braintree_error': result.message,
+                    'client_side_encryption_key': client_side_encryption_key,
+                    'form': form
+                }
+                return render(request, 'yldt_braintree/payment_form.html', context)
 
         # The user entered invalid data
         else:
@@ -55,9 +72,14 @@ def payment_form(request, transaction_pk):
                 'form': form
             }
             return render(request, 'yldt_braintree/payment_form.html', context)
+
+    # show the payment form to the user.
     else:
         context = {
             'client_side_encryption_key': client_side_encryption_key,
             'form': BrainTreeForm()
         }
         return render(request, 'yldt_braintree/payment_form.html', context)
+
+def payment_succes(request):
+    return render(request, 'yldt_braintree/payment_success.html', {})

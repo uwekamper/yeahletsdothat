@@ -62,3 +62,9 @@ class BasePaymentMethod():
         """
         raise NotImplementedError()
 
+    def refund(self, campaign, transaction):
+        """
+        Base payment method. We will call this method whenever a payment transaction
+        is created.
+        """
+        raise NotImplementedError()

@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Payment succeded" %}{% endblock %}
+
+{% block container %}
+    <h1>{% trans "Braintree Credit Card Transaction Succeeded" %}</h1>
+    <div>
+        {% trans "Your payment went through. Thank you very much." %}
+    </div>
+{% endblock container %}
+
+{% block templates %}{% endblock templates %}
+
+{% block extra_scripts %}{% endblock extra_scripts%}

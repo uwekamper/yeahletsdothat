@@ -65,7 +65,6 @@ def new_activity(request):
     if request.method == 'POST':
         form = forms.NewActivityForm(request.user, request.POST)
         if form.is_valid():
-
             new_campaign = form.save(commit=False)
             new_campaign.user = request.user
             new_campaign.save()
@@ -128,7 +127,8 @@ def select_payment(request, key):
 
             # Create a new payment transaction, STATE_PLEDGE means that the user wants
             # to pay but has not payed, yet.
-            transact = Transaction.objects.create(amount=amount, state=Transaction.STATE_PLEDGED, )
+            transact = Transaction.objects.create(amount=amount, campaign=campaign,
+                    state=Transaction.STATE_PLEDGED)
 
             # Delegate the payment transaction to the pay() method of the selected
             # payment method. The method will then redirect the user to the page it needs

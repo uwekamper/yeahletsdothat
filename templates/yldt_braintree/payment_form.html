@@ -10,19 +10,28 @@
           {% if form.errors %}
             {{ form.errors }}
           {% endif %}
+          {% if braintree_error %}
+              <div class="alert alert-danger">
+                {{ braintree_error }}
+              </div>
+          {% endif %}
         <p>
-          <label>Card Number</label>
-          <input value="{{ form.number.value }}" type="text" size="20" autocomplete="off" data-encrypted-name="number" />
+          <label for="id_number">Card Number</label>
+          <input id="id_number" value="" type="text" size="20" autocomplete="off" data-encrypted-name="number" />
+            4111111111111111
         </p>
         <p>
-          <label>CVV</label>
-          <input value="{{ form.cvv.value }}" type="text" size="4" autocomplete="off" data-encrypted-name="cvv" />
+          <label for="id_cvv">CVV</label>
+          <input id="id_cvv" value="" type="text" size="4" autocomplete="off" data-encrypted-name="cvv" />
         </p>
         <p>
-          <label>Expiration (MM/YYYY)</label>
-          <input value="{{ form.month.value }}" type="text" size="2" data-encrypted-name="month" />
-            / <input value="{{ form.year.value }}"  type="text" size="4" data-encrypted-name="year" />
+          <label for="id_month">Expiration (MM/YYYY)</label>
+          <input id="id_month" value="" type="text" size="2" data-encrypted-name="month" />
+            / <input value=""  type="text" size="4" data-encrypted-name="year" />
+
+           11/2015
         </p>
+
         <input class="btn btn-primary" type="submit" id="submit" />
       </form>
     </div>

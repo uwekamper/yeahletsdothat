@@ -41,6 +41,10 @@ def payment_form(request, transaction_pk):
     Show a payment form to the user.
     """
     transact = get_object_or_404(Transaction, pk=transaction_pk)
+    if transact.state != Transaction.STATE_PLEDGED:
+        return render(request, 'yldt_braintree/transaction_error.html',
+                {'transaction': transact})
+
     client_side_encryption_key = braintree_config['cse_key']
 
     # process the payment data and show the results.
@@ -52,14 +56,14 @@ def payment_form(request, transaction_pk):
             if result.is_success:
                 BrainTreeTransaction.objects.create(transaction=transact,
                         braintree_transaction_id=result.transaction.id)
-                transact.state = Transaction.STATE_PAYMENT_RECEIVED
+                transact.state = Transaction.STATE_PAYMENT_CONFIRMED
                 transact.save()
-                return HttpResponseRedirect(reverse('yldt_braintree_payment_success'))
-                # return HttpResponse("<h1>Success! Transaction ID: {0}</h1>".format(result.transaction.id))
+                url = reverse('yldt_braintree_payment_success', args=(transact.id, ))
+                return HttpResponseRedirect(url)
             else:
-                # return HttpResponse("<h1>Error: {0}</h1>".format(result.message))
                 context = {
                     'braintree_error': result.message,
+                    'transaction': transact,
                     'client_side_encryption_key': client_side_encryption_key,
                     'form': form
                 }
@@ -68,6 +72,7 @@ def payment_form(request, transaction_pk):
         # The user entered invalid data
         else:
             context = {
+                'transaction': transact,
                 'client_side_encryption_key': client_side_encryption_key,
                 'form': form
             }
@@ -76,10 +81,13 @@ def payment_form(request, transaction_pk):
     # show the payment form to the user.
     else:
         context = {
+            'transaction': transact,
             'client_side_encryption_key': client_side_encryption_key,
             'form': BrainTreeForm()
         }
         return render(request, 'yldt_braintree/payment_form.html', context)
 
-def payment_succes(request):
-    return render(request, 'yldt_braintree/payment_success.html', {})
+def payment_succes(request, transaction_pk):
+    transact = get_object_or_404(Transaction, pk=transaction_pk)
+    return render(request, 'yldt_braintree/payment_success.html',
+            {'transaction': transact})

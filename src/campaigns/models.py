@@ -39,7 +39,7 @@ def pkgen():
         if Campaign.objects.filter(key=new_key).count() == 0:
             return new_key
 
-
+@python_2_unicode_compatible
 class Campaign(models.Model):
     CURRENCY_EUR = (0, _('EUR'))
     CURRENCY_USD = (1, _('USD'))

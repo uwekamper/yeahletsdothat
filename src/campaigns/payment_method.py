@@ -48,19 +48,32 @@ class BasePaymentMethod():
     """
     # TODO
     """
-    def __init__(self):
+    def __init__(self, options):
         try:
             method_registry[self.name] = self
         except AttributeError:
             msg = '{} does not have a "name" member'.format(self.__class__)
             raise PaymentMethodDoesNotHaveName(msg)
 
+        try:
+            options
+
     def pay(self, campaign, transaction):
         """
         Base payment method. We will call this method whenever a payment transaction
         is created.
+
+        Should return a valid HttpResponse instance (e.g. HttpResponseRedirect).
         """
         raise NotImplementedError()
+
+    def complete(self, campaign, transaction):
+        """
+        This method should be called, when the payment was successfully processed.
+        It will set the transaction to STATE_PAYMENT_CONFIRMED and send an e-mail to
+        the person who payed for the transaction.
+        """
+        pass
 
     def refund(self, campaign, transaction):
         """

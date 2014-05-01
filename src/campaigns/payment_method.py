@@ -17,9 +17,10 @@ def get_method_by_name(name):
     name and returns None if the
     """
     for payment_plugin in settings.YLDT_PAYMENT_METHODS:
-        method = __import__(payment_plugin)
-        if method.PaymentMethod.name == name:
-            return method.PaymentMethod()
+        method_name = payment_plugin['name']
+        if method_name == name:
+            method = __import__(payment_plugin['module_name'])
+            return method.PaymentMethod(payment_plugin)
 
     # This means someone is trying to access a method that does not work.
     raise PaymentMethodDoseNotExist
@@ -44,19 +45,23 @@ class PaymentMethodDoseNotExist(PaymentException):
     pass
 
 
-class BasePaymentMethod():
+class BasePaymentMethod(object):
     """
-    # TODO
+    Basal peyment method, contains the things that are common to all
+    payment methods.
     """
     def __init__(self, options):
+        self.name = options['name']
+        self.display_name = options['display_name']
         try:
-            method_registry[self.name] = self
+            method_registry[options['name']] = self
         except AttributeError:
             msg = '{} does not have a "name" member'.format(self.__class__)
             raise PaymentMethodDoesNotHaveName(msg)
-
         try:
-            options
+            self.currencies = options['currencies']
+        except AttributeError:
+            msg = 'You must provide a list of currencies for {}.'.format(self.__class__)
 
     def pay(self, campaign, transaction):
         """

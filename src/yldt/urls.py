@@ -32,12 +32,14 @@ urlpatterns = patterns('',
     url(r'^yeah/', include('campaigns.urls')),
 )
 
-for payment_plugin in settings.YLDT_PAYMENT_METHODS:
-    method = __import__(payment_plugin)
-    print('Found payment method %s' % payment_plugin)
+for options in settings.YLDT_PAYMENT_METHODS:
+    module = __import__(options['module_name'])
+    method = module.PaymentMethod(options)
+    print('Found payment method %s' % options['module_name'])
     # create a url pattern for the plugin.
-    pattern = r'^pay/' + method.PaymentMethod.name.encode('string-escape') + r'/'
-    include_module = payment_plugin + '.urls'
-    urlpatterns.append( url(pattern, include(include_module)) )
+    pattern = r'^pay/' + method.name.encode('string-escape') + r'/'
+    include_module = options['module_name'] + '.urls'
+    sub_url = url(pattern, include(include_module), {'payment_method_name': method.name})
+    urlpatterns.append(sub_url)
 
 print urlpatterns

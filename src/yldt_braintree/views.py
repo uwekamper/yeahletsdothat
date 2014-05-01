@@ -9,18 +9,23 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 
 from campaigns.models import Transaction
+from campaigns.payment_method import get_method_by_name
 from forms import BrainTreeForm
 from yldt_braintree.models import BrainTreeTransaction
 
 
-braintree_config = settings.YLDT_PAYMENT['braintree']
+def do_transaction(payment_method, transaction, form):
+    """
+    Subroutine that send the transaction data to the Braintree servers.
+    """
+    # configure the environment
+    # TODO: Make the environment configurable (Sandbox/Production)
+    braintree.Configuration.configure(braintree.Environment.Sandbox,
+            merchant_id=payment_method.merchant_id,
+            public_key=payment_method.public_key,
+            private_key=payment_method.private_key)
 
-braintree.Configuration.configure(braintree.Environment.Sandbox,
-        merchant_id=braintree_config['merchant_id'],
-        public_key=braintree_config['public_key'],
-        private_key=braintree_config['private_key'])
-
-def do_transaction(transaction, form):
+    # create the transaction on Braintree's side
     result = braintree.Transaction.sale({
         'amount': "{0:.2f}".format(transaction.amount),
         'credit_card': {
@@ -36,7 +41,7 @@ def do_transaction(transaction, form):
 
     return result
 
-def payment_form(request, transaction_pk):
+def payment_form(request, transaction_pk, payment_method_name):
     """
     Show a payment form to the user.
     """
@@ -45,13 +50,14 @@ def payment_form(request, transaction_pk):
         return render(request, 'yldt_braintree/transaction_error.html',
                 {'transaction': transact})
 
-    client_side_encryption_key = braintree_config['cse_key']
+    payment_method = get_method_by_name(payment_method_name)
+    client_side_encryption_key = payment_method.cse_key
 
     # process the payment data and show the results.
     if request.method == "POST":
         form = BrainTreeForm(request.POST)
         if form.is_valid():
-            result = do_transaction(transact, form)
+            result = do_transaction(payment_method, transact, form)
 
             if result.is_success:
                 BrainTreeTransaction.objects.create(transaction=transact,
@@ -87,7 +93,7 @@ def payment_form(request, transaction_pk):
         }
         return render(request, 'yldt_braintree/payment_form.html', context)
 
-def payment_succes(request, transaction_pk):
+def payment_succes(request, transaction_pk, method_name):
     transact = get_object_or_404(Transaction, pk=transaction_pk)
     return render(request, 'yldt_braintree/payment_success.html',
             {'transaction': transact})

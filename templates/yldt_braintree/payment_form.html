@@ -1,41 +1,48 @@
-{% extends "base.html" %}
+{% extends "base_title.html" %}
 
-{% block title %}Step 1-Title{% endblock %}
+{% block title %}Pay with Braintree{% endblock %}
 
-{% block container %}
+{% block titlesection %}
     <h1>Braintree Credit Card Transaction Form</h1>
+{% endblock titlesection %}
+
+{% block main-content %}
     <div>
-      <form method="POST" id="braintree-payment-form">
-        {% csrf_token %}
-          {% if form.errors %}
-            {{ form.errors }}
-          {% endif %}
-          {% if braintree_error %}
-              <div class="alert alert-danger">
-                {{ braintree_error }}
-              </div>
-          {% endif %}
-        <p>
-          <label for="id_number">Card Number</label>
-          <input id="id_number" value="" type="text" size="20" autocomplete="off" data-encrypted-name="number" />
-            4111111111111111
-        </p>
-        <p>
-          <label for="id_cvv">CVV</label>
-          <input id="id_cvv" value="" type="text" size="4" autocomplete="off" data-encrypted-name="cvv" />
-        </p>
-        <p>
-          <label for="id_month">Expiration (MM/YYYY)</label>
-          <input id="id_month" value="" type="text" size="2" data-encrypted-name="month" />
-            / <input value=""  type="text" size="4" data-encrypted-name="year" />
+        <form method="POST" id="braintree-payment-form">
+            {% csrf_token %}
+            {% if form.errors %}
+                {{ form.errors }}
+            {% endif %}
+            {% if braintree_error %}
+                <div class="alert alert-danger">
+                    {{ braintree_error }}
+                </div>
+            {% endif %}
+            <p>
+                <label for="id_number">Card Number</label>
+                <input id="id_number" value="" type="text" size="20" autocomplete="off"
+                       data-encrypted-name="number"/>
+                4111111111111111
+            </p>
 
-           11/2015
-        </p>
+            <p>
+                <label for="id_cvv">CVV</label>
+                <input id="id_cvv" value="" type="text" size="4" autocomplete="off"
+                       data-encrypted-name="cvv"/>
+            </p>
 
-        <input class="btn btn-primary" type="submit" id="submit" />
-      </form>
+            <p>
+                <label for="id_month">Expiration (MM/YYYY)</label>
+                <input id="id_month" value="" type="text" size="2" data-encrypted-name="month"/>
+                / <input value="" type="text" size="4" data-encrypted-name="year"/>
+
+                11/2015
+            </p>
+
+            <input class="btn btn-primary" type="submit" id="submit"/>
+        </form>
     </div>
-{% endblock container %}
+{% endblock main-content %}
 
 {% block templates %}{% endblock templates %}
 

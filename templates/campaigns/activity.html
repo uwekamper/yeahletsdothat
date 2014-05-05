@@ -1,11 +1,13 @@
-{% extends "base.html" %}
+{% extends "base_title.html" %}
 
 {% block title %}{{ activity.name }}{% endblock %}
 
 {% block container %}
     <div class="activity-title">
-        <h1>{{ campaign.name }}</h1>
-        <div class="activity-creator">by {{ campaign.user.username }}</div>
+        {% block titlesection %}
+            <h1>{{ campaign.name }}</h1>
+            <div class="activity-creator">by {{ campaign.user.username }}</div>
+        {% endblock titlesection %}
     </div>
     <div class="main-content">
         <div class="row">

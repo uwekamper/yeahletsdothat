@@ -1,6 +1,6 @@
 body {
     margin-top: 60px;
-    background: #F79C33;
+    background: #E0EFF1;
     margin-bottom: 50px;
 }
 
@@ -23,6 +23,7 @@ body {
 
 .main-content {
     margin-top: 20px;
+    margin-bottom: 20px;
     border-radius: 10px;
     background-color: #fff;
     min-height: 50px;
@@ -93,6 +94,17 @@ p.activity-name {
     width: 100%;
     font-size: 36px;
     font-weight: bold;
+}
+
+.btn-primary {
+    background-color: #7DB4B5;
+    border-color: #E0EFF1 ;
+}
+
+
+.btn-primary:hover {
+    background-color: #680148;
+    border-color: #000000 ;
 }
 
 .date {

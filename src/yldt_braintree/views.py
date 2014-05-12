@@ -64,7 +64,7 @@ def payment_form(request, transaction_pk, payment_method_name):
                         braintree_transaction_id=result.transaction.id)
                 transact.state = Transaction.STATE_PAYMENT_CONFIRMED
                 transact.save()
-                url = reverse('yldt_braintree_payment_success', args=(transact.id, ))
+                url = '/pay/{}/{}/success/'.format(payment_method_name, transact.id)
                 return HttpResponseRedirect(url)
             else:
                 context = {
@@ -93,7 +93,7 @@ def payment_form(request, transaction_pk, payment_method_name):
         }
         return render(request, 'yldt_braintree/payment_form.html', context)
 
-def payment_succes(request, transaction_pk, method_name):
+def payment_succes(request, transaction_pk, payment_method_name):
     transact = get_object_or_404(Transaction, pk=transaction_pk)
     return render(request, 'yldt_braintree/payment_success.html',
             {'transaction': transact})

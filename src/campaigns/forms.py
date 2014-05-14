@@ -50,9 +50,8 @@ class NewActivityForm(forms.ModelForm):
         self.fields['target_account'].queryset = models.BankAccount.objects.filter(user=user)
 
     class Meta:
-        fields = ('name', 'description', 'goal', 'pledge_value', 'currency',
+        fields = ('name', 'description', 'goal', 'currency',
             'target_account',
-            'min_people', 'max_people',
             'start_date', 'end_date', 'is_private')
         model = models.Campaign
 

@@ -115,3 +115,9 @@ p.activity-name {
 .jumbotron {
     background-color: #ffffff;
 }
+
+.perk_amount {
+    font-weight: bold;
+    font-size: 16px;
+    color: green;
+}

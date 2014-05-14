@@ -83,17 +83,16 @@ def campaign_details(request, key):
     View that shows a single activity.
     """
     campaign = get_campaign_or_404(request, key)
-
     methods = get_payment_methods()
+    context = {'campaign': campaign, 'methods': methods, }
 
-    context = {'campaign': campaign, 'methods': methods}
     try:
         if settings.YLDT_PLEDGE_BUTTON_TEXT:
             context['pledge_button_text'] = settings.YLDT_PLEDGE_BUTTON_TEXT
     except AttributeError:
         pass
 
-    return render(request, 'campaigns/activity.html', context)
+    return render(request, 'campaigns/campaign_details.html', context)
 
 def abort_activity(request, pk):
     """

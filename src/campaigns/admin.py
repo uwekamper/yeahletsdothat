@@ -1,7 +1,12 @@
 from django.contrib import admin
-from campaigns.models import Campaign
+from campaigns.models import Campaign, Perk
 
-class ActivityAdmin(admin.ModelAdmin):
-    pass
 
-admin.site.register(Campaign, ActivityAdmin)
+class PerkInline(admin.StackedInline):
+    model = Perk
+
+class CampaignAdmin(admin.ModelAdmin):
+    inlines = [PerkInline, ]
+
+admin.site.register(Campaign, CampaignAdmin)
+# admin.site.register(Perk, PerkAdmin)

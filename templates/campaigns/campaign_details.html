@@ -38,6 +38,14 @@
                     </div>
                     {% endif %}
 
+                    <h2>Available Perks</h2>
+                    {% for perk in campaign.perks.all %}
+                        <div class="well">
+                            <h3>{{ perk.title }}</h3>
+                            <p>{{ perk.text }}</p>
+                            <p class="perk_amount">{{ perk.amount }} {{ perk.get_currency_display }}</p>
+                        </div>
+                    {% endfor %}
                     {% for method in methods %}
                         {{ method.display_name }}
                     {% endfor %}

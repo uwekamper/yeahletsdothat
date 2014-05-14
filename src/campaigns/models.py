@@ -31,7 +31,7 @@ class BankAccount(models.Model):
 
 def pkgen():
     """
-    Generates the primary key codes for the Activity class.
+    Generates the primary key codes for the Campaign class.
     """
     while True:
         new_key = base64.urlsafe_b64encode(os.urandom(12))
@@ -39,18 +39,23 @@ def pkgen():
         if Campaign.objects.filter(key=new_key).count() == 0:
             return new_key
 
+CURRENCY_EUR = (0, _('EUR'))
+CURRENCY_USD = (1, _('USD'))
+CURRENCY_BITCOIN = (2, _('BTC'))
+
+CURRENCIES = (
+    CURRENCY_EUR,
+    CURRENCY_USD,
+    CURRENCY_BITCOIN
+)
+
+
 @python_2_unicode_compatible
 class Campaign(models.Model):
-    CURRENCY_EUR = (0, _('EUR'))
-    CURRENCY_USD = (1, _('USD'))
-    CURRENCY_BITCOIN = (2, _('BTC'))
-
-    CURRENCIES = (
-        CURRENCY_EUR,
-        CURRENCY_USD,
-        CURRENCY_BITCOIN
-    )
-
+    """
+    Campaign is the central piece of the model.
+    """
+    CURRENCIES = CURRENCIES
     key = models.CharField(max_length=16, null=True, default=pkgen)
     is_private = models.BooleanField(default=True)
     user = models.ForeignKey(User, null=True, blank=True)
@@ -58,9 +63,6 @@ class Campaign(models.Model):
     description = models.TextField(blank=True)
     currency = models.IntegerField(choices=CURRENCIES)
     goal = models.DecimalField(max_digits=10, decimal_places=8)
-    pledge_value = models.DecimalField(max_digits=10, decimal_places=8)
-    min_people = models.IntegerField()
-    max_people = models.IntegerField(blank=True, null=True)
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
     target_account = models.ForeignKey('BankAccount', null=True)
@@ -83,7 +85,22 @@ class Campaign(models.Model):
             state=Transaction.STATE_PAYMENT_CONFIRMED).aggregate(Sum('amount'))['amount__sum']
 
     def __str__(self):
-        return self.key
+        return '{} ({})'.format(self.name, self.key)
+
+
+@python_2_unicode_compatible
+class Perk(models.Model):
+    """
+    Each campaign can have a number of perks.
+    """
+    campaign = models.ForeignKey('Campaign', related_name='perks')
+    title = models.CharField(max_length=256)
+    text = models.TextField(blank=True, null=True)
+    amount = models.DecimalField(max_digits=10, decimal_places=8)
+    currency = models.IntegerField(choices=CURRENCIES)
+
+    def __str__(self):
+        return '{} ({})'.format(self.title, self.amount)
 
 
 class Transaction(models.Model):

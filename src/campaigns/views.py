@@ -72,10 +72,10 @@ def new_activity(request):
             return HttpResponseRedirect(url)
         else:
             print form.errors
-            return render(request, 'campaigns/new_activity.html', {'form': form})
+            return render(request, 'campaigns/new_campaign.html', {'form': form})
 
     form = forms.NewActivityForm(user=request.user)
-    return render(request, 'campaigns/new_activity.html', {'form': form})
+    return render(request, 'campaigns/new_campaign.html', {'form': form})
 
 
 def campaign_details(request, key):

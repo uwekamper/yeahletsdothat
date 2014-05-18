@@ -42,8 +42,6 @@ body {
     background-color: #ccc;
 }
 
-pay
-
 .activity-center {
    margin: 0 auto;
    width: 256px;
@@ -120,4 +118,114 @@ p.activity-name {
     font-weight: bold;
     font-size: 16px;
     color: green;
+}
+
+.circled {
+    display: inline-block;
+    float: left;
+    margin: 0px 10px 0px 0px;
+    height: 50px;
+    width: 50px;
+    border: 3px solid hsl(0, 0%, 20%);;
+    -webkit-border-radius: 40px;
+    -moz-border-radius: 40px;
+    border-radius: 40px;
+    padding: 2px 0px 0px 0px;
+}
+
+.circled-text {
+    /*background-color: yellow;*/
+    /*font-family: sans-serif;*/
+    font-weight: bold;
+    font-size: 30px;
+    text-align: center;
+    width: 44px;
+    height: 36px;
+    line-height: 40px;
+}
+
+#id_description {
+    height: 300px;
+}
+.numba {
+
+}
+
+.process li a span.glyphicon {
+    background-color: ccc;
+    margin-top: 5px;
+}
+
+.process {
+    padding-left: 0px;
+	list-style: none;
+	overflow: hidden;
+	font: 18px sans-serif;
+}
+.process li {
+    float: left;
+}
+.process li a {
+    font-weight: bold;
+    margin-left: 0px;
+    line-height: 50px;
+	color: hsl(0, 0%, 20%);
+	text-decoration: none;
+	padding: 10px 0px 10px 45px;
+	background: #ccc;
+	position: relative;
+	display: block;
+	float: left;
+}
+
+.process li.done a {
+    background-color: lightgreen;
+}
+
+.process li.active a {
+    text-decoration: underline;
+    background-color: lightblue;
+}
+
+.process li a:after {
+	content: " ";
+	display: block;
+	width: 0;
+	height: 0;
+	border-top: 50px solid transparent;           /* Go big on the size, and let overflow hide */
+	border-bottom: 50px solid transparent;
+	border-left: 30px solid #ccc;
+	position: absolute;
+	top: 50%;
+	margin-top: -50px;
+	left: 100%;
+	z-index: 2;
+}
+
+.process li.done a:after {
+    border-left: 30px solid lightgreen;
+}
+
+.process li.active a:after {
+    border-left: 30px solid lightblue;
+}
+
+.process li a:before {
+	content: " ";
+	display: block;
+	width: 0;
+	height: 0;
+	border-top: 50px solid transparent;
+	border-bottom: 50px solid transparent;
+	border-left: 30px solid white;
+	position: absolute;
+	top: 50%;
+	margin-top: -50px;
+	margin-left: 1px;
+	left: 100%;
+	z-index: 1;
+}
+
+.process li:first-child a {
+	padding-left: 15px;
 }

@@ -4,6 +4,7 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
 from django.conf import settings
+from django.conf.urls.static import static
 
 # import campaigns
 
@@ -30,7 +31,7 @@ urlpatterns = patterns('',
     url(r'^api/transaction/(?P<pk>\d+)/$', 'campaigns.views.transaction_api', name='transaction_api'),
 
     url(r'^yeah/', include('campaigns.urls')),
-)
+) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 for options in settings.YLDT_PAYMENT_METHODS:
     module = __import__(options['module_name'])

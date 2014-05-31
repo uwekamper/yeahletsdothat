@@ -69,14 +69,11 @@
     {% block scripts %}
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="{{ STATIC_URL }}bower_components/jquery/jquery.js"></script>
-    <script src="{{ STATIC_URL }}bower_components/underscore/underscore.js"></script>
-    <script src="{{ STATIC_URL }}bower_components/backbone/backbone.js"></script>
+
 {#    <script src="{{ STATIC_URL }}bower_components/mustache/mustache.js"></script>#}
-    <script src="{{ STATIC_URL }}bower_components/handlebars/handlebars.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="{{ STATIC_URL }}bower_components/bootstrap/dist/js/bootstrap.js"></script>
 
-    <script src="{{ STATIC_URL }}bower_components/react/react.js"></script>
 
     {% block templates %}{% endblock templates %}
     {% block extra_scripts %}{% endblock extra_scripts %}

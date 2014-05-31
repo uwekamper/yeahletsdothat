@@ -166,7 +166,6 @@ p.activity-name {
     float: left;
 }
 .process li a {
-    font-weight: bold;
     margin-left: 0px;
     line-height: 50px;
 	color: hsl(0, 0%, 20%);
@@ -176,6 +175,10 @@ p.activity-name {
 	position: relative;
 	display: block;
 	float: left;
+}
+
+.process li a:hover {
+    text-decoration: underline;
 }
 
 .process li.done a {

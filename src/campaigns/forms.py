@@ -39,14 +39,14 @@ class ActivityForm(forms.ModelForm):
         fields = ('v',)
 
 
-class NewActivityForm(forms.ModelForm):
+class NewCampaignForm(forms.ModelForm):
     currency = forms.ChoiceField(choices=models.Campaign.CURRENCIES,
         widget=forms.Select(attrs={'class': 'form-control'}))
 
     target_account = forms.ModelChoiceField(queryset=None, widget=forms.Select(attrs={'class': 'form-control'}))
 
     def __init__(self, user, *args, **kwargs):
-        super(NewActivityForm, self).__init__(*args, **kwargs)
+        super(NewCampaignForm, self).__init__(*args, **kwargs)
         self.fields['target_account'].queryset = models.BankAccount.objects.filter(user=user)
 
     class Meta:

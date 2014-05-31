@@ -1,0 +1,20 @@
+<div class="row">
+    <div class="col-xs-12 col-md-12 col-lg-12" id="crumbs_container">
+        <ul class="process">
+
+            <li ng-class="{active: active_tab == 'basic', done: model.basic_done}"><a href="#/basic">
+                <div class="circled">
+                    <div class="circled-text">
+                        <span ng-if="model.basic_done == true" class="glyphicon glyphicon-ok"></span>
+                        <span ng-if="model.basic_done != true">1</span>
+                    </div>
+                </div>Basic Information</a></li>
+
+            <li ng-class="{active: active_tab == 'perks', done: perks_done}"><a href="#/perks">
+                <div class="circled"><div class="circled-text">2</div></div>Add Perks</a></li>
+            <li ng-class="{active: active_tab == 'duration', done: duration_done}"><a href="#/duration">
+                <div class="circled"><div class="circled-text">3</div></div>Start Date and Duration</a></li>
+
+        </ul>
+    </div>
+</div><!-- /.row -->

@@ -1,0 +1,97 @@
+{% extends "base_title.html" %}
+
+{% block title %}New campaign{% endblock %}
+
+{% block extra_css %}
+    <link href="{{ STATIC_URL }}css/bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen">
+{% endblock %}
+
+{% block titlesection %}
+    <h1>Create a New Campaign</h1>
+{% endblock titlesection %}
+
+{% block main-content %}
+
+    {% verbatim %}
+    <div ng-view></div>
+ <div ng-controller="BasicController">
+    <div class="row">
+        <div class="col-xs-12 col-md-12 col-lg-12" id="crumbs_container">
+            <ul class="process">
+
+                <li ng-class="{active: active_tab == 'basic', done: basic_done}"><a href="#" ng-click="active_tab='basic'">
+                    <div class="circled">
+                    <div class="circled-text">
+                        <span ng-if="basic_done == true" class="glyphicon glyphicon-ok"></span>
+                        <span ng-if="basic_done != true">1</span>
+                    </div>
+                    </div>Basic Information</a></li>
+
+                <li ng-class="{active: active_tab == 'perks', done: perks_done}"><a href="#" ng-click="active_tab = 'perks'"><div class="circled"><div class="circled-text">2</div></div>Add Perks</a></li>
+                <li ng-class="{active: active_tab == 'duration', done: duration_done}"><a href="#" ng-click="active_tab = 'duration'"><div class="circled"><div class="circled-text">3</div></div>Start Date and Duration</a></li>
+            </ul>
+        </div>
+    </div><!-- /.row -->
+    {% endverbatim %}
+
+
+    <div class="row">
+        <div class="col-xs-12">
+
+            <form role="form" class="form" method="post" ng-switch="active_tab">
+
+                {% if form.non_field_errors %}
+                    {% for error in form.non_field_errors %}
+                        <div class="alert alert-danger">{{ error }}</div>
+                    {% endfor %}
+                     <hr/>
+
+                {% endif %}
+
+                <!-- ### Basic ### -->
+                <div ng-switch-when="basic">
+
+                    <!-- basic -->
+
+
+                </div><!-- /ng-switch-when: basic -->
+
+                <!-- ### Perks ### -->
+                <div ng-switch-when="perks">
+
+
+                </div><!-- /ng-switch-when: perks -->
+
+                <div ng-switch-when="duration">
+
+
+                </div><!-- /ng-switch-when: duration -->
+
+                <input type="submit" class="btn btn-primary" value="Submit" />
+
+                </form>
+
+        </div><!-- /.col-->
+        </div><!-- /.row -->
+
+    </div><!-- /ng-controller:new_campaign --->
+{% endblock main-content %}
+
+{% block templates %}
+
+{% endblock templates %}
+
+{% block extra_scripts %}
+    <script src="{{ STATIC_URL }}bower_components/angular/angular.min.js" type="text/javascript"></script>
+    <script src="{{ STATIC_URL }}bower_components/angular-route/angular-route.js" type="text/javascript"></script>
+    <!--<script src="{{ STATIC_URL }}bower_components/moment/moment.js" type="text/javascript"></script>
+    <script src="{{ STATIC_URL }}js/bootstrap-datetimepicker.min.js" type="text/javascript"></script>-->
+    <script src="{{ STATIC_URL }}js/new_campaign.js" type="text/javascript">
+{#    $(function () {#}
+{#        $('#startdate-datepicker').datetimepicker();#}
+{#        $('#enddate-datepicker').datetimepicker();#}
+{#    });#}
+
+
+    </script>
+{% endblock extra_scripts %}

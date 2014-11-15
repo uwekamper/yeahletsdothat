@@ -27,7 +27,7 @@
         {% if campaigns %}
             <ul id="account-list">
             {% for campaign in campaigns %}
-                <li><a href="{% url 'campaign_details' campaign.key %}">{{ campaign.name }}</a>
+                <li><a href="{% url 'campaign_details' campaign.key %}">{{ campaign.name }} (goto)</a>
                 {% if campaign.is_private %}<abbr title="This campaign is private"><span class="glyphicon glyphicon-lock"></span></abbr>{% endif %}</li>
             {% endfor %}
             </ul>

@@ -171,6 +171,8 @@ LOGGING = {
 ACCOUNT_ACTIVATION_DAYS = 7
 LOGIN_REDIRECT_URL = '/accounts/profile/'
 
+URL_COUNTER_INTERVAL = 60
+
 try:
     from local_settings import *
 except ImportError, e:

@@ -1,41 +1,33 @@
 <div ng-include src="'/static/partials/progress_menu.html'"></div>
 
-<h3>When should it start and when does it end?</h3>
+<form ng-submit="saveDuration()">
+<div class="row">
+    <div class="col-md-12">
+        <h3>When should it start and when does it end?</h3>
+
+        <div class="form-group">
+            <label for="id_end_date">Start Date and Time</label>
+            <p class="input-group">
+                <input type="text" class="form-control" datepicker-popup="{{format}}" ng-model="model.campaign.start_date" is-open="opened_start" min-date="minDate" max-date="'2015-06-22'" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
+                <span class="input-group-btn">
+                    <button type="button" class="btn btn-default" ng-click="open_start($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+                </span>
+            </p>
+        </div>
+
+        <div class="form-group">
+            <label for="id_end_date">End Date and Time</label>
+            <p class="input-group">
+                <input type="text" class="form-control" datepicker-popup="{{format}}" ng-model="model.campaign.end_date" is-open="opened_end" min-date="minDate" max-date="'2015-06-22'" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
+                <span class="input-group-btn">
+                    <button type="button" class="btn btn-default" ng-click="open_end($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+                </span>
+            </p>
+        </div>
+    </div><!-- /.col -->
+</div><!-- /.row -->
 
 <div class="form-group">
-    <label for="id_start_date">Start Date and Time</label>
-    <div id="startdate-datepicker" class="input-group date">
-        <input data-format="YYYY-MM-DD hh:mm" type="text" class="form-control" id="id_start_date"
-               placeholder="" name="start_date"
-               value="{{ form.start_date.value }}">
-
-        <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span>
-        </span>
-    </div>
-    {% if form.start_date.errors %}<span class="help-inline">
-        {{ form.start_date.errors.as_text }}</span>{% endif %}
+    <input type="submit" class="btn btn-primary" />
 </div>
-
- <div class="form-group">
-    <label for="id_end_date">End Date and Time</label>
-    <div id="enddate-datepicker" class="input-group date">
-        <input data-format="YYYY-MM-DD hh:mm" type="text" class="form-control" id="id_start_date"
-               placeholder="" name="end_date"
-               value="{{ form.end_date.value }}">
-
-        <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span>
-        </span>
-    </div>
-    {% if form.start_date.errors %}<span class="help-inline">
-        {{ form.start_date.errors.as_text }}</span>{% endif %}
-</div>
-
-<!-- Name -->
-<div class="form-group">
-    <label for="id_is_private">Is private?</label>
-    <label class="checkbox-inline" for="id_is_private">
-      <input type="checkbox" name="is_private" id="id_is_private" value="1">
-      Private
-    </label>
-    {% if form.is_private.errors %}<span class="help-inline">{{ form.is_private.errors.as_text }}</span>{% endif %}
-</div>
+</form>

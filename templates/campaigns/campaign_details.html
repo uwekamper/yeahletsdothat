@@ -1,18 +1,19 @@
 {% extends "base_title.html" %}
+{% load campaigns_extras %}
 
 {% block title %}{{ activity.name }}{% endblock %}
 
 {% block container %}
     <div class="activity-title">
         {% block titlesection %}
-            <h1>{{ campaign.name }}</h1>
+            <h1>{{ campaign.title }}</h1>
             <div class="activity-creator">by {{ campaign.user.username }}</div>
         {% endblock titlesection %}
     </div>
     <div class="main-content">
         <div class="row">
             <div class="col-xs-8">
-                <p>{{ campaign.description }}</p>
+                <p>{{ campaign.description|markdown }}</p>
             </div><!-- /.col -->
             <div class="col-xs-4 activity-right">
                 <div class="activity-right-body">

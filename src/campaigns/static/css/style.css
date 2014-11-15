@@ -14,7 +14,7 @@ body {
 }
 
 .activity-title h1 {
-
+    font-size: 48px;
 }
 
 .activity-title div.by {
@@ -22,12 +22,8 @@ body {
 }
 
 .main-content {
-    margin-top: 20px;
-    margin-bottom: 20px;
-    border-radius: 10px;
     background-color: #ffffff;
     min-height: 50px;
-    padding: 10px;
 }
 
 .main-content p, .main-content h1, .main-content h2 {
@@ -112,12 +108,6 @@ p.activity-name {
 
 .jumbotron {
     background-color: #ffffff;
-}
-
-.perk_amount {
-    font-weight: bold;
-    font-size: 16px;
-    color: green;
 }
 
 .circled {

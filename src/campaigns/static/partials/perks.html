@@ -1,22 +1,142 @@
 <div ng-include src="'/static/partials/progress_menu.html'"></div>
 
+<form ng-submit="savePerks()">
 <div class="row">
     <div class="col-md-12">
 
-    <div ng-repeat="perk in model.perks">
-        <div class="col-md-2">
+    <h3>How much money are you raising?</h3>
+
+    <div class="form-group">
+        <label for="id_goal">Campaign goal</label>
+        <input type="text" class="form-control" id="id_goal"
+               placeholder="0.00" name="goal" ng-model="model.goal ">
+        <span class="help-inline">
+            {{ form.goal.errors.as_text }}</span>
+    </div>
+
+    <div class="form-group">
+        <label for="id_currency">Currency</label>
+        <input type="text" class="form-control" id="id_goal"
+               ng-model="model.currency">
+    </div>
+
+
+    </div><!-- /.col -->
+</div><!-- /.row -->
+<div class="row">
+    <div class="col-md-12">
+        <h3>Add Perks</h3>
+    </div><!-- /.col -->
+</div><!-- /.row -->
+
+
+<div class="row">
+
+    <span ng-repeat="perk in model.perks ">
+
+    <div ng-if="perk.state == 'OK' " class="col-md-2">
+        <div class="perk-wrapper" ng-switch on="perk.available">
             <h3>{{ perk.title }}</h3>
-            {{ perk.amount }}<br />
-            <input type="text" ng-model="perk.title" /><br />
-            <input type="text" ng-model="perk.amount" />
+            <span class="perk-amount">{{ perk.amount }}</span>
+            <span class="perk-currency">{{ model.currency }}</span>
+            <br />
+
+            <span class="perk-available" ng-switch-when="0">
+                <span class="perk-available-number">unlimited</span> perks available.
+            </span>
+
+            <span class="perk-available" ng-switch-when="1">
+                <span class="perk-available-number">{{ perk.available }}</span>
+                perk available
+            </span>
+
+            <span class="perk-available" ng-switch-default>
+                <span class="perk-available-number">{{ perk.available }}</span>
+                perks available
+            </span>
+
+            <br />
+            <br />
             <a ng-click="delete_perk($index)">Delete</a>
+            <a ng-click="perk.state = 'EDITABLE' ">Edit</a>
         </div>
     </div>
 
+    <div ng-if="perk.state == 'DELETED' " class="col-md-2">
+        <div class="perk-wrapper perk-deleted">
+            <h3>{{ perk.title }}</h3>
+            <span class="perk-amount">{{ perk.amount }}</span>
+            <span class="perk-currency">{{ model.currency }}</span>
+            <br />
+            <a ng-click="undelete_perk($index)">Undo</a>
+        </div>
+    </div>
+
+    <div ng-if="perk.state == 'EDITABLE' " class="col-md-2">
+        <div class="perk-wrapper">
+            <div class="input-group">
+                <label for="id_title_{{ $index }}">Title</label>
+                <input class="form-control perk-title-input" id=id_title_{{ $index }}" type="text" ng-model="perk.title" />
+            </div>
+            <div class="input-group">
+                <input class="form-control perk-amount-input" type="text" ng-model="perk.amount" /><span class="input-group-addon">{{ model.currency }}</span>
+            </div>
+
+            <div class="input-group">
+                <input class="form-control perk-available-input" type="number" ng-model="perk.available" />
+            </div>
+            <br />
+            <a ng-click="perk.state = 'OK' ">Done</a>
+        </div>
+    </div>
+
+    </span><!-- /ng-repeat -->
+
+    <div class="col-md-2">
+        <div class="perk-wrapper perk-add" ng-click="add_perk() ">
+            <div class="perk-add-symbol">
+                <span class="glyphicon glyphicon-plus"></span>
+            </div>
+            Add perk
+        </div>
+    </div>
+
+</div><!-- /row -->
+
+
+<div class="row">
+    <div class="col-md-12">
+        <h3>Perk-u-Lator 3000 (perk calculator)</h3>
+
+        <table class="table">
+            <thead>
+                <th>Number of perks</th>
+                <th>Title</th>
+                <th>Price per Perk</th>
+                <th>Sum</th>
+            </thead>
+            <tbody ng-repeat="perk in model.perks | filter:{state: '!DELETED'}">
+                <tr>
+                    <td>{{ perk.available }}</td>
+                    <td>{{ perk.title }}</td>
+                    <td>{{ perk.amount }} {{ model.currency }}</td>
+                    <td>{{ perk.amount * perk.available }} EUR {{ BLABLA }}</td>
+                </tr>
+            </tbody>
+            <tbody>
+                <tr>
+                    <td colspan="3" style="text-align: right;">Summe</td>
+                    <td>{{ perks_sum(); }} EUR</td>
+                </tr>
+            </tbody>
+
+        </table>
+
     </div><!-- /.col -->
-
-    <button class="btn btn-default" ng-click="add_perk()">Add</button>
-    <pre>{{ model }}</pre>
-
 </div><!-- /.row -->
 
+<div class="form-group">
+    <input type="submit" class="btn btn-primary" />
+</div>
+
+</form>

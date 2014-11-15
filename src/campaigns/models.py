@@ -59,13 +59,13 @@ class Campaign(models.Model):
     key = models.CharField(max_length=16, null=True, default=pkgen)
     is_private = models.BooleanField(default=True)
     user = models.ForeignKey(User, null=True, blank=True)
-    name = models.CharField(max_length=200)
+    title = models.CharField(max_length=200)
     description = models.TextField(blank=True)
     currency = models.IntegerField(choices=CURRENCIES)
     goal = models.DecimalField(max_digits=10, decimal_places=8)
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
-    target_account = models.ForeignKey('BankAccount', null=True)
+    target_account = models.ForeignKey('BankAccount', null=True, blank=True)
     completed = models.BooleanField(default=False)
 
     @property
@@ -85,7 +85,7 @@ class Campaign(models.Model):
             state=Transaction.STATE_PAYMENT_CONFIRMED).aggregate(Sum('amount'))['amount__sum']
 
     def __str__(self):
-        return '{} ({})'.format(self.name, self.key)
+        return '{} ({})'.format(self.title, self.key)
 
 
 @python_2_unicode_compatible
@@ -97,7 +97,7 @@ class Perk(models.Model):
     title = models.CharField(max_length=256)
     text = models.TextField(blank=True, null=True)
     amount = models.DecimalField(max_digits=10, decimal_places=8)
-    currency = models.IntegerField(choices=CURRENCIES)
+    available = models.IntegerField(blank=True, null=True)
 
     def __str__(self):
         return '{} ({})'.format(self.title, self.amount)

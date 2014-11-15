@@ -1,0 +1,56 @@
+.perk-wrapper {
+    /*background-color: #ddd;*/
+    height: 200px;
+    border: 1px solid #ffffff;
+    margin: 5px;
+    padding: 5px;
+}
+
+.perk-wrapper:hover {
+    border: 1px solid #cccccc;
+}
+
+.perk-deleted {
+    background-color: #cccccc;
+    color: #eee;
+}
+
+.perk-wrapper:hover {
+    /*border: 1px solid #cccccc;*/
+}
+
+.perk-wrapper h3 {
+    font-size: 16px;
+}
+
+.perk-add {
+    cursor: pointer;
+    text-align: center;
+    background-color: #cccccc;
+}
+
+.perk-add-symbol {
+    text-align: center;
+    font-size: 100px;
+    height: 120px;
+    margin-left: 8px;
+}
+
+.perk-add:hover {
+    background-color: #ffffff;
+    border: 1px solid #cccccc;
+}
+
+.perk_amount {
+    font-weight: bold;
+    font-size: 16px;
+    color: green;
+}
+
+.perk-title-input {
+
+}
+
+.perk-amount-input {
+
+}

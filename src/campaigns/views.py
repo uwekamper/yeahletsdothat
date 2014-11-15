@@ -62,17 +62,17 @@ def new_activity(request):
     """
     View for creating new activities.
     """
-    if request.method == 'POST':
-        form = forms.NewCampaignForm(request.user, request.POST)
-        if form.is_valid():
-            new_campaign = form.save(commit=False)
-            new_campaign.user = request.user
-            new_campaign.save()
-            url = reverse('campaign_details', args=(new_campaign.key,))
-            return HttpResponseRedirect(url)
-        else:
-            print form.errors
-            return render(request, 'campaigns/new_campaign.html', {'form': form})
+    # if request.method == 'POST':
+    #     form = forms.NewCampaignForm(request.user, request.POST)
+    #     if form.is_valid():
+    #         new_campaign = form.save(commit=False)
+    #         new_campaign.user = request.user
+    #         new_campaign.save()
+    #         url = reverse('campaign_details', args=(new_campaign.key,))
+    #         return HttpResponseRedirect(url)
+    #     else:
+    #         print form.errors
+    #         return render(request, 'campaigns/new_campaign.html', {'form': form})
 
     form = forms.NewCampaignForm(user=request.user)
     return render(request, 'campaigns/new_campaign.html', {'form': form})

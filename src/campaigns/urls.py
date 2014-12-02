@@ -17,7 +17,6 @@ class CampaignsViewSet(viewsets.ModelViewSet):
     serializer_class = CampaignSerializer
     lookup_field = 'key'
 
-
 class PerksViewSet(viewsets.ModelViewSet):
     model = Perk
     serializer_class = PerkSerializer
@@ -32,7 +31,7 @@ class PerksViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
-router = routers.DefaultRouter()
+router = routers.DefaultRouter(trailing_slash=False)
 
 router.register(r'campaigns', CampaignsViewSet)
 router.register(r'perks', PerksViewSet)
@@ -42,4 +41,5 @@ urlpatterns = patterns('',
     url(r'^(?P<key>\w+)/pay/$', 'campaigns.views.select_payment', name='select_payment'),
     url(r'^new/$', 'campaigns.views.new_activity', name='new_activity'),
     url(r'^(?P<key>\w+)/$', 'campaigns.views.campaign_details', name='campaign_details'),
+    url(r'^(?P<key>\w+)/edit/$', 'campaigns.views.campaign_edit', name='campaign_edit'),
 )

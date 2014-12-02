@@ -1,9 +1,11 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+
 from __future__ import unicode_literals
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
+from django.utils.encoding import smart_text
 
 from rest_framework import serializers
-
 from campaigns.models import Transaction, Campaign, Perk
 
 class CampaignSerializer(serializers.ModelSerializer):
@@ -13,12 +15,34 @@ class CampaignSerializer(serializers.ModelSerializer):
     target_account = serializers.PrimaryKeyRelatedField(default=1, required=False)
     class Meta:
         model = Campaign
+        exclude = ['id', ]
+
+class CampaignKeyRelatedField(serializers.PrimaryKeyRelatedField):
+    def to_native(self, value):
+
+        return u'{}'.format(Campaign.objects.get(pk=value).key)
+
+    def from_native(self, data):
+        if self.queryset is None:
+            raise Exception('Writable related fields must include a `queryset` argument')
+
+        try:
+            return self.queryset.get(key=data)
+        except ObjectDoesNotExist:
+            msg = self.error_messages['does_not_exist'] % smart_text(data)
+            raise ValidationError(msg)
+        except (TypeError, ValueError):
+            received = type(data).__name__
+            msg = self.error_messages['incorrect_type'] % received
+            raise ValidationError(msg)
 
 class PerkSerializer(serializers.ModelSerializer):
     """
     TODO: write docs
     """
+    campaign = CampaignKeyRelatedField()
     state = serializers.SerializerMethodField('get_state')
+
 
     def get_state(self, obj):
         """

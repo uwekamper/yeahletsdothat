@@ -3,9 +3,8 @@
 <!DOCTYPE html>
 <html ng-app="root">
     <head>
-    <title>{% block title %}Bootstrap 101 Template{% endblock title %}</title>
+    <title>{% block title %}Untitled{% endblock title %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Bootstrap -->
     <!--<link href='http://fonts.googleapis.com/css?family=Viga' rel='stylesheet' type='text/css'>-->
     <link href="{{ STATIC_URL }}bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" media="screen">
 
@@ -20,6 +19,7 @@
     {% block extra_css %}{% endblock %}
     </head>
     <body>
+    {% block extra_body %}{% endblock extra_body %}
 
     <!-- Fixed navbar -->
     <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -62,13 +62,14 @@
     </div>
 
     {% block body %}
+      {% block content %}
         <div class="container">
             {% block container %}{% endblock container %}
         </div>
-
+      {% endblock content %}
     {% block scripts %}
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="{{ STATIC_URL }}bower_components/jquery/jquery.js"></script>
+    <script src="{{ STATIC_URL }}bower_components/jquery/dist/jquery.min.js"></script>
 
 {#    <script src="{{ STATIC_URL }}bower_components/mustache/mustache.js"></script>#}
     <!-- Include all compiled plugins (below), or include individual files as needed -->

@@ -1,15 +1,25 @@
 "use strict";
-module = angular.module("services", ['djangoRESTResources']);
+var module = angular.module("services", ['ngResource']);
 
-module.factory('Campaign', function (djResource) {
-    var resource = djResource('/yeah/rest/campaigns/:key/ ', {key: '@key'});
+module.factory('Campaign', function ($resource) {
+    var resource = $resource('/yeah/rest/campaigns/:key', {key: '@key'},
+        {'update': {
+            method: 'put'
+        }}
+    );
     return resource;
 });
 
-module.factory('Perk', function (djResource) {
-    var resource = djResource('/yeah/rest/perks/:id', {id: '@id'});
+module.factory('Perk', function ($resource) {
+    var resource = $resource('/yeah/rest/perks/:id', {id: '@id'},
+        {'update':  {
+            method: 'put'}
+        }
+    );
     return resource;
 });
+
+/*
 
 module.factory('sharedModel', function (Campaign) {
     var sharedModel = {
@@ -36,3 +46,4 @@ module.factory('sharedModel', function (Campaign) {
     // sharedModel.loadData();
     return sharedModel;
 });
+*/

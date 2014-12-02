@@ -2,23 +2,21 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-# Create your views here.
 from django.contrib.auth.decorators import login_required
-from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseNotAllowed, HttpResponse, HttpResponseRedirect, \
-    HttpResponseForbidden
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 import jsonrpclib
 from rest_framework.decorators import api_view
+from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from campaigns.payment_method import get_method_by_name
-from campaigns.serializers import TransactionSerializer
+from campaigns.serializers import TransactionSerializer, CampaignSerializer, PerkSerializer
 from campaigns.utils import get_campaign_or_404, get_payment_methods
+from django.conf import settings
 
 import forms
 from models import Campaign, Transaction, BankAccount
-from django.conf import settings
 
 
 def index(request):
@@ -93,6 +91,32 @@ def campaign_details(request, key):
         pass
 
     return render(request, 'campaigns/campaign_details.html', context)
+
+def campaign_edit(request, key):
+    """
+    Edit a campaign, basically delivers the angular app that changes the values via the
+    REST backend.
+    """
+    campaign = get_campaign_or_404(request, key)
+    methods = get_payment_methods()
+    currencies = [{'id': x[0], 'display_name': x[1]} for x in Campaign.CURRENCIES]
+    campaign_ser = CampaignSerializer(campaign)
+    initial_data = JSONRenderer().render(campaign_ser.data,
+        accepted_media_type='application/json; indent=4')
+
+    perk_ser = PerkSerializer(campaign.perks.all(), many=True)
+    initial_perks = JSONRenderer().render(perk_ser.data,
+        accepted_media_type='application/json; indent=4')
+
+    context = {
+        'campaign': campaign,
+        'methods': methods,
+        'initial_data': initial_data,
+        'initial_perks': initial_perks,
+        'currencies': currencies,
+    }
+
+    return render(request, 'campaigns/campaign_edit.html', context)
 
 def abort_activity(request, pk):
     """

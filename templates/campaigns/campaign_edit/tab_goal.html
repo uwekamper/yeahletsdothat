@@ -1,0 +1,24 @@
+<div class="row">
+  <div class="col-xs-12">
+    <h3>Bla</h3>
+  </div><!-- /.col -->
+
+    <div class="col-xs-6">
+      <div class="form-group">
+        <label for="id_goal">Campaign goal</label>
+        <input type="text" class="form-control" id="id_goal" ng-model="ctrl.campaign.goal"/>
+      </div>
+    </div><!-- /.col -->
+
+    <div class="col-xs-6">
+      <div class="form-group">
+        <label for="id_goal">Currency</label>
+        <select class="form-control" id="id_goal" ng-model="ctrl.campaign.currency">
+          {% for currency in currencies %}
+            <option value="{{ currency.id }}">{{ currency.display_name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div><!-- /.col -->
+
+</div><!-- /.row -->

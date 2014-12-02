@@ -1,0 +1,51 @@
+
+.progress-item {
+    background-color: #fff;
+}
+
+.progress-number {
+}
+
+/**
+ * Progress item
+ */
+.progress-item[active=false] {
+    border: 1px solid #fff;
+}
+
+.progress-item[active=true] {
+    border: 1px solid #ccc;
+}
+
+.progress-item[enabled=false] {
+    background-color: #ddd;
+    border: 1px solid #ddd;
+    color: #888;
+}
+
+/**
+ * Progress number
+ */
+.progress-item .progress-number {
+    font-size: 36px;
+}
+
+.progress-item[active=false] .progress-number {
+}
+
+.progress-item[active=true] .progress-number {
+    color: red;
+}
+
+.progress-description {
+    background-color: #fff;
+}
+
+.blafasel {
+    background: #fff;
+    min-height: 450px;
+}
+
+#id_description {
+    font-family: monospace;
+}

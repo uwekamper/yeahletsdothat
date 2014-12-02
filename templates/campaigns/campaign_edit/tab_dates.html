@@ -1,0 +1,33 @@
+<div class="row">
+  <div class="col-xs-12">
+    <h3>Dates</h3>
+
+    <div class="form-group">
+      <label for="id_start_date">Start date and time</label>
+      <input type="text" id="id_start_date" class="form-control" name="is_private"
+             ng-model="ctrl.campaign.start_date"/>
+    </div>
+    <div class="form-group">
+      <label for="id_end_date">End date and time</label>
+      <input type="text" id="id_end_date" class="form-control" name="is_private"
+             ng-model="ctrl.campaign.start_date"/>
+    </div>
+
+    <h3>Preferences</h3>
+
+    <div class="form-group">
+      <label for="id_is_private">
+        <input type="checkbox" id="id_is_private" name="is_private"
+               ng-model="ctrl.campaign.is_private"/>
+        Make this campaign private.
+      </label>
+    </div>
+    <div class="form-group">
+      <label for="id_end_when_goal_reached">
+        <input type="checkbox" id="id_end_when_goal_reached" name="is_private"/>
+        <!-- ng-model="ctrl.campaign.is_private" />-->
+        End this campaign before the end date when the campaign goal is reached.
+      </label>
+    </div>
+  </div><!--/.col -->
+</div><!-- /.row -->

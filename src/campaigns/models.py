@@ -96,7 +96,7 @@ class Perk(models.Model):
     campaign = models.ForeignKey('Campaign', related_name='perks')
     title = models.CharField(max_length=256)
     text = models.TextField(blank=True, null=True)
-    amount = models.DecimalField(max_digits=10, decimal_places=8)
+    amount = models.DecimalField(max_digits=20, decimal_places=8)
     available = models.IntegerField(blank=True, null=True)
 
     def __str__(self):

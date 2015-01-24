@@ -6,12 +6,13 @@
 <link rel="stylesheet" href="{{ STATIC_URL }}bower_components/ngtoast/dist/ngToast.min.css">
 <link rel="stylesheet" href="{{ STATIC_URL }}css/perks.css">
 <link rel="stylesheet" href="{{ STATIC_URL }}css/campaign_edit.css">
+<link rel="stylesheet" href="{{ STATIC_URL }}bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css">
 {% endblock extra_css %}
 
 {% block extra_body %}<ng-toast></ng-toast>{% endblock extra_body %}
 
 {% block container %}
-<div id="edit-ctrl" ng-controller="EditCtrl as ctrl">
+<div id="edit-ctrl" ng-controller="EditController as ctrl">
 <form name="editCampaignForm">
 
   <div class="row">
@@ -109,6 +110,10 @@
     <script src="{{ STATIC_URL }}bower_components/angular-animate/angular-animate.min.js"></script>
     <script src="{{ STATIC_URL }}bower_components/angular-sanitize/angular-sanitize.min.js"></script>
     <script src="{{ STATIC_URL }}bower_components/ngtoast/dist/ngToast.min.js"></script>
+    <script src="{{ STATIC_URL }}bower_components/momentjs/min/moment.min.js"></script>
+    <script src="{{ STATIC_URL }}bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="{{ STATIC_URL }}bower_components/accounting/accounting.min.js"></script>
+
     <script type="text/javascript">
       window.init = {{ initial_data|safe }};
       window.perks = {{ initial_perks|safe }};

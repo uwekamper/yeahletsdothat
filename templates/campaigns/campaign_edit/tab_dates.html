@@ -4,13 +4,23 @@
 
     <div class="form-group">
       <label for="id_start_date">Start date and time</label>
-      <input type="text" id="id_start_date" class="form-control" name="is_private"
-             ng-model="ctrl.campaign.start_date"/>
+      <div class='input-group date' id='datetimepicker3'>
+        <input type="text" id="id_start_date" class="form-control" name="is_private"
+               ng-model="ctrl.campaign.start_date" date-time-picker />
+        <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span>
+        </span>
+      </div><!-- /.input-group -->
     </div>
+
     <div class="form-group">
       <label for="id_end_date">End date and time</label>
-      <input type="text" id="id_end_date" class="form-control" name="is_private"
-             ng-model="ctrl.campaign.start_date"/>
+      <div class='input-group date' id='datetimepicker3'>
+
+        <input type="text" id="id_end_date" class="form-control" name="is_private"
+               ng-model="ctrl.campaign.end_date" date-time-picker />
+        <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span>
+        </span>
+      </div><!-- /.input-group -->
     </div>
 
     <h3>Preferences</h3>

@@ -19,6 +19,75 @@ module.factory('Perk', function ($resource) {
     return resource;
 });
 
+module.directive('dateTimePicker', [function() {
+    function link(scope, element, attrs, controller) {
+        var format = 'DD/MM/YYYY h:mm a';
+        controller.$parsers.push(function (inputValue) {
+            var num;
+            num = moment(inputValue)
+            return num;
+        });
+        controller.$formatters.push(function (value) {
+            console.log(value);
+            var str;
+            str = moment(value).format(format);
+            return str;
+        });
+        $(element).datetimepicker();
+    }
+
+    // put everything together
+    return {
+        restrict: 'A',
+        require: 'ngModel',
+        link: link
+    };
+}]);
+
+var formatAsCurrency = function($locale){
+    return {
+        restrict: 'A',
+        require: 'ngModel',
+        link: function (scope, element, attrs, controller) {
+            var decimal, thousands;
+            decimal = '.';
+            thousands = ',';
+            if ($locale.id.match(/^de/) !== null) {
+                decimal = ',';
+                thousands = '.';
+            }
+            controller.$parsers.push(function (inputValue) {
+                var num;
+                num = accounting.unformat(inputValue, decimal, thousands);
+                return num;
+            });
+            controller.$formatters.push(function (modelValue) {
+                var str;
+                str = accounting.formatNumber(modelValue, 2, thousands, decimal);
+                return str;
+            });
+            return element.bind('blur', function () {
+                if (controller.$modelValue !== void 0) {
+                    return element.val(accounting.formatNumber(controller.$modelValue, 2, thousands, decimal));
+                }
+            });
+        }
+    };
+};
+
+formatAsCurrency['$inject'] = ['$locale'];
+
+module.directive('formatAsCurrency', ['$locale', formatAsCurrency]);
+
+module.filter('currency', function() {
+
+    return function(number) {
+        return accounting.formatNumber(number, 2);
+    };
+
+});
+
+
 /*
 
 module.factory('sharedModel', function (Campaign) {

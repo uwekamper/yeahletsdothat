@@ -14,8 +14,7 @@ app.config(['$httpProvider', function($httpProvider) {
     $httpProvider.defaults.headers.post['X-CSRFToken'] = token;
 }]);
 
-
-app.controller('EditCtrl', ['$scope', '$window', 'ngToast', 'Campaign', 'Perk',
+app.controller('EditController', ['$scope', '$window', 'ngToast', 'Campaign', 'Perk',
 function($scope, $window, ngToast, Campaign, Perk) {
     var self = this;
 

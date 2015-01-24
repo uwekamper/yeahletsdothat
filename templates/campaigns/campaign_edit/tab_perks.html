@@ -7,7 +7,7 @@
       <div ng-if="perk.state == 'OK' " class="col-xs-4">
         <div class="perk-wrapper" ng-switch on="perk.available">
           <h3>{$ perk.title $}</h3>
-          <span class="perk-amount">{$ perk.amount $}</span>
+          <span class="perk-amount">{$ perk.amount|currency $}</span>
           <span class="perk-currency">{$ ctrl.getCurrencyDisplay() $}</span>
           <br/>
 
@@ -35,7 +35,7 @@
       <div ng-if="perk.state == 'DELETED' " class="col-xs-4">
         <div class="perk-wrapper perk-deleted">
           <h3>{$ perk.title $}</h3>
-          <span class="perk-amount">{$ perk.amount $}</span>
+          <span class="perk-amount">{$ perk.amount|currency $}</span>
           <span class="perk-currency">{$ ctrl.getCurrencyDisplay() $}</span>
           <br/>
           <a ng-click="ctrl.undelete_perk($index)">Undo</a>
@@ -50,7 +50,7 @@
                    id="id_title_{$ $index $}" type="text" ng-model="perk.title"/>
           </div>
           <div class="input-group">
-            <input class="form-control perk-amount-input" type="text"
+            <input class="form-control perk-amount-input" type="text" format-as-currency
                    ng-model="perk.amount"/><span class="input-group-addon">{$ ctrl.getCurrencyDisplay() $}</span>
           </div>
 
@@ -80,22 +80,23 @@
 
     <table class="table">
       <thead>
-      <th>Number of perks</th>
       <th>Title</th>
+      <th>Available</th>
       <th>Price per Perk</th>
-      <th>Sum</th>
+      <th>Total</th>
       </thead>
-      <tbody ng-repeat="perk in model.perks | filter:{state: '!DELETED'}">
+      <tbody ng-repeat="perk in ctrl.perks | filter:{state: '!DELETED'}">
       <tr>
-        <td>{$ perk.available $}</td>
         <td>{$ perk.title $}</td>
-        <td>{$ perk.amount $} {{ model.currency }}</td>
-        <td>{$ perk.amount * perk.available $} EUR {$ BLABLA $}</td>
+        <td>{$ perk.available $}</td>
+
+        <td>{$ perk.amount|currency $}&nbsp;{$ ctrl.getCurrencyDisplay() $}</td>
+        <td>{$ perk.amount * perk.available | currency $}&nbsp;{$ ctrl.getCurrencyDisplay() $}</td>
       </tr>
       </tbody>
       <tbody>
       <tr>
-        <td colspan="3" style="text-align: right;">Summe</td>
+        <td colspan="3" style="text-align: right;">Total</td>
         <td>{$ perks_sum(); $} EUR</td>
       </tr>
       </tbody>

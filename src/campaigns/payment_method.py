@@ -40,6 +40,8 @@ class PaymentException(Exception):
 class PaymentMethodDoesNotHaveName(PaymentException):
     pass
 
+class PaymentMethodDoesNotHaveCurrencies(PaymentException):
+    pass
 
 class PaymentMethodDoseNotExist(PaymentException):
     pass
@@ -51,17 +53,20 @@ class BasePaymentMethod(object):
     payment methods.
     """
     def __init__(self, options):
-        self.name = options['name']
-        self.display_name = options['display_name']
         try:
+            self.name = options['name']
             method_registry[options['name']] = self
-        except AttributeError:
+        except KeyError:
             msg = '{} does not have a "name" member'.format(self.__class__)
             raise PaymentMethodDoesNotHaveName(msg)
         try:
             self.currencies = options['currencies']
-        except AttributeError:
+        except KeyError:
             msg = 'You must provide a list of currencies for {}.'.format(self.__class__)
+            raise PaymentMethodDoesNotHaveCurrencies(msg)
+
+        self.display_name = options['display_name']
+
 
     def pay(self, campaign, transaction):
         """

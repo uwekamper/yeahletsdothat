@@ -11,7 +11,6 @@ from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 
 from django.utils.encoding import python_2_unicode_compatible
-from django_hstore import hstore
 
 
 @python_2_unicode_compatible
@@ -124,8 +123,4 @@ class Transaction(models.Model):
     return_btc_address = models.CharField(max_length=1024, blank=True, null=True)
 
     email = models.EmailField(max_length=1024, blank=True, null=True)
-
-class Events(models.Model):
-    data = hstore.DictionaryField()
-    objects = hstore.HStoreManager()
 

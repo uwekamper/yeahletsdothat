@@ -126,17 +126,6 @@ def abort_activity(request, pk):
     # TODO: Implement abort feature
     return None
 
-def get_rpc_address(conf=None):
-    if not conf:
-        conf = settings
-    return 'http://{}:{}@{}:{}/'.format(conf.BTC_USER, conf.BTC_PASS, conf.BTC_HOST, conf.BTC_PORT)
-
-def create_bitcoin_address(address=None):
-    if not address:
-        address = get_rpc_address()
-    server = jsonrpclib.Server(address)
-    new_addr = server.getnewaddress()
-    return new_addr
 
 def select_payment(request, key):
     """

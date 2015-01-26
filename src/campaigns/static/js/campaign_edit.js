@@ -127,4 +127,15 @@ function($scope, $window, ngToast, Campaign, Perk) {
         return $scope.editCampaignForm.$pristine && self.perksPristine;
     };
 
+    /**
+     * Calculate the total sum of all the perks times availability
+     */
+    self.getPerksTotal = function() {
+        var sum = 0.0;
+        for(var i = 0; i < self.perks.length; i++ ) {
+            // TODO: check if perk is not deleted
+            sum = sum + (self.perks[i].amount * self.perks[i].available)
+        }
+        return sum;
+    }
 }]);

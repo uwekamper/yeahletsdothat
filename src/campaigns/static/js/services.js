@@ -23,15 +23,10 @@ module.directive('dateTimePicker', [function() {
     function link(scope, element, attrs, controller) {
         var format = 'DD/MM/YYYY h:mm a';
         controller.$parsers.push(function (inputValue) {
-            var num;
-            num = moment(inputValue)
-            return num;
+            return moment(inputValue)
         });
         controller.$formatters.push(function (value) {
-            console.log(value);
-            var str;
-            str = moment(value).format(format);
-            return str;
+            return moment(value).format(format);
         });
         $(element).datetimepicker();
     }

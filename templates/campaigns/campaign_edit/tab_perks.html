@@ -97,11 +97,17 @@
       <tbody>
       <tr>
         <td colspan="3" style="text-align: right;">Total</td>
-        <td>{$ perks_sum(); $} EUR</td>
+        <td>{$ ctrl.getPerksTotal() | currency $} EUR</td>
+      </tr>
+      <tr>
+        <td colspan="3" style="text-align: right;">Campaign goal</td>
+        <td>{$ ctrl.campaign.goal | currency $}&nbsp;{$ ctrl.getCurrencyDisplay(); $}</td>
       </tr>
       </tbody>
 
     </table>
+
+
 
   </div>
   <!-- /.col -->

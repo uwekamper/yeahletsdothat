@@ -137,5 +137,10 @@ function($scope, $window, ngToast, Campaign, Perk) {
             sum = sum + (self.perks[i].amount * self.perks[i].available)
         }
         return sum;
-    }
+    };
+
+    self.goalIsReachable = function() {
+        return self.getPerksTotal() >= self.campaign.goal;
+    };
+
 }]);

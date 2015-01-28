@@ -121,7 +121,7 @@
         {% for c in currencies %}
           {{ c.id }}: "{{ c.display_name }}"{% if forloop.last %}{% else %},{% endif %}
         {% endfor %}
-      };
+      }
     </script>
 
     <script type="text/javascript" src="{{ STATIC_URL }}js/services.js"></script>

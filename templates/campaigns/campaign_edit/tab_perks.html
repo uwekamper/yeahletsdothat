@@ -1,10 +1,10 @@
 <div class="row">
-  <div class="col-xs-8">
+  <div class="col-xs-6">
     <h3>Perks</h3>
 
     <span ng-repeat="perk in ctrl.perks ">
 
-      <div ng-if="perk.state == 'OK' " class="col-xs-4">
+      <div ng-if="perk.state == 'OK' " class="col-xs-6">
         <div class="perk-wrapper" ng-switch on="perk.available">
           <h3>{$ perk.title $}</h3>
           <span class="perk-amount">{$ perk.amount|currency $}</span>
@@ -32,7 +32,7 @@
         </div>
       </div>
 
-      <div ng-if="perk.state == 'DELETED' " class="col-xs-4">
+      <div ng-if="perk.state == 'DELETED' " class="col-xs-6">
         <div class="perk-wrapper perk-deleted">
           <h3>{$ perk.title $}</h3>
           <span class="perk-amount">{$ perk.amount|currency $}</span>
@@ -42,12 +42,18 @@
         </div>
       </div>
 
-      <div ng-if="perk.state == 'EDITABLE' " class="col-xs-4">
+      <div ng-if="perk.state == 'EDITABLE' " class="col-xs-12">
         <div class="perk-wrapper">
           <div class="input-group">
             <label for="id_title_{$ $index $}">Title</label>
             <input class="form-control perk-title-input"
                    id="id_title_{$ $index $}" type="text" ng-model="perk.title"/>
+          </div>
+          <div class="input-group">
+            <label for="id_title_{$ $index $}">Description <small>supports Markdown</small></label>
+            <textarea class="form-control perk-text-input"
+                      id="id_title_{$ $index $}" ng-model="perk.text">
+              </textarea>
           </div>
           <div class="input-group">
             <input class="form-control perk-amount-input" type="text" format-as-currency
@@ -65,7 +71,7 @@
 
     </span><!-- /ng-repeat -->
 
-    <div class="col-xs-4">
+    <div class="col-xs-6">
         <div class="perk-wrapper perk-add" ng-click="ctrl.add_perk() ">
             <div class="perk-add-symbol">
                 <span class="glyphicon glyphicon-plus"></span>
@@ -75,40 +81,56 @@
     </div>
 
   </div><!--/.col -->
-  <div class="col-xs-4">
-    <h3>Perk-u-Lator 3000 (perk calculator)</h3>
+  <div class="col-xs-6">
+    <div class="row">
 
-    <table class="table">
-      <thead>
-      <th>Title</th>
-      <th>Available</th>
-      <th>Price per Perk</th>
-      <th>Total</th>
-      </thead>
-      <tbody ng-repeat="perk in ctrl.perks | filter:{state: '!DELETED'}">
-      <tr>
-        <td>{$ perk.title $}</td>
-        <td>{$ perk.available $}</td>
+      <div class="col-xs-11">
+        <h3>Perk-u-Lator 3000 (perk calculator)</h3>
 
-        <td>{$ perk.amount|currency $}&nbsp;{$ ctrl.getCurrencyDisplay() $}</td>
-        <td>{$ perk.amount * perk.available | currency $}&nbsp;{$ ctrl.getCurrencyDisplay() $}</td>
-      </tr>
-      </tbody>
-      <tbody>
-      <tr>
-        <td colspan="3" style="text-align: right;">Total</td>
-        <td>{$ ctrl.getPerksTotal() | currency $} EUR</td>
-      </tr>
-      <tr>
-        <td colspan="3" style="text-align: right;">Campaign goal</td>
-        <td>{$ ctrl.campaign.goal | currency $}&nbsp;{$ ctrl.getCurrencyDisplay(); $}</td>
-      </tr>
-      </tbody>
+        <table class="table">
+          <thead>
+          <th>Title</th>
+          <th>Available</th>
+          <th>Price per Perk</th>
+          <th>Total</th>
+          </thead>
+          <tbody ng-repeat="perk in ctrl.perks | filter:{state: '!DELETED'}">
+          <tr>
+            <td>{$ perk.title $}</td>
+            <td>{$ perk.available $}</td>
 
-    </table>
+            <td>{$ perk.amount|currency $}&nbsp;{$ ctrl.getCurrencyDisplay() $}</td>
+            <td>{$ perk.amount * perk.available | currency $}&nbsp;{$ ctrl.getCurrencyDisplay() $}</td>
+          </tr>
+          </tbody>
+          <tbody>
+          <tr>
+            <td colspan="3" style="text-align: right;">Total</td>
+            <td>{$ ctrl.getPerksTotal() | currency $} EUR</td>
+          </tr>
+          <tr>
+            <td colspan="3" style="text-align: right;">Campaign goal</td>
+            <td>{$ ctrl.campaign.goal | currency $}&nbsp;{$ ctrl.getCurrencyDisplay(); $}</td>
+          </tr>
+          </tbody>
 
+        </table>
+      </div><!-- ./col -->
+    </div><!-- /.row -->
+    <div class="row">
+      <div class="col-xs-8 col-xs-offset-3">
 
+        <div class="alert alert-success" role="alert" ng-if="ctrl.goalIsReachable();">
+          You have enough perks to meet your campaign goal.
+        </div>
 
+        <div class="alert alert-danger" role="alert" ng-if="!ctrl.goalIsReachable();">
+          You do not have enough perks or your perks are not expensive enough.
+          This campaign could never reach its goal. You can either lower your goal
+          or add more perks and raise prices.
+        </div>
+      </div><!-- /.col -->
+    </div><!-- /.row -->
   </div>
   <!-- /.col -->
 </div><!-- /.row -->

@@ -20,7 +20,7 @@
                     <div class="activity-value">{{ campaign.get_number_of_participants }}</div>
                     <div class="activity-unit">participant(s)</div>
                     <div class="activity-value">{% if campaign.get_total_pledge_amount %}{{ campaign.get_total_pledge_amount }}{% else %}0{% endif %} {{ campaign.get_currency_display }}</div>
-                    <div class="activity-unit">pledged of {{ campaign.goal }}
+                    <div class="activity-unit">pledged of {{ campaign.goal|floatformat:2 }}
                     {{ campaign.get_currency_display }} goal</div>
                     <div class="activity-value">{{ campaign.days_left }}</div>
                     <div class="activity-unit">days to go</div>
@@ -43,8 +43,9 @@
                     {% for perk in campaign.perks.all %}
                         <div class="well">
                             <h3>{{ perk.title }}</h3>
-                            <p>{{ perk.text }}</p>
-                            <p class="perk_amount">{{ perk.amount }} {{ perk.get_currency_display }}</p>
+                            <p>{{ perk.text|markdown }}</p>
+                            <p class="perk_amount">{{ perk.amount|floatformat:2 }} {{ campaign.get_currency_display }}</p>
+                          <a href="#" class="btn btn-success">Select this perk</a>
                         </div>
                     {% endfor %}
                     {% for method in methods %}

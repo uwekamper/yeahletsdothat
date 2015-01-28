@@ -42,7 +42,7 @@ class MyInlineGrammar(mistune.InlineGrammar):
     # ![:youtube 600x400](G-M7ECt3-zY)
     youtube_link = re.compile(
         r'!\['                              # ![
-        r':youtube'                           # :vimeo
+        r':youtube'                           # :youtube
         r'([\s\S]*?)'                       # widthxheight
         r'\]'                               # ]
         r'\(([\s\S]+?)\)'                   # (youtube_id)

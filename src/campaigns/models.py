@@ -11,6 +11,7 @@ from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 
 from django.utils.encoding import python_2_unicode_compatible
+from django_hstore.fields import DictionaryField
 
 
 @python_2_unicode_compatible
@@ -124,3 +125,30 @@ class Transaction(models.Model):
 
     email = models.EmailField(max_length=1024, blank=True, null=True)
 
+
+class ProjectedModel(models.Model):
+    class Meta:
+        abstract = True
+
+    def save(self, *args, **kwargs):
+        """
+        Disable the save method
+        """
+        return
+
+    def delete(self, *args, **kwargs):
+        """
+        Disable the delete method.
+        """
+        return
+
+
+
+class Event(models.Model):
+    BEGIN_PAYMENT = 0
+    EVENT_TYPES = (
+        (BEGIN_PAYMENT, 'Begin payment process'),
+    )
+    event_type = models.IntegerField(choices=EVENT_TYPES)
+    created = models.DateTimeField(auto_now_add=True)
+    data = DictionaryField()

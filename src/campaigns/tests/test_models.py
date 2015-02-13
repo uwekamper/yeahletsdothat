@@ -52,14 +52,14 @@ class TestCampaigns(CommonMethods):
         #response = client.post(url, data={'name': self.TEST_ACTIVITY_NAME})
         #assert response.status_code == 200
 
-    def test_user_can_view_activity(self):
+    def test_user_can_view_campaign(self):
         """
         Check if a user can view the details of an activity.
         """
         TEST_CODE = 'WJLuiiI8NQWcJQ=='
-        activity = mommy.make(Campaign, code=TEST_CODE)
+        campaign = mommy.make(Campaign, key=TEST_CODE)
         client = Client()
-        response = client.get(reverse('activity', args=(activity.id, TEST_CODE)))
+        response = client.get(reverse('campaign_details', args=[TEST_CODE]))
         assert response.status_code == 200
         dom = html.fromstring(response.content)
         header = dom.cssselect('h1')[0]

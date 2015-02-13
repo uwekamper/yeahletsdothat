@@ -12,6 +12,9 @@ from django.utils.translation import ugettext_lazy as _
 
 from django.utils.encoding import python_2_unicode_compatible
 from django_hstore.fields import DictionaryField
+from django_hstore.managers import HStoreManager
+from django_hstore.query import HStoreQuerySet
+from polymorphic import PolymorphicModel, PolymorphicManager
 
 
 @python_2_unicode_compatible
@@ -126,7 +129,11 @@ class Transaction(models.Model):
     email = models.EmailField(max_length=1024, blank=True, null=True)
 
 
-class ProjectedModel(models.Model):
+class ReadModel(models.Model):
+    """
+    The read model is an abstract class for creating read-only models
+    that present the state of the system to the outside.
+    """
     class Meta:
         abstract = True
 
@@ -134,21 +141,75 @@ class ProjectedModel(models.Model):
         """
         Disable the save method
         """
-        return
+        raise NotImplementedError()
+
+    def _super_save(self, *args, **kwargs):
+        super(ReadModel, self).save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
         """
         Disable the delete method.
         """
-        return
+        raise NotImplementedError()
+
+    def _super_delete(self, *args, **kwargs):
+        super(ReadModel, self).delete(*args, **kwargs)
 
 
-
-class Event(models.Model):
-    BEGIN_PAYMENT = 0
-    EVENT_TYPES = (
-        (BEGIN_PAYMENT, 'Begin payment process'),
-    )
-    event_type = models.IntegerField(choices=EVENT_TYPES)
+class BaseEvent(PolymorphicModel):
+    """
+    Events are simplistic way of keeping a log of all the changes
+    in our database.
+    """
     created = models.DateTimeField(auto_now_add=True)
     data = DictionaryField()
+
+    hstore_objects = HStoreManager()
+
+    # queryset_class = HStoreQuerySet
+    # event_type = models.IntegerField()
+    #
+    # # Schema can be overwritten by subclasses
+    schema = None
+    #
+    def reload_schema(self):
+        if self.schema != None:
+            field = self._meta.get_field('data')
+            field.reload_schema(self.schema)
+    #
+    # def get_event_type(self):
+    #     return self.__class__
+    #
+    # def get_event_type_display(self):
+    #     return self.get_event_type().__name__
+    #
+    # def get_data(self):
+    #     self.reload_schema()
+    #     return self.data
+
+    # def save(self, *args, **kwargs):
+    #    self.event_type = str(self.get_event_type())
+    #    super(BaseEvent, self).save(*args, **kwargs)
+
+
+class BeginPaymentEvent(BaseEvent):
+
+    @classmethod
+    def create(cls, id, key, amount):
+        ev = cls(data={'id': id, 'campaign_key': key, 'amount': amount})
+        ev.save()
+        return ev
+
+    schema = [
+         {'name': 'id', 'class': 'CharField', 'kwargs': {'max_length': 36}},
+         {'name': 'campaign_key', 'class': 'CharField', 'kwargs': {'max_length': 16}},
+         {'name': 'amount', 'class': 'DecimalField', 'kwargs': {'decimal_places': 8, 'max_digits': 20}},
+    ]
+
+
+class TransactionState(ReadModel):
+    # transaction holds the UUID for this transaction
+    transaction_id = models.CharField(max_length=1024)
+    amount = models.DecimalField(decimal_places=10, max_digits=20)
+    is_pending = models.BooleanField(default=False)
+    started = models.DateTimeField()

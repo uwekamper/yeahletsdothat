@@ -99,14 +99,14 @@
             <td>{$ perk.title $}</td>
             <td>{$ perk.available $}</td>
 
-            <td>{$ perk.amount|currency $}&nbsp;{$ ctrl.getCurrencyDisplay() $}</td>
-            <td>{$ perk.amount * perk.available | currency $}&nbsp;{$ ctrl.getCurrencyDisplay() $}</td>
+            <td>{$ perk.amount|currency $}&nbsp;{$ ctrl.getCurrencyDisplay(); $}</td>
+            <td>{$ perk.amount * perk.available | currency $}&nbsp;{$ ctrl.getCurrencyDisplay(); $}</td>
           </tr>
           </tbody>
           <tbody>
           <tr>
             <td colspan="3" style="text-align: right;">Total</td>
-            <td>{$ ctrl.getPerksTotal() | currency $} EUR</td>
+            <td>{$ ctrl.getPerksTotal() | currency $} {$ ctrl.getCurrencyDisplay(); $}</td>
           </tr>
           <tr>
             <td colspan="3" style="text-align: right;">Campaign goal</td>

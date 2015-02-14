@@ -156,6 +156,28 @@ class ReadModel(models.Model):
         super(ReadModel, self).delete(*args, **kwargs)
 
 
+class TransactionState(ReadModel):
+    STATE_OPEN = 0
+    STATE_COMPLETE = 200
+    STATE_ABORTED = 500
+
+    STATES = (
+        (STATE_OPEN, _('open')),
+        (STATE_COMPLETE, _('complete')),
+        (STATE_ABORTED, _('aborted'))
+    )
+    # transaction holds the UUID for this transaction
+    campaign = models.ForeignKey('Campaign', null=True, blank=True)
+    transaction_id = models.CharField(max_length=1024)
+    state = models.IntegerField(choices=STATES)
+
+    amount = models.DecimalField(decimal_places=10, max_digits=20)
+    amount_received = models.DecimalField(decimal_places=10, max_digits=20)
+    # is_pending = models.BooleanField(default=False)
+    started = models.DateTimeField()
+    email = models.EmailField(null=True, blank=True)
+
+
 class BaseEvent(PolymorphicModel):
     """
     Events are simplistic way of keeping a log of all the changes
@@ -176,40 +198,21 @@ class BaseEvent(PolymorphicModel):
         if self.schema != None:
             field = self._meta.get_field('data')
             field.reload_schema(self.schema)
-    #
-    # def get_event_type(self):
-    #     return self.__class__
-    #
-    # def get_event_type_display(self):
-    #     return self.get_event_type().__name__
-    #
-    # def get_data(self):
-    #     self.reload_schema()
-    #     return self.data
-
-    # def save(self, *args, **kwargs):
-    #    self.event_type = str(self.get_event_type())
-    #    super(BaseEvent, self).save(*args, **kwargs)
-
 
 class BeginPaymentEvent(BaseEvent):
+    pass
+    # schema = [
+    #      {'name': 'transaction_id', 'class': 'CharField', 'kwargs': {'max_length': 36}},
+    #      {'name': 'campaign_key', 'class': 'CharField', 'kwargs': {'max_length': 16}},
+    #      {'name': 'amount', 'class': 'DecimalField', 'kwargs': {'decimal_places': 8, 'max_digits': 20}},
+    # ]
 
-    @classmethod
-    def create(cls, id, key, amount):
-        ev = cls(data={'id': id, 'campaign_key': key, 'amount': amount})
-        ev.save()
-        return ev
+class ReceivePaymentEvent(BaseEvent):
+    pass
+    # schema = [
+    #      {'name': 'transaction_id', 'class': 'CharField', 'kwargs': {'max_length': 36}},
+    #      {'name': 'amount', 'class': 'DecimalField', 'kwargs': {'decimal_places': 8, 'max_digits': 20}},
+    # ]
 
-    schema = [
-         {'name': 'id', 'class': 'CharField', 'kwargs': {'max_length': 36}},
-         {'name': 'campaign_key', 'class': 'CharField', 'kwargs': {'max_length': 16}},
-         {'name': 'amount', 'class': 'DecimalField', 'kwargs': {'decimal_places': 8, 'max_digits': 20}},
-    ]
-
-
-class TransactionState(ReadModel):
-    # transaction holds the UUID for this transaction
-    transaction_id = models.CharField(max_length=1024)
-    amount = models.DecimalField(decimal_places=10, max_digits=20)
-    is_pending = models.BooleanField(default=False)
-    started = models.DateTimeField()
+class AbortPaymentEvent(BaseEvent):
+    pass

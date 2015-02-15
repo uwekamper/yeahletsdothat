@@ -9,13 +9,12 @@ from rest_framework import viewsets, routers
 from campaigns.serializers import CampaignSerializer, PerkSerializer
 from rest_framework.response import Response
 
-import views
-
 
 class CampaignsViewSet(viewsets.ModelViewSet):
     model = Campaign
     serializer_class = CampaignSerializer
     lookup_field = 'key'
+
 
 class PerksViewSet(viewsets.ModelViewSet):
     model = Perk

@@ -1,0 +1,53 @@
+[
+{
+    "pk": 3, 
+    "model": "campaigns.campaign", 
+    "fields": {
+        "description": "", 
+        "end_date": "2015-02-14T00:58:43.680Z", 
+        "title": "TestCampaign", 
+        "target_account": null, 
+        "completed": false, 
+        "currency": 0, 
+        "user": null, 
+        "key": "ErVK0PZGdQnkglqM", 
+        "start_date": "2015-02-14T00:58:43.680Z", 
+        "is_private": true, 
+        "goal": "20.00000000"
+    }
+},
+{
+    "pk": 4, 
+    "model": "campaigns.campaign", 
+    "fields": {
+        "description": "The path of the righteous man is beset on all sides by the iniquities of the selfish and the tyranny of evil men. Blessed is he who, in the name of charity and good will, shepherds the weak through the valley of darkness, for he is truly his brother's keeper and the finder of lost children. And I will strike down upon thee with great vengeance and furious anger those who would attempt to poison and destroy My brothers. And you will know My name is the Lord when I lay My vengeance upon thee.", 
+        "end_date": "2015-02-28T17:24:00Z", 
+        "title": "TestCampaign", 
+        "target_account": null, 
+        "completed": false, 
+        "currency": 0, 
+        "user": 1, 
+        "key": "DtveyNUwMggcwHaL", 
+        "start_date": "2015-02-14T17:24:00Z", 
+        "is_private": true, 
+        "goal": "20.00000000"
+    }
+},
+{
+    "pk": 5, 
+    "model": "campaigns.campaign", 
+    "fields": {
+        "description": "", 
+        "end_date": "2015-02-14T20:35:00.425Z", 
+        "title": "TestCampaign", 
+        "target_account": null, 
+        "completed": false, 
+        "currency": 0, 
+        "user": 1, 
+        "key": "EfO3bXxSWc_lFR3u", 
+        "start_date": "2015-02-14T20:35:00.424Z", 
+        "is_private": true, 
+        "goal": "20.00000000"
+    }
+}
+]

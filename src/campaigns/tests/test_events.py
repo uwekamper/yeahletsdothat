@@ -1,11 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from model_mommy import mommy
-import pytest
-from campaigns.projectors import TransactionProjector
 from common import *
-import uuid
-from django.utils import timezone
 from campaigns.models import *
 pytestmark = pytest.mark.django_db
 
@@ -17,9 +12,7 @@ denormalization, etc.) works as intended.
 """
 
 class TestTransactionCommands(object):
-    """
 
-    """
     @pytest.fixture
     def transaction_id(self):
         return 'e3ac5128-a8d3-11e4-9f5f-002332c62ffc'

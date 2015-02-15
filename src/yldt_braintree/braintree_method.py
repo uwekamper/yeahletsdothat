@@ -19,8 +19,8 @@ class BrainTree(BasePaymentMethod):
         self.private_key = options['private_key']
         self.cse_key = options['cse_key']
 
-    def pay(self, campaign, transaction):
-        url = '/pay/' + self.name + '/' + str(transaction.id) + '/'
+    def pay(self, campaign, transaction_id):
+        url = '/pay/' + self.name + '/' + str(transaction_id) + '/'
         return HttpResponseRedirect(url)
 
     def refund(self, campaign, transaction):

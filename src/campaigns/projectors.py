@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from decimal import Decimal
-from campaigns.models import Campaign, TransactionState, BeginPaymentEvent, \
+from campaigns.models import Campaign, Transaction, BeginPaymentEvent, \
     ReceivePaymentEvent, AbortPaymentEvent
 
 
@@ -51,10 +51,10 @@ class TransactionProjector(Projector):
 
     def handle_begin_payment(self, event):
         campaign = Campaign.objects.get(key=event.data['campaign_key'])
-        trans = TransactionState(
+        trans = Transaction(
             campaign=campaign,
             transaction_id=event.data['transaction_id'],
-            state=TransactionState.STATE_OPEN,
+            state=Transaction.STATE_OPEN,
             amount=event.data['amount'],
             amount_received=0,
             started=event.created,
@@ -63,15 +63,15 @@ class TransactionProjector(Projector):
         trans._super_save()
 
     def handle_received_payment(self, event):
-        trans = TransactionState.objects.get(transaction_id=event.data['transaction_id'])
+        trans = Transaction.objects.get(transaction_id=event.data['transaction_id'])
         trans.amount_received += Decimal(event.data['amount'])
         if trans.amount_received >= trans.amount:
-            trans.state = TransactionState.STATE_COMPLETE
+            trans.state = Transaction.STATE_COMPLETE
         trans._super_save()
 
     def handle_abort_payment(self, event):
-        trans = TransactionState.objects.get(transaction_id=event.data['transaction_id'])
-        trans.state = TransactionState.STATE_ABORTED
+        trans = Transaction.objects.get(transaction_id=event.data['transaction_id'])
+        trans.state = Transaction.STATE_ABORTED
         trans._super_save()
 
 register_projector(TransactionProjector)

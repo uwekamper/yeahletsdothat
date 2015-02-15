@@ -63,14 +63,14 @@ class TransactionSerializer(serializers.ModelSerializer):
     confirmed = serializers.SerializerMethodField('_get_confirmed')
 
     def _get_pledged(self, obj):
-        return(obj.state == Transaction.STATE_PLEDGED)
+        return(obj.state == Transaction.STATE_OPEN)
 
     def _get_received(self, obj):
-        return(obj.state == Transaction.STATE_PAYMENT_RECEIVED)
+        return(obj.state == Transaction.STATE_COMPLETE)
 
     def _get_confirmed(self, obj):
-        return(obj.state == Transaction.STATE_PAYMENT_CONFIRMED)
+        return(obj.state == Transaction.STATE_COMPLETE)
 
     class Meta:
         model = Transaction
-        fields = ('id', 'activity', 'state', 'pledged', 'received', 'confirmed')
+        fields = ('id', 'transaction_id', 'campaign', 'state', 'pledged', 'received', 'confirmed')

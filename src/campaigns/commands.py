@@ -49,5 +49,8 @@ def receive_payment(id, amount):
 
 @command
 def abort_payment(id):
+    """
+    Stop the payment process for one transaction id.
+    """
     data = dict(transaction_id=id)
     yield AbortPaymentEvent(data=data)

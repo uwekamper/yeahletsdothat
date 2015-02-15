@@ -3,8 +3,6 @@
 from __future__ import unicode_literals
 from django.db import models
 
-from campaigns.models import Transaction
-
 class BrainTreeTransaction(models.Model):
-    transaction = models.ForeignKey(Transaction)
+    transaction_id = models.CharField(max_length=255)
     braintree_transaction_id = models.CharField(max_length=255)

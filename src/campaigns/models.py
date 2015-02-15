@@ -83,11 +83,12 @@ class Campaign(models.Model):
         return delta.days
 
     def get_number_of_participants(self):
-        return self.transaction_set.filter(state=Transaction.STATE_PAYMENT_CONFIRMED).count()
+        count = Transaction.objects.filter(campaign=self, state=Transaction.STATE_COMPLETE).count()
+        return count
 
     def get_total_pledge_amount(self):
         return self.transaction_set.filter(campaign=self,
-            state=Transaction.STATE_PAYMENT_CONFIRMED).aggregate(Sum('amount'))['amount__sum']
+            state=Transaction.STATE_COMPLETE).aggregate(Sum('amount'))['amount__sum']
 
     def __str__(self):
         return '{} ({})'.format(self.title, self.key)
@@ -106,27 +107,6 @@ class Perk(models.Model):
 
     def __str__(self):
         return '{} ({})'.format(self.title, self.amount)
-
-
-class Transaction(models.Model):
-    STATE_ABORTED = -1
-    STATE_PLEDGED = 0
-    STATE_PAYMENT_RECEIVED = 1
-    STATE_PAYMENT_CONFIRMED = 2
-
-    STATES = (
-        (STATE_PLEDGED, _("pledged")),
-        (STATE_PAYMENT_RECEIVED, _('payment received')),
-        (STATE_PAYMENT_CONFIRMED, _('payment confirmed'))
-    )
-    amount = models.DecimalField(max_digits=10, decimal_places=8, null=True)
-    campaign = models.ForeignKey('Campaign', default=0)
-    state = models.IntegerField(choices=STATES)
-
-    btc_address = models.CharField(max_length=1024, blank=True, null=True)
-    return_btc_address = models.CharField(max_length=1024, blank=True, null=True)
-
-    email = models.EmailField(max_length=1024, blank=True, null=True)
 
 
 class ReadModel(models.Model):
@@ -156,7 +136,7 @@ class ReadModel(models.Model):
         super(ReadModel, self).delete(*args, **kwargs)
 
 
-class TransactionState(ReadModel):
+class Transaction(ReadModel):
     STATE_OPEN = 0
     STATE_COMPLETE = 200
     STATE_ABORTED = 500

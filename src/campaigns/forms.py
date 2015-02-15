@@ -18,18 +18,18 @@ class SelectPaymentForm(forms.Form):
     email1 = forms.EmailField()
     email2 = forms.EmailField()
 
-    def clean(self):
-        cleaned_data = super(SelectPaymentForm, self).clean()
-        min_amount = self._campaign.pledge_value
-
-        # the amount may not be
-        if cleaned_data.get('amount') < min_amount:
-            raise forms.ValidationError('Amount must be at least {}.'.format(min_amount))
-
-        # make sure the e-mail addresses are correct
-        if cleaned_data.get('email1') != cleaned_data.get('email2'):
-            raise forms.ValidationError(_('Both e-mail addresses must be equal.'))
-        return cleaned_data
+    # def clean(self):
+    #     cleaned_data = super(SelectPaymentForm, self).clean()
+    #     min_amount = self._campaign.pledge_value
+    #
+    #     # the amount may not be
+    #     if cleaned_data.get('amount') < min_amount:
+    #         raise forms.ValidationError('Amount must be at least {}.'.format(min_amount))
+    #
+    #     # make sure the e-mail addresses are correct
+    #     if cleaned_data.get('email1') != cleaned_data.get('email2'):
+    #         raise forms.ValidationError(_('Both e-mail addresses must be equal.'))
+    #     return cleaned_data
 
 class ActivityForm(forms.ModelForm):
     v = forms.CharField(required=False)
@@ -58,7 +58,7 @@ class NewCampaignForm(forms.ModelForm):
 
 class TransactionForm(forms.ModelForm):
     class Meta:
-        fields = ('amount', 'return_btc_address', 'email')
+        fields = ('amount', 'email')
         model = models.Transaction
 
 

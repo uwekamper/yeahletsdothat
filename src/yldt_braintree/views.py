@@ -7,6 +7,7 @@ from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
+from campaigns.commands import receive_payment
 
 from campaigns.models import Transaction
 from campaigns.payment_method import get_method_by_name
@@ -41,12 +42,12 @@ def do_transaction(payment_method, transaction, form):
 
     return result
 
-def payment_form(request, transaction_pk, payment_method_name):
+def payment_form(request, transaction_id, payment_method_name):
     """
     Show a payment form to the user.
     """
-    transact = get_object_or_404(Transaction, pk=transaction_pk)
-    if transact.state != Transaction.STATE_PLEDGED:
+    transact = get_object_or_404(Transaction, transaction_id=transaction_id)
+    if transact.state != Transaction.STATE_OPEN:
         return render(request, 'yldt_braintree/transaction_error.html',
                 {'transaction': transact})
 
@@ -60,11 +61,11 @@ def payment_form(request, transaction_pk, payment_method_name):
             result = do_transaction(payment_method, transact, form)
 
             if result.is_success:
-                BrainTreeTransaction.objects.create(transaction=transact,
-                        braintree_transaction_id=result.transaction.id)
-                transact.state = Transaction.STATE_PAYMENT_CONFIRMED
-                transact.save()
-                url = '/pay/{}/{}/success/'.format(payment_method_name, transact.id)
+                BrainTreeTransaction.objects.create(transaction_id=transaction_id,
+                    braintree_transaction_id=result.transaction.id)
+                receive_payment(transaction_id, transact.amount)
+
+                url = '/pay/{}/{}/success/'.format(payment_method_name, transaction_id)
                 return HttpResponseRedirect(url)
             else:
                 context = {
@@ -93,7 +94,7 @@ def payment_form(request, transaction_pk, payment_method_name):
         }
         return render(request, 'yldt_braintree/payment_form.html', context)
 
-def payment_succes(request, transaction_pk, payment_method_name):
-    transact = get_object_or_404(Transaction, pk=transaction_pk)
+def payment_succes(request, transaction_id, payment_method_name):
+    transact = get_object_or_404(Transaction, transaction_id=transaction_id)
     return render(request, 'yldt_braintree/payment_success.html',
             {'transaction': transact})

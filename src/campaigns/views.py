@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+import uuid
 
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
@@ -16,11 +17,15 @@ from campaigns.utils import get_campaign_or_404, get_payment_methods
 from django.conf import settings
 
 import forms
-from models import Campaign, Transaction, BankAccount
+from models import Campaign, BankAccount, Transaction
 
+from commands import begin_payment
 
 def index(request):
     return render(request, 'campaigns/index.html', {})
+
+def get_rpc_address():
+    return "vla"
 
 @login_required
 def user_profile(request):
@@ -126,7 +131,6 @@ def abort_activity(request, pk):
     # TODO: Implement abort feature
     return None
 
-
 def select_payment(request, key):
     """
     The user has clicked the "Pledge now" button. Let's show him the list of
@@ -142,16 +146,16 @@ def select_payment(request, key):
         if form.is_valid():
             amount = form.cleaned_data.get('amount')
             method = get_method_by_name(form.cleaned_data.get('payment_method'))
+            email = form.cleaned_data.get('email1')
 
-            # Create a new payment transaction, STATE_PLEDGE means that the user wants
-            # to pay but has not payed, yet.
-            transact = Transaction.objects.create(amount=amount, campaign=campaign,
-                    state=Transaction.STATE_PLEDGED)
+            # Create a new payment transaction with a random ID.
+            transaction_id = str(uuid.uuid4())
+            begin_payment(transaction_id, campaign.key, amount, email)
 
             # Delegate the payment transaction to the pay() method of the selected
             # payment method. The method will then redirect the user to the page it needs
             # to complete the payment.
-            return method.pay(campaign, transact)
+            return method.pay(campaign, transaction_id)
 
         else:
             return render(request, 'campaigns/select_payment.html',
@@ -179,32 +183,33 @@ def check_completion(activity):
             'buy-uk-a-beer')
 
 
-@api_view(['GET'])
-def transaction_api(request, pk):
-    transaction = get_object_or_404(Transaction, pk=pk)
-    s = jsonrpclib.Server(get_rpc_address())
-    received = s.getreceivedbyaddress(transaction.btc_address, 0)
-    confirmed = s.getreceivedbyaddress(transaction.btc_address, 1)
-
-    print "received: ", received
-    print "confirmed: ", confirmed
-
-    # TODO: this should be moved into a background task
-    if transaction.state == Transaction.STATE_PLEDGED:
-        if received >= float(transaction.amount):
-            transaction.state = Transaction.STATE_PAYMENT_RECEIVED
-            transaction.save()
-        if confirmed >= float(transaction.amount):
-            transaction.state = Transaction.STATE_PAYMENT_CONFIRMED
-            transaction.save()
-    elif transaction.state == Transaction.STATE_PAYMENT_RECEIVED:
-        if confirmed >= float(transaction.amount):
-            transaction.state = Transaction.STATE_PAYMENT_CONFIRMED
-            transaction.save()
-
-    check_completion(transaction.campaign)
-
-    # transaction.state = 0
-    ser = TransactionSerializer(transaction)
-    return Response(ser.data)
+# TODO: Move this into the bitcoin module
+# @api_view(['GET'])
+# def transaction_api(request, pk):
+#     transaction = get_object_or_404(TransactionState, pk=pk)
+#     s = jsonrpclib.Server(get_rpc_address())
+#     received = s.getreceivedbyaddress(transaction.btc_address, 0)
+#     confirmed = s.getreceivedbyaddress(transaction.btc_address, 1)
+#
+#     print "received: ", received
+#     print "confirmed: ", confirmed
+#
+#     # TODO: this should be moved into a background task
+#     if transaction.state == TransactionState.STATE_PLEDGED:
+#         if received >= float(transaction.amount):
+#             transaction.state = Transaction.STATE_PAYMENT_RECEIVED
+#             transaction.save()
+#         if confirmed >= float(transaction.amount):
+#             transaction.state = Transaction.STATE_PAYMENT_CONFIRMED
+#             transaction.save()
+#     elif transaction.state == Transaction.STATE_PAYMENT_RECEIVED:
+#         if confirmed >= float(transaction.amount):
+#             transaction.state = Transaction.STATE_PAYMENT_CONFIRMED
+#             transaction.save()
+#
+#     check_completion(transaction.campaign)
+#
+#     # transaction.state = 0
+#     ser = TransactionSerializer(transaction)
+#     return Response(ser.data)
 

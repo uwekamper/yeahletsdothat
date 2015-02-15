@@ -28,7 +28,7 @@ urlpatterns = patterns('',
     url(r'^bankaccounts/add/$', 'campaigns.views.add_bankaccount', name='add_bankaccount'),
 
     url(r'^transaction/(?P<pk>\d+)/$', 'campaigns.views.transaction', name='transaction'),
-    url(r'^api/transaction/(?P<pk>\d+)/$', 'campaigns.views.transaction_api', name='transaction_api'),
+    # url(r'^api/transaction/(?P<pk>\d+)/$', 'campaigns.views.transaction_api', name='transaction_api'),
 
     url(r'^yeah/', include('campaigns.urls')),
 ) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

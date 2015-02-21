@@ -1,6 +1,9 @@
+import uuid
+from decimal import Decimal
 from model_mommy import mommy
 import pytest
 from common import *
+from commands import begin_payment, receive_payment
 
 class TestUserProfile(CommonMethods):
     """
@@ -69,24 +72,24 @@ class TestCampaigns(CommonMethods):
         """
         Check if the user can pledge to be part of the activity.
         """
-        activity = mommy.make(Campaign)
+        campaign = mommy.make(Campaign)
         client = Client()
-        data = {
-            'state': 0,
-            'activity': activity.id
-        }
-        response = client.post(reverse('pledge_activity', args=(activity.id, )),
-            data=data)
+
+        response = client.get(reverse('select_payment', args=(campaign.key, )),)
         assert response.status_code == 200
 
     def test_get_number_of_participants(self):
         """
         Check the function that returns the number of participants for an activity.
         """
-        activity = mommy.make(Campaign)
-        assert activity.get_number_of_participants() == 0
-        transact = mommy.make(Transaction, state=Transaction.STATE_PAYMENT_CONFIRMED)
-        assert activity.get_number_of_participants() == 1
+        campaign = mommy.make(Campaign)
+        assert campaign.get_number_of_participants() == 0
+
+        # When there is a completed transaction, there will be one more participant
+        transact_id = str(uuid.uuid4())
+        begin_payment(transact_id, campaign.key, Decimal(23), 'test@example.com')
+        receive_payment(transact_id, Decimal(23))
+        assert campaign.get_number_of_participants() == 1
 
     def test_pkgen(self):
         code = pkgen()

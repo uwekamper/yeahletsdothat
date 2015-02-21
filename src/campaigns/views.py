@@ -17,7 +17,7 @@ from campaigns.utils import get_campaign_or_404, get_payment_methods
 from django.conf import settings
 
 import forms
-from models import Campaign, BankAccount, Transaction
+from models import Campaign, BankAccount, Transaction, Perk
 
 from commands import begin_payment
 
@@ -137,6 +137,10 @@ def select_payment(request, key):
     available Payment methods
     """
     campaign = get_campaign_or_404(request, key)
+    perk_id = request.GET.get('perk', None)
+    perk = None
+    if perk_id != None:
+        perk = get_object_or_404(Perk, pk=int(perk_id))
 
     # TODO: is this necessary?
     methods = get_payment_methods()
@@ -158,12 +162,12 @@ def select_payment(request, key):
             return method.pay(campaign, transaction_id)
 
         else:
-            return render(request, 'campaigns/select_payment.html',
-                    {'campaign': campaign, 'methods': methods, 'form': form})
+            return render(request, 'campaigns/select_pament.html',
+                    {'campaign': campaign, 'selected_perk': perk, 'methods': methods, 'form': form})
 
     else:
         return render(request, 'campaigns/select_payment.html',
-                {'campaign': campaign, 'methods': methods})
+                {'campaign': campaign, 'selected_perk': perk, 'methods': methods})
 
 def transaction(request, pk):
     transaction = get_object_or_404(Transaction, pk=pk)

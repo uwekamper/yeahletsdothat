@@ -11,11 +11,16 @@
         {% csrf_token %}
         <div class="row">
             <div class="col-xs-12">
-                <h2>Your pledge amount</h2>
 
-                <p>You are about to pledge the amount of
-                    <strong>{{ campaign.pledge_value }} {{ campaign.get_currency_display }}</strong>
-                    for <strong>{{ campaign.name }}</strong>. </p>
+                <h2>Selected Perk</h2>
+
+                {% if selected_perk %}
+                  <p id="perk-title">{{ selected_perk.title }}</p>
+                {% else %}
+                  <p>You did not select a perk.</p>
+                {% endif %}
+
+                <h2>Your Pledge Amount</h2>
 
                 {% if form.errors %}
                 <div class="alert alert-danger">
@@ -33,10 +38,10 @@
                             <div class="col-md-4">
                                 <div class="input-group">
                                     <input id="id_amount" name="amount" class="form-control"
-                                           placeholder="example@example.com" value="{{ campaign.pledge_value }}" type="number">
+                                           placeholder="0" value="{{ campaign.pledge_value }}" type="float">
                                     <span class="input-group-addon">{{ campaign.get_currency_display }}</span>
                                 </div>
-                                <p class="help-block">You can pledge a higher amount if you wish to do so.</p>
+                                <span class="help-block">You can pledge a higher amount if you wish to do so.</span>
                             </div>
                             <div class="col-md-4">
                             </div>
@@ -82,9 +87,8 @@
                                  <h3>{{ method.display_name }}</h3>
                             <div class="radio">
                                 <input type="radio" name="payment_method" id="id_radio_{{ forloop.counter }}" value="{{ method.name }}" checked="checked">
-                                Pay with {{ method.display_name }} in
-                                {% for currency in method.currencies %}
-                                {% endfor %}
+                                Pay via {{ method.display_name }}<br />
+                                <small>Fees apply: EUR {{ method.fee_per_transaction }} + {{ method.fee_percent }} %</small>
                             </div><!-- /.radio -->
                             </label>
                         </div>

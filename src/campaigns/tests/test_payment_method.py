@@ -1,8 +1,23 @@
+# -*- coding: utf-8 -*-
+
 import pytest
+from decimal import Decimal
 from campaigns.payment_method import BasePaymentMethod, PaymentMethodDoesNotHaveName, \
     PaymentMethodDoesNotHaveCurrencies, method_registry
 
+
 class TestPaymentMethod:
+
+    def test_payment_method_fees(self):
+        b = BasePaymentMethod({
+            'name': 'testpaymentmethod',
+            'fee_per_transaction': Decimal('0.30'),
+            'fee_percent': Decimal('2.9'),
+            'display_name': 'test_display_name',
+            'currencies': ['EUR']
+        })
+        assert b.calculate_fee(Decimal('100')) == Decimal('3.2')
+
 
     def test_payment_method_without_name(self):
         """

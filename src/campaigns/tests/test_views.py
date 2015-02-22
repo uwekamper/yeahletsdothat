@@ -31,10 +31,11 @@ def test_select_payment(client, campaign):
     perk = campaign.perks.last()
     resp = client.get(reverse('select_payment', args=[campaign.key]) + '?perk={}'.format(perk.id))
     assert resp.status_code == 200
+
+    # title must be there
     dom = html.fromstring(resp.content)
     perk_title = dom.cssselect('#perk-title')[0].text
     assert perk_title == perk.title
-
 
 
 # class BankAccountTest(TestCase):

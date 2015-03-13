@@ -38,7 +38,7 @@
                             <div class="col-md-4">
                                 <div class="input-group">
                                     <input id="id_amount" name="amount" class="form-control"
-                                           placeholder="0" value="{{ campaign.pledge_value }}" type="float">
+                                           placeholder="0" value="{{ pledge_value|floatformat:2 }}" type="float">
                                     <span class="input-group-addon">{{ campaign.get_currency_display }}</span>
                                 </div>
                                 <span class="help-block">You can pledge a higher amount if you wish to do so.</span>

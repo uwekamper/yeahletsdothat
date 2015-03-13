@@ -9,7 +9,8 @@ from campaigns.utils import get_payment_methods, get_payment_method_names
 import models
 
 class SelectPaymentForm(forms.Form):
-    def __init__(self, campaign, *args, **kwargs):
+    def __init__(self, campaign, perk, *args, **kwargs):
+        self.min_amount = perk.amount
         super(SelectPaymentForm, self).__init__(*args, **kwargs)
         self._campaign = campaign
 
@@ -18,18 +19,18 @@ class SelectPaymentForm(forms.Form):
     email1 = forms.EmailField()
     email2 = forms.EmailField()
 
-    # def clean(self):
-    #     cleaned_data = super(SelectPaymentForm, self).clean()
-    #     min_amount = self._campaign.pledge_value
-    #
-    #     # the amount may not be
-    #     if cleaned_data.get('amount') < min_amount:
-    #         raise forms.ValidationError('Amount must be at least {}.'.format(min_amount))
-    #
-    #     # make sure the e-mail addresses are correct
-    #     if cleaned_data.get('email1') != cleaned_data.get('email2'):
-    #         raise forms.ValidationError(_('Both e-mail addresses must be equal.'))
-    #     return cleaned_data
+    def clean(self):
+        cleaned_data = super(SelectPaymentForm, self).clean()
+
+        # the amount may not be less than the perk's amount
+        if cleaned_data.get('amount') < self.min_amount:
+            error_msg = 'Amount must be at least {:.2} {}.'.format(self.min_amount, self._campaign.get_currency_display())
+            raise forms.ValidationError(error_msg)
+
+        # make sure the e-mail addresses are correct
+        if cleaned_data.get('email1') != cleaned_data.get('email2'):
+            raise forms.ValidationError(_('Both e-mail addresses must be equal.'))
+        return cleaned_data
 
 class ActivityForm(forms.ModelForm):
     v = forms.CharField(required=False)

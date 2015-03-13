@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from decimal import Decimal
 from campaigns.models import Campaign, Transaction, BeginPaymentEvent, \
-    ReceivePaymentEvent, AbortPaymentEvent
+    ReceivePaymentEvent, AbortPaymentEvent, CampaignState
 
 
 class HandlerNotFoundException(Exception):
@@ -31,7 +31,8 @@ class Projector(object):
         try:
             handler_func = self.registry[event_type]
         except KeyError, e:
-            raise HandlerNotFoundException()
+            # raise HandlerNotFoundException()
+            return
 
         handler_func(event)
 
@@ -75,3 +76,21 @@ class TransactionProjector(Projector):
         trans._super_save()
 
 register_projector(TransactionProjector)
+
+class CampaignStateProjector(Projector):
+    """
+    Project the events to create TransactionState read-models.
+    """
+    def __init__(self, *args, **kwargs):
+        super(CampaignStateProjector, self).__init__()
+        self.register(ReceivePaymentEvent, self.handle_received_payment)
+
+    def handle_received_payment(self, event):
+        amount = event.data['amount']
+        transaction_id = event.data['transaction_id']
+        transaction = Transaction.objects.get(transaction_id=transaction_id)
+        state = transaction.campaign.state
+        state.total_received += Decimal(amount)
+        state._super_save()
+
+register_projector(CampaignStateProjector)

@@ -45,7 +45,7 @@
                             <h3>{{ perk.title }}</h3>
                             <p>{{ perk.text|markdown }}</p>
                             <p class="perk_amount">{{ perk.amount|floatformat:2 }} {{ campaign.get_currency_display }}</p>
-                          <a href="#" class="btn btn-success">Select this perk</a>
+                          <a href="{% url 'select_payment' campaign.key %}?perk={{ perk.id }}" class="btn btn-success">Select this perk</a>
                         </div>
                     {% endfor %}
 

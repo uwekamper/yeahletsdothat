@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 import uuid
+from decimal import Decimal
 
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
@@ -139,14 +140,22 @@ def select_payment(request, key):
     campaign = get_campaign_or_404(request, key)
     perk_id = request.GET.get('perk', None)
     perk = None
+    pledge_value = Decimal('0.0')
     if perk_id != None:
         perk = get_object_or_404(Perk, pk=int(perk_id))
+        pledge_value = perk.amount
 
-    # TODO: is this necessary?
     methods = get_payment_methods()
 
+    context = {
+        'campaign': campaign,
+        'selected_perk': perk,
+        'methods': methods,
+        'pledge_value': pledge_value,
+    }
+
     if request.method == 'POST':
-        form = forms.SelectPaymentForm(campaign, request.POST)
+        form = forms.SelectPaymentForm(campaign, perk, request.POST)
         if form.is_valid():
             amount = form.cleaned_data.get('amount')
             method = get_method_by_name(form.cleaned_data.get('payment_method'))
@@ -162,12 +171,10 @@ def select_payment(request, key):
             return method.pay(campaign, transaction_id)
 
         else:
-            return render(request, 'campaigns/select_pament.html',
-                    {'campaign': campaign, 'selected_perk': perk, 'methods': methods, 'form': form})
+            return render(request, 'campaigns/select_payment.html', dict(context, form=form))
 
     else:
-        return render(request, 'campaigns/select_payment.html',
-                {'campaign': campaign, 'selected_perk': perk, 'methods': methods})
+        return render(request, 'campaigns/select_payment.html', context)
 
 def transaction(request, pk):
     transaction = get_object_or_404(Transaction, pk=pk)

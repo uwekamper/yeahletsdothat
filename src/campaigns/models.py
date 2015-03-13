@@ -71,7 +71,18 @@ class Campaign(models.Model):
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
     target_account = models.ForeignKey('BankAccount', null=True, blank=True)
-    completed = models.BooleanField(default=False)
+
+    @property
+    def state(self):
+        try:
+            return self.state_of
+        except CampaignState.DoesNotExist:
+            CampaignState(campaign=self)._super_save()
+            return self.state_of
+
+    @property
+    def completed(self):
+        return self.state.completed
 
     @property
     def days_left(self):
@@ -136,6 +147,19 @@ class ReadModel(models.Model):
         super(ReadModel, self).delete(*args, **kwargs)
 
 
+class CampaignState(ReadModel):
+    """
+    ReadModel to represent the current state of a Campaign instance.
+    """
+    campaign = models.OneToOneField('Campaign', related_name='state_of')
+    total_received = models.DecimalField(decimal_places=10, max_digits=20, default=0)
+    total_pledged = models.DecimalField(decimal_places=10, max_digits=20, default=0)
+
+    @property
+    def completed(self):
+        return self.total_received >= self.campaign.goal
+
+
 class Transaction(ReadModel):
     STATE_OPEN = 0
     STATE_COMPLETE = 200
@@ -178,6 +202,7 @@ class BaseEvent(PolymorphicModel):
         if self.schema != None:
             field = self._meta.get_field('data')
             field.reload_schema(self.schema)
+
 
 class BeginPaymentEvent(BaseEvent):
     pass

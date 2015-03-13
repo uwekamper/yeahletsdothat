@@ -17,8 +17,6 @@ class TestTransactionCommands(object):
     def transaction_id(self):
         return 'e3ac5128-a8d3-11e4-9f5f-002332c62ffc'
 
-
-
     def test_handle_begin_payment_event(self, campaign, transaction_id):
         ev = begin_payment(transaction_id, campaign.key, 23.0, 'test@example.com')[0]
         t = Transaction.objects.get(transaction_id=transaction_id)
@@ -47,3 +45,13 @@ class TestTransactionCommands(object):
         abort_payment(transaction_id)
         t = Transaction.objects.get(transaction_id=transaction_id)
         assert t.state == Transaction.STATE_ABORTED
+
+    def test_campaign_state_completion(self, campaign, transaction_id):
+        """
+        Test if the campaign state goes to 'complete' if there are enough
+        completed transactions.
+        """
+        assert campaign.state.completed == False
+        begin_payment(transaction_id, campaign.key, 20.0, 'test@example.com')
+        receive_payment(transaction_id, 20.0)
+        assert Campaign.objects.get(id=campaign.id).state.completed == True

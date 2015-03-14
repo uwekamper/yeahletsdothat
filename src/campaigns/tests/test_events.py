@@ -54,4 +54,6 @@ class TestTransactionCommands(object):
         assert campaign.state.completed == False
         begin_payment(transaction_id, campaign.key, 20.0, 'test@example.com')
         receive_payment(transaction_id, 20.0)
-        assert Campaign.objects.get(id=campaign.id).state.completed == True
+        changed_campaign = Campaign.objects.get(id=campaign.id)
+        assert changed_campaign.state.total_received == Decimal('20.0')
+        assert changed_campaign.state.completed == True

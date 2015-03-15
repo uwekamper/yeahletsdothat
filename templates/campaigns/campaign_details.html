@@ -1,4 +1,5 @@
 {% extends "base_title.html" %}
+{% load i18n %}
 {% load campaigns_extras %}
 
 {% block title %}{{ activity.name }}{% endblock %}
@@ -17,8 +18,8 @@
             </div><!-- /.col -->
             <div class="col-xs-4 activity-right">
                 <div class="activity-right-body">
-                    <div class="activity-value">{{ campaign.get_number_of_participants }}</div>
-                    <div class="activity-unit">participant(s)</div>
+                    <div class="activity-value">{{ campaign.state.total_supporters }}</div>
+                    <div class="activity-unit">{% trans "supporter(s)" %}</div>
                     <div class="activity-value">{% if campaign.state.total_received %}{{ campaign.state.total_received|floatformat:2 }}{% else %}0{% endif %} {{ campaign.get_currency_display }}</div>
                     <div class="activity-unit">pledged of {{ campaign.goal|floatformat:2 }}
                     {{ campaign.get_currency_display }} goal</div>
@@ -43,9 +44,20 @@
                     {% for perk in campaign.perks.all %}
                         <div class="well">
                             <h3>{{ perk.title }}</h3>
+                            <p>
+
+                              {% if perk.state.total_received > 0 %}
+                                {{ perk.state.total_received }} supporter(s)
+                              {% endif %}
+
+                              {% if perk.is_limited %}
+                                <mark>Limited ({{ perk.state.perks_left }} of {{ perk.available }} left)</mark>
+                              {% endif %}
+
+                            </p>
                             <p>{{ perk.text|markdown }}</p>
                             <p class="perk_amount">{{ perk.amount|floatformat:2 }} {{ campaign.get_currency_display }}</p>
-                          <a href="{% url 'select_payment' campaign.key %}?perk={{ perk.id }}" class="btn btn-success">Select this perk</a>
+                          <a href="{% url 'select_payment' campaign.key %}?perk={{ perk.id }}" class="btn btn-success {% if campaign.state.completed %}disabled{% endif %}">Select this perk</a>
                         </div>
                     {% endfor %}
 

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from decimal import Decimal
 from campaigns.models import Campaign, Transaction, BeginPaymentEvent, \
-    ReceivePaymentEvent, AbortPaymentEvent, CampaignState
+    ReceivePaymentEvent, AbortPaymentEvent, CampaignState, Perk
 
 
 class HandlerNotFoundException(Exception):
@@ -61,6 +61,12 @@ class TransactionProjector(Projector):
             started=event.created,
             email=event.data['email'],
         )
+        try:
+            perk = Perk.objects.get(pk=event.data['perk_id'])
+            trans.perk = perk
+        except KeyError:
+            pass
+
         trans._super_save()
 
     def handle_received_payment(self, event):
@@ -83,7 +89,16 @@ class CampaignStateProjector(Projector):
     """
     def __init__(self, *args, **kwargs):
         super(CampaignStateProjector, self).__init__()
+        self.register(BeginPaymentEvent, self.handle_begin_payment)
         self.register(ReceivePaymentEvent, self.handle_received_payment)
+
+    def handle_begin_payment(self, event):
+        amount = event.data['amount']
+        transaction_id = event.data['transaction_id']
+        state = Transaction.objects.get(transaction_id=transaction_id).campaign.state
+        state.total_pledged += Decimal(amount)
+        state.total_pledgers += 1
+        state._super_save()
 
     def handle_received_payment(self, event):
         amount = event.data['amount']
@@ -91,6 +106,32 @@ class CampaignStateProjector(Projector):
         transaction = Transaction.objects.get(transaction_id=transaction_id)
         state = transaction.campaign.state
         state.total_received += Decimal(amount)
+        state.total_supporters += 1
         state._super_save()
 
 register_projector(CampaignStateProjector)
+
+class PerkStateProjector(Projector):
+    def __init__(self, *args, **kwargs):
+        super(PerkStateProjector, self).__init__()
+        self.register(BeginPaymentEvent, self.handle_begin_payment)
+        self.register(ReceivePaymentEvent, self.handle_received_payment)
+
+    def handle_begin_payment(self, event):
+        perk_id = event.data.get('perk_id', None)
+        if perk_id != None:
+            perk = Perk.objects.get(pk=perk_id)
+            perk.state.total_pledged += 1
+            perk.state._super_save()
+
+    def handle_received_payment(self, event):
+        transaction_id = event.data['transaction_id']
+        transaction = Transaction.objects.get(transaction_id=transaction_id)
+        perk = transaction.perk
+
+        if perk != None:
+            perk.state.total_received += 1
+            perk.state._super_save()
+
+
+register_projector(PerkStateProjector)

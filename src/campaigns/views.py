@@ -163,7 +163,10 @@ def select_payment(request, key):
 
             # Create a new payment transaction with a random ID.
             transaction_id = str(uuid.uuid4())
-            begin_payment(transaction_id, campaign.key, amount, email)
+            perk_id = None
+            if perk != None:
+                perk_id = perk.id
+            begin_payment(transaction_id, campaign.key, amount, email, perk_id)
 
             # Delegate the payment transaction to the pay() method of the selected
             # payment method. The method will then redirect the user to the page it needs

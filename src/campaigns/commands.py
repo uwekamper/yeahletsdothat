@@ -32,11 +32,12 @@ def command(command_func):
     return wrapper
 
 @command
-def begin_payment(id, campaign_key, amount, email):
+def begin_payment(id, campaign_key, amount, email, perk_id):
     """
     Begin a payment procedure.
     """
-    data = dict(transaction_id=id, campaign_key=campaign_key, amount=amount, email=email)
+    data = dict(transaction_id=id, campaign_key=campaign_key, amount=amount,
+        email=email, perk_id=perk_id)
     yield BeginPaymentEvent(data=data)
 
 @command

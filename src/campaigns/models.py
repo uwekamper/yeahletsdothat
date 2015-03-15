@@ -67,7 +67,7 @@ class Campaign(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField(blank=True)
     currency = models.IntegerField(choices=CURRENCIES)
-    goal = models.DecimalField(max_digits=10, decimal_places=8)
+    goal = models.DecimalField(max_digits=20, decimal_places=10)
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
     target_account = models.ForeignKey('BankAccount', null=True, blank=True)
@@ -93,10 +93,6 @@ class Campaign(models.Model):
         delta = self.end_date - now
         return delta.days
 
-    def get_number_of_participants(self):
-        count = Transaction.objects.filter(campaign=self, state=Transaction.STATE_COMPLETE).count()
-        return count
-
     def get_total_pledge_amount(self):
         return self.transaction_set.filter(campaign=self,
             state=Transaction.STATE_COMPLETE).aggregate(Sum('amount'))['amount__sum']
@@ -115,6 +111,19 @@ class Perk(models.Model):
     text = models.TextField(blank=True, null=True)
     amount = models.DecimalField(max_digits=20, decimal_places=8)
     available = models.IntegerField(blank=True, null=True)
+
+    @property
+    def state(self):
+        try:
+            return self.state_of
+        except PerkState.DoesNotExist:
+            PerkState(perk=self)._super_save()
+            return self.state_of
+
+    @property
+    def is_limited(self):
+        return self.available >= 1
+
 
     def __str__(self):
         return '{} ({})'.format(self.title, self.amount)
@@ -154,11 +163,23 @@ class CampaignState(ReadModel):
     campaign = models.OneToOneField('Campaign', related_name='state_of')
     total_received = models.DecimalField(decimal_places=10, max_digits=20, default=0)
     total_pledged = models.DecimalField(decimal_places=10, max_digits=20, default=0)
+    total_supporters = models.IntegerField(default=0)
+    total_pledgers = models.IntegerField(default=0)
+
 
     @property
     def completed(self):
         return self.total_received >= self.campaign.goal
 
+
+class PerkState(ReadModel):
+    perk = models.OneToOneField('Perk', related_name='state_of')
+    total_pledged = models.IntegerField(default=0)
+    total_received = models.IntegerField(default=0)
+
+    @property
+    def perks_left(self):
+        return self.perk.available - self.total_received
 
 class Transaction(ReadModel):
     STATE_OPEN = 0
@@ -180,8 +201,10 @@ class Transaction(ReadModel):
     # is_pending = models.BooleanField(default=False)
     started = models.DateTimeField()
     email = models.EmailField(null=True, blank=True)
+    perk = models.ForeignKey('Perk', null=True, blank=True)
 
 
+@python_2_unicode_compatible
 class BaseEvent(PolymorphicModel):
     """
     Events are simplistic way of keeping a log of all the changes
@@ -203,6 +226,8 @@ class BaseEvent(PolymorphicModel):
             field = self._meta.get_field('data')
             field.reload_schema(self.schema)
 
+    def __str__(self):
+        return '{} - {}: {}'.format(self.__class__.__name__, self.created, self.data)
 
 class BeginPaymentEvent(BaseEvent):
     pass

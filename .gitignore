@@ -1,6 +1,7 @@
 .Python
 *.sqlite3
 .idea
+.DS_Store
 bin
 include
 share

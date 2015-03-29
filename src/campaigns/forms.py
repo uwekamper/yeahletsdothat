@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-
+from decimal import Decimal
 from django import forms
 from django.utils.translation import gettext_lazy as _
 from campaigns.utils import get_payment_methods, get_payment_method_names
@@ -10,7 +10,7 @@ import models
 
 class SelectPaymentForm(forms.Form):
     def __init__(self, campaign, perk, *args, **kwargs):
-        self.min_amount = perk.amount
+        self.min_amount = perk.amount if perk else Decimal(1)
         super(SelectPaymentForm, self).__init__(*args, **kwargs)
         self._campaign = campaign
 

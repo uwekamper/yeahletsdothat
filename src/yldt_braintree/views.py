@@ -19,8 +19,7 @@ def do_transaction(payment_method, transaction, form):
     Subroutine that send the transaction data to the Braintree servers.
     """
     # configure the environment
-    # TODO: Make the environment configurable (Sandbox/Production)
-    braintree.Configuration.configure(braintree.Environment.Sandbox,
+    braintree.Configuration.configure(payment_method.braintree_environment,
             merchant_id=payment_method.merchant_id,
             public_key=payment_method.public_key,
             private_key=payment_method.private_key)
@@ -53,6 +52,10 @@ def payment_form(request, transaction_id, payment_method_name):
     payment_method = get_method_by_name(payment_method_name)
     client_side_encryption_key = payment_method.cse_key
 
+    amount = transact.amount
+    fee = payment_method.calculate_fee(amount)
+    total = amount + fee
+
     # process the payment data and show the results.
     if request.method == "POST":
         form = BrainTreeForm(request.POST)
@@ -70,6 +73,10 @@ def payment_form(request, transaction_id, payment_method_name):
             else:
                 context = {
                     'braintree_error': result.message,
+                    'amount': amount,
+                    'fee': fee,
+                    'total': total,
+                    'is_sandbox': payment_method.is_sandbox(),
                     'transaction': transact,
                     'client_side_encryption_key': client_side_encryption_key,
                     'form': form
@@ -89,8 +96,13 @@ def payment_form(request, transaction_id, payment_method_name):
     else:
         context = {
             'transaction': transact,
+            'amount': amount,
+            'fee': fee,
+            'total': total,
+            'is_sandbox': payment_method.is_sandbox(),
             'client_side_encryption_key': client_side_encryption_key,
             'form': BrainTreeForm()
+
         }
         return render(request, 'yldt_braintree/payment_form.html', context)
 

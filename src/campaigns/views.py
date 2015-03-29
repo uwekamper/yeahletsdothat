@@ -139,8 +139,8 @@ def select_payment(request, key):
     """
     campaign = get_campaign_or_404(request, key)
     perk_id = request.GET.get('perk', None)
-    perk = None
     pledge_value = Decimal('0.0')
+    perk = None
     if perk_id != None:
         perk = get_object_or_404(Perk, pk=int(perk_id))
         pledge_value = perk.amount

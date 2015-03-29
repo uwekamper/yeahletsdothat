@@ -1,11 +1,11 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from django.core.urlresolvers import reverse
+import braintree
 from django.http import HttpResponseRedirect
-from django.utils.translation import gettext_lazy as _
 
 from campaigns.payment_method import BasePaymentMethod
+
 
 class BrainTree(BasePaymentMethod):
 
@@ -18,6 +18,12 @@ class BrainTree(BasePaymentMethod):
         self.public_key = options['public_key']
         self.private_key = options['private_key']
         self.cse_key = options['cse_key']
+        braintree_env = options.get('environment', 'sandbox')
+        if braintree_env == 'production':
+            self.braintree_environment = braintree.Environment.Production
+        else:
+            self.braintree_environment = braintree.Environment.Sandbox
+
 
     def pay(self, campaign, transaction_id):
         url = '/pay/' + self.name + '/' + str(transaction_id) + '/'
@@ -25,3 +31,6 @@ class BrainTree(BasePaymentMethod):
 
     def refund(self, campaign, transaction):
         pass
+
+    def is_sandbox(self):
+        return self.braintree_environment == braintree.Environment.Sandbox

@@ -7,7 +7,9 @@ from campaigns.payment_method import BasePaymentMethod, PaymentMethodDoesNotHave
 
 
 class TestPaymentMethod:
-
+    """
+    Base class for all the payment method.
+    """
     def test_payment_method_fees(self):
         b = BasePaymentMethod({
             'name': 'testpaymentmethod',

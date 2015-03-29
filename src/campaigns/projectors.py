@@ -66,6 +66,8 @@ class TransactionProjector(Projector):
             trans.perk = perk
         except KeyError:
             pass
+        except Perk.DoesNotExist:
+            pass
 
         trans._super_save()
 

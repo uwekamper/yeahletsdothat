@@ -8,6 +8,7 @@ This module contains the base class for every payment method plugin.
 from __future__ import unicode_literals
 from django.conf import settings
 from decimal import Decimal
+import commands
 
 # TODO: Remove the registry, probably don't need it anyway
 from campaigns.models import Transaction
@@ -78,7 +79,6 @@ class BasePaymentMethod(object):
         """
         This method shall return the payment fee that is added on top.
         """
-        # amount = Transaction.objects.get(transaction_id=transaction_id).amount
         return (amount / Decimal(100)) * self.fee_percent + self.fee_per_transaction
 
     def pay(self, campaign_key, transaction_id):

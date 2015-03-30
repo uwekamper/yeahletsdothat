@@ -48,11 +48,9 @@ class NewCampaignForm(forms.ModelForm):
 
     def __init__(self, user, *args, **kwargs):
         super(NewCampaignForm, self).__init__(*args, **kwargs)
-        self.fields['target_account'].queryset = models.BankAccount.objects.filter(user=user)
 
     class Meta:
         fields = ('title', 'description', 'goal', 'currency',
-            'target_account',
             'start_date', 'end_date', 'is_private')
         model = models.Campaign
 

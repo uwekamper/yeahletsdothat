@@ -62,8 +62,3 @@ class TransactionForm(forms.ModelForm):
         fields = ('amount', 'email')
         model = models.Transaction
 
-
-class BankAccountForm(forms.ModelForm):
-    class Meta:
-        fields = ('description', 'btc_address')
-        model = models.BankAccount

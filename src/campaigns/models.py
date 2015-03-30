@@ -17,22 +17,21 @@ from django_hstore.query import HStoreQuerySet
 from polymorphic import PolymorphicModel, PolymorphicManager
 
 
-@python_2_unicode_compatible
-class BankAccount(models.Model):
-    user = models.ForeignKey(User)
-    description = models.CharField(max_length=256, blank=True, null=True)
-    btc_address = models.CharField(max_length=1024, blank=True, null=True)
-
-    def __str__(self):
-        if self.description and self.btc_address:
-            return '{} ({})'.format(self.description, self.btc_address)
-        elif not self.description and self.btc_address:
-            return self.btc_address
-        elif self.description and not self.btc_address:
-            return self.description
-        else:
-            return _('Unnamed account')
-
+# @python_2_unicode_compatible
+# class BankAccount(models.Model):
+#     user = models.ForeignKey(User)
+#     description = models.CharField(max_length=256, blank=True, null=True)
+#     btc_address = models.CharField(max_length=1024, blank=True, null=True)
+#
+#     def __str__(self):
+#         if self.description and self.btc_address:
+#             return '{} ({})'.format(self.description, self.btc_address)
+#         elif not self.description and self.btc_address:
+#             return self.btc_address
+#         elif self.description and not self.btc_address:
+#             return self.description
+#         else:
+#             return _('Unnamed account')
 
 def pkgen():
     """
@@ -70,7 +69,6 @@ class Campaign(models.Model):
     goal = models.DecimalField(max_digits=20, decimal_places=10)
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
-    target_account = models.ForeignKey('BankAccount', null=True, blank=True)
 
     @property
     def state(self):

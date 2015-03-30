@@ -12,7 +12,6 @@ class CampaignSerializer(serializers.ModelSerializer):
     """
     # TODO: Write docs
     """
-    target_account = serializers.PrimaryKeyRelatedField(default=1, required=False)
     class Meta:
         model = Campaign
         exclude = ['id', ]
@@ -25,7 +24,6 @@ class CampaignKeyRelatedField(serializers.PrimaryKeyRelatedField):
     def from_native(self, data):
         if self.queryset is None:
             raise Exception('Writable related fields must include a `queryset` argument')
-
         try:
             return self.queryset.get(key=data)
         except ObjectDoesNotExist:

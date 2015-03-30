@@ -8,21 +8,8 @@
 {% block main-content %}
 <div class="row">
     <div class="col-xs-12">
-        <h2>Your Bank Accounts</h2>
-        {% if accounts %}
-             <ul id="account-list">
-            {% for account in accounts %}
-                <li>{{ account }}</li>
-            {% endfor %}
-            </ul>
-        {% else %}
-            <p>You did not add any bank accounts, yet.</p>
-        {% endif %}
 
-        <a class="btn btn-primary"
-           href="{% url 'manage_bankaccounts' %}">Manage your accounts</a>
-
-        <h2>Activities That You Started</h2>
+        <h2>Your Campaigns</h2>
 
         {% if campaigns %}
             <ul id="account-list">
@@ -37,7 +24,7 @@
         {% endif %}
 
         <a class="btn btn-primary"
-           href="{% url 'new_activity' %}">Create a new activity</a>
+           href="{% url 'new_activity' %}">Create new campaign</a>
 
 
     </div>

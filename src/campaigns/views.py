@@ -18,7 +18,7 @@ from campaigns.utils import get_campaign_or_404, get_payment_methods
 from django.conf import settings
 
 import forms
-from models import Campaign, BankAccount, Transaction, Perk
+from models import Campaign, Transaction, Perk
 
 from commands import begin_payment
 
@@ -31,17 +31,10 @@ def get_rpc_address():
 @login_required
 def user_profile(request):
     campaigns = Campaign.objects.filter(user=request.user)
-    accounts = BankAccount.objects.filter(user=request.user)
-    return render(request, 'campaigns/user_profile.html',
-        {'accounts': accounts, 'campaigns': campaigns})
+    return render(request, 'campaigns/user_profile.html', {'campaigns': campaigns})
 
 def current_activities(request):
     pass
-
-@login_required
-def manage_bankaccounts(request):
-    accounts = BankAccount.objects.filter(user=request.user)
-    return render(request, 'campaigns/manage_bankaccounts.html', {'accounts': accounts})
 
 @login_required
 def add_bankaccount(request):

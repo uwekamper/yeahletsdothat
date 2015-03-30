@@ -84,6 +84,3 @@ class TestTransactionCommands(object):
         perk = changed_campaign.perks.all()[0]
         assert perk.state.total_pledged == 1
         assert perk.state.total_received == 1
-
-
-

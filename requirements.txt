@@ -1,4 +1,5 @@
 Django==1.6.2
+django-polymorphic==0.6.1
 pytest==2.6.4
 Pygments==1.6
 South==0.8.4

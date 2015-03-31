@@ -17,3 +17,6 @@ Your bitcoind/bitcoin-qt configuration file should look like this.
     server=1
     rpcuser=bitcoinrpc
     rpcpassword=*yourpassword*
+=======
+Yeah Let's Do That is a Bitcoin-based crowd-funding tool (early Alpha stage)
+

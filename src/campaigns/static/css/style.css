@@ -1,0 +1,224 @@
+body {
+    margin-top: 60px;
+    background: #E0EFF1;
+    margin-bottom: 50px;
+}
+
+.jumbotron {
+    margin-top: 50px;
+}
+
+.activity-title {
+    text-align: center;
+
+}
+
+.activity-title h1 {
+    font-size: 48px;
+}
+
+.activity-title div.by {
+
+}
+
+.main-content {
+    background-color: #ffffff;
+    min-height: 50px;
+}
+
+.main-content p, .main-content h1, .main-content h2 {
+    margin-left: 10px;
+}
+
+.payment-method {
+
+}
+
+.payment-method:hover {
+    background-color: #ccc;
+}
+
+.activity-center {
+   margin: 0 auto;
+   width: 256px;
+}
+
+p.activity-name {
+    font-size: 24px;
+    font-style: italic;
+}
+
+.activity-right {
+    border-left: 1px solid #e0e0e0;
+    -webkit-border-top-right-radius: 10px;
+    -webkit-border-bottom-right-radius: 10px;
+    -moz-border-radius-topright: 10px;
+    -moz-border-radius-bottomright: 10px;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    #background-color: #e8e8e8;
+}
+
+.activity-right-body {
+
+    margin-left: 30px;
+    margin-right: 30px;
+    margin-bottom: 100px;
+}
+
+.activity-value {
+    padding: 0;
+    margin-left: 10px;
+    margin-bottom: 0px;
+    margin-top: 10px;
+    font-size: 36px;
+    font-weight: bold;
+}
+.activity-unit {
+    padding: 0;
+    margin-left: 10px;
+    margin-bottom: 10px;
+    margin-top:0px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.pledge-btn {
+    margin-top: 50px;
+    width: 100%;
+    font-size: 36px;
+    font-weight: bold;
+}
+
+.btn-primary {
+    background-color: #680148;
+    border-color: #000000 ;
+
+}
+
+
+.btn-primary:hover {
+    background-color: #680148;
+    border-color: #E0EFF1 ;
+}
+
+.date {
+    width: 250px;
+}
+
+.jumbotron {
+    background-color: #ffffff;
+}
+
+.circled {
+    display: inline-block;
+    float: left;
+    margin: 0px 10px 0px 0px;
+    height: 50px;
+    width: 50px;
+    border: 3px solid hsl(0, 0%, 20%);;
+    -webkit-border-radius: 40px;
+    -moz-border-radius: 40px;
+    border-radius: 40px;
+    padding: 2px 0px 0px 0px;
+}
+
+.circled-text {
+    /*background-color: yellow;*/
+    /*font-family: sans-serif;*/
+    font-weight: bold;
+    font-size: 30px;
+    text-align: center;
+    width: 44px;
+    height: 36px;
+    line-height: 40px;
+}
+
+#id_description {
+    height: 300px;
+}
+.numba {
+
+}
+
+.process li a span.glyphicon {
+    background-color: ccc;
+    margin-top: 5px;
+}
+
+.process {
+    padding-left: 0px;
+	list-style: none;
+	overflow: hidden;
+	font: 18px sans-serif;
+}
+.process li {
+    float: left;
+}
+.process li a {
+    margin-left: 0px;
+    line-height: 50px;
+	color: hsl(0, 0%, 20%);
+	text-decoration: none;
+	padding: 10px 0px 10px 45px;
+	background: #ccc;
+	position: relative;
+	display: block;
+	float: left;
+}
+
+.process li a:hover {
+    text-decoration: underline;
+}
+
+.process li.done a {
+    background-color: lightgreen;
+}
+
+.process li.active a {
+    text-decoration: underline;
+    background-color: lightblue;
+}
+
+.process li a:after {
+	content: " ";
+	display: block;
+	width: 0;
+	height: 0;
+	border-top: 50px solid transparent;           /* Go big on the size, and let overflow hide */
+	border-bottom: 50px solid transparent;
+	border-left: 30px solid #ccc;
+	position: absolute;
+	top: 50%;
+	margin-top: -50px;
+	left: 100%;
+	z-index: 2;
+}
+
+.process li.done a:after {
+    border-left: 30px solid lightgreen;
+}
+
+.process li.active a:after {
+    border-left: 30px solid lightblue;
+}
+
+.process li a:before {
+	content: " ";
+	display: block;
+	width: 0;
+	height: 0;
+	border-top: 50px solid transparent;
+	border-bottom: 50px solid transparent;
+	border-left: 30px solid white;
+	position: absolute;
+	top: 50%;
+	margin-top: -50px;
+	margin-left: 1px;
+	left: 100%;
+	z-index: 1;
+}
+
+.process li:first-child a {
+	padding-left: 15px;
+}

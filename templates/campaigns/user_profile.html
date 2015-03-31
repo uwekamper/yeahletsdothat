@@ -1,0 +1,32 @@
+{% extends "base_title.html" %}
+
+{% block titlesection %}
+<h1>User Profile</h1>
+<div class="activity-creator">This is your personal profile</div>
+{% endblock titlesection %}
+
+{% block main-content %}
+<div class="row">
+    <div class="col-xs-12">
+
+        <h2>Your Campaigns</h2>
+
+        {% if campaigns %}
+            <ul id="account-list">
+            {% for campaign in campaigns %}
+                <li><a href="{% url 'campaign_details' campaign.key %}">{{ campaign.title }} (goto)</a>,
+                  <a href="{% url 'campaign_edit' campaign.key %}">Edit</a>
+                {% if campaign.is_private %}<abbr title="This campaign is private"><span class="glyphicon glyphicon-lock"></span></abbr>{% endif %}</li>
+            {% endfor %}
+            </ul>
+        {% else %}
+            <p>You did no start any activities, yet.</p>
+        {% endif %}
+
+        <a class="btn btn-primary"
+           href="{% url 'new_activity' %}">Create new campaign</a>
+
+
+    </div>
+</div>
+{% endblock main-content %}

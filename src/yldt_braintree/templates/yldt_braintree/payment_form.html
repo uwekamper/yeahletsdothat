@@ -1,0 +1,104 @@
+{% extends "base_title.html" %}
+
+{% block title %}Pay with Braintree{% endblock %}
+
+{% block titlesection %}
+    <h1>Braintree Credit Card Transaction Form</h1>
+{% endblock titlesection %}
+
+{% block main-content %}
+    <div>
+      <h2>Your information</h2>
+
+      <ul>
+        <li>Your email addresse: {{ transaction.email }}</li>
+      </ul>
+
+      We will send a payment confirmation as well as all further information to this email address
+    </div>
+    <div>
+        <h2>You are about to pay</h2>
+        <table class="table">
+          <tbody>
+          <tr>
+            <td>
+              {% if transaction.perk %}
+                Your support for {{ transaction.campaign.title }}. Your perk:
+                {{ transaction.perk.name }}.
+              {% else %}
+                Your support for {{ transaction.campaign.title }}. Thank you!
+              {% endif %}
+            </td>
+            <td class="text-right">{{ amount|floatformat:2 }}</td>
+          </tr>
+          <tr>
+            <td>Payment service fee</td>
+            <td class="text-right">{{ fee|floatformat:2 }}</td>
+          </tr>
+          <tr>
+            <td class="text-right"><strong>Total</strong></td>
+            <td class="text-right"><strong>{{ total|floatformat:2 }}</strong></td>
+          </tr>
+          </tbody>
+        </table>
+        Please enter your payment details below to complete the transaction.
+    </div>
+    <div>
+        {% if is_sandbox %}
+            <div class="alert alert-info" role="alert">
+              This payment method is running in sandbox mode for testing. It will not deduct
+              money from credit cards.
+              Please set 'environment' to 'production' in your
+              settings file to enable real-world payments. This message will
+              disappear in the production   environment.
+            </div>
+        {% endif %}
+        <form method="POST" id="braintree-payment-form">
+            {% csrf_token %}
+            {% if form.errors %}
+                {{ form.errors }}
+            {% endif %}
+            {% if braintree_error %}
+                <div class="alert alert-danger">
+                    {{ braintree_error }}
+                </div>
+            {% endif %}
+            <p>
+                <label for="id_number">Card Number</label>
+                <input id="id_number" value="" type="text" size="20" autocomplete="off"
+                       data-encrypted-name="number"/>
+                {% if is_sandbox %}<p class="help-block">Card number for sandbox testing:
+                  4111111111111111</p>{% endif %}
+            </p>
+
+            <p>
+                <label for="id_cvv">CVV</label>
+                <input id="id_cvv" value="" type="text" size="4" autocomplete="off"
+                       data-encrypted-name="cvv"/>
+                <p class="help-block">3 or 4 digit security code located on the back of the card.
+                  {% if is_sandbox %}CVV number for sandbox testing: 111{% endif %}</p>
+
+            </p>
+
+            <p>
+                <label for="id_month">Expiration date (MM/YYYY)</label>
+                <input id="id_month" value="" type="text" size="2" data-encrypted-name="month"/>
+                / <input value="" type="text" size="4" data-encrypted-name="year"/>
+
+                {% if is_sandbox %}<p class="help-block">Date for sandbox testing: 11/2015</p>{% endif %}
+            </p>
+
+            <input class="btn btn-primary" type="submit" id="submit"/>
+        </form>
+    </div>
+{% endblock main-content %}
+
+{% block templates %}{% endblock templates %}
+
+{% block extra_scripts %}
+<script type="text/javascript" src="https://js.braintreegateway.com/v1/braintree.js"></script>
+<script type="text/javascript">
+    var braintree = Braintree.create("{{ client_side_encryption_key }}");
+    braintree.onSubmitEncryptForm('braintree-payment-form');
+</script>
+{% endblock extra_scripts%}

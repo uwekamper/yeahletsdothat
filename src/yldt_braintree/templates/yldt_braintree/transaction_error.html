@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Payment succeded" %}{% endblock %}
+
+{% block container %}
+    <h1>{% trans "Transaction Error" %}</h1>
+    <div>
+        {% trans "Oops, there was an error with your transaction." %}
+    </div>
+{% endblock container %}
+
+{% block templates %}{% endblock templates %}
+
+{% block extra_scripts %}{% endblock extra_scripts %}

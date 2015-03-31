@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block container %}
+    <div class="activity-title">
+        {% block titlesection %}
+            <h1>Title</h1>
+            <div class="activity-creator">subtitle</div>
+        {% endblock titlesection %}
+    </div>
+    <div class="main-content">
+        {% block main-content %}{% endblock main-content %}
+    </div>
+{% endblock container %}

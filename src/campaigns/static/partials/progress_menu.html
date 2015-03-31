@@ -1,0 +1,33 @@
+<div class="row">
+    <div class="col-xs-12 col-md-12 col-lg-12" id="crumbs_container">
+        <ul class="process">
+
+            <li ng-class="{active: active_tab == 'basic', done: model.basic_done}">
+                <a ng-show="model.campaign.key !== null" ng-href="#/{{ model.campaign.key }}/basic">
+                    <div class="circled">
+                        <div class="circled-text">
+                            <span ng-if="model.basic_done == true" class="glyphicon glyphicon-ok"></span>
+                            <span ng-if="model.basic_done != true">1</span>
+                        </div>
+                    </div>Basic Information</a>
+            </li>
+
+            <li ng-class="{active: active_tab == 'perks', done: model.perks_done}">
+                <a ng-href="#/{{ model.campaign.key }}/perks">
+                    <div class="circled">
+                        <div class="circled-text">
+                            <span ng-if="model.perks_done == true" class="glyphicon glyphicon-ok"></span>
+                            <span ng-if="model.perks_done != true">2</span>
+                        </div>
+                    </div>Add Perks</a>
+            </li>
+            <li ng-class="{active: active_tab == 'duration', done: model.duration_done}"><a ng-href="#/{{ model.campaign.key }}/duration">
+                <div class="circled"><div class="circled-text">3</div></div>Start Date and Duration</a></li>
+
+            <li ng-class="{active: active_tab == 'finished', done: model.finished_done}"><a ng-href="#/{{ model.campaign.key }}/finished">
+                <div class="circled"><div class="circled-text">4</div></div>Finished</a></li>
+
+
+        </ul>
+    </div>
+</div><!-- /.row -->

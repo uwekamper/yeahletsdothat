@@ -1,5 +1,10 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
+from django.conf import settings
+from django.conf.urls.static import static
 
 admin.autodiscover()
 
@@ -12,17 +17,24 @@ urlpatterns = patterns('',
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
     # Uncomment the next line to enable the admin:
+    url(r'^$', 'campaigns.views.index', name='index'),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^accounts/', include('registration.backends.default.urls')),
-    url(r'^accounts/profile/$', 'activities.views.user_profile', name="user_profile"),
+    url(r'^accounts/profile/$', 'campaigns.views.user_profile', name="user_profile"),
+    url(r'^transaction/(?P<pk>\d+)/$', 'campaigns.views.transaction', name='transaction'),
+    # url(r'^api/transaction/(?P<pk>\d+)/$', 'campaigns.views.transaction_api', name='transaction_api'),
 
-    url(r'^bankaccounts/$', 'activities.views.manage_bankaccounts', name='manage_bankaccounts'),
-    url(r'^bankaccounts/add/$', 'activities.views.add_bankaccount', name='add_bankaccount'),
+    url(r'^yeah/', include('campaigns.urls')),
+) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
-    url(r'^transaction/(?P<pk>\d+)/$', 'activities.views.transaction', name='transaction'),
-    url(r'^api/transaction/(?P<pk>\d+)/$', 'activities.views.transaction_api', name='transaction_api'),
-    url(r'^activities/new/$', 'activities.views.new_activity', name='new_activity'),
-    url(r'^activities/(?P<pk>\d+)/$', 'activities.views.activity', name='activity'),
-    url(r'^activities/(?P<pk>\d+)/pledge/$', 'activities.views.pledge_activity',
-        name='pledge_activity'),
-)
+for options in settings.YLDT_PAYMENT_METHODS:
+    module = __import__(options['module_name'])
+    method = module.PaymentMethod(options)
+    print('Found payment method %s' % options['module_name'])
+    # create a url pattern for the plugin.
+    pattern = r'^pay/' + method.name.encode('string-escape') + r'/'
+    include_module = options['module_name'] + '.urls'
+    sub_url = url(pattern, include(include_module), {'payment_method_name': method.name})
+    urlpatterns.append(sub_url)
+
+print urlpatterns

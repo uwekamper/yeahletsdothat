@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Payment succeded" %}{% endblock %}
+
+{% block container %}
+    <h1>{% trans "Braintree Credit Card Transaction Succeeded" %}</h1>
+    <div>
+        {% url 'campaign_details' transaction.campaign.key as campaign_url %}
+        {% blocktrans with the_url=campaign_url %}
+            <p>Your payment went through. Thank you very much.</p>
+            <p>Go back to the
+                <a href="{{ the_url }}" title="Go to campaign details page">campaign site</a>
+            </p>
+        {% endblocktrans %}
+    </div>
+{% endblock container %}
+
+{% block templates %}{% endblock templates %}
+
+{% block extra_scripts %}{% endblock extra_scripts%}

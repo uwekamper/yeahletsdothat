@@ -1,0 +1,76 @@
+{% extends "base_title.html" %}
+{% load i18n %}
+{% load campaigns_extras %}
+
+{% block title %}{{ activity.name }}{% endblock %}
+
+{% block container %}
+    <div class="activity-title">
+        {% block titlesection %}
+            <h1>{{ campaign.title }}</h1>
+            <div class="activity-creator">by {{ campaign.user.username }}</div>
+        {% endblock titlesection %}
+    </div>
+    <div class="main-content">
+        <div class="row">
+            <div class="col-xs-8">
+                <p>{{ campaign.description|markdown }}</p>
+            </div><!-- /.col -->
+            <div class="col-xs-4 activity-right">
+                <div class="activity-right-body">
+                    <div class="activity-value">{{ campaign.state.total_supporters }}</div>
+                    <div class="activity-unit">{% trans "supporter(s)" %}</div>
+                    <div class="activity-value">{% if campaign.state.total_received %}{{ campaign.state.total_received|floatformat:2 }}{% else %}0{% endif %} {{ campaign.get_currency_display }}</div>
+                    <div class="activity-unit">pledged of {{ campaign.goal|floatformat:2 }}
+                    {{ campaign.get_currency_display }} goal</div>
+                    <div class="activity-value">{{ campaign.days_left }}</div>
+                    <div class="activity-unit">days to go</div>
+
+                    {% if not campaign.completed %}
+                    <div class="text-center">
+                        <a href="{% url 'select_payment' campaign.key %}"
+                           class="pledge-btn btn btn-primary">{% if pledge_button_text %}{{ pledge_button_text }}{% else %}Pledge now{% endif %}</a>
+                        {{ campaign.pledge_value }} {{ campaign.get_currency_display }}
+                        minimum pledge
+                    </div>
+                    {% else %}
+                        <div class="text-center">
+                        <a href="" disabled="disabled" class="pledge-btn btn btn-primary">Pledge now!</a>
+                        This activity was completed. Pledging is disabled.
+                    </div>
+                    {% endif %}
+
+                    <h2>Available Perks</h2>
+                    {% for perk in campaign.perks.all %}
+                        <div class="well">
+                            <h3>{{ perk.title }}</h3>
+                            <p>
+
+                              {% if perk.state.total_received > 0 %}
+                                {{ perk.state.total_received }} supporter(s)
+                              {% endif %}
+
+                              {% if perk.is_limited %}
+                                <mark>Limited ({{ perk.state.perks_left }} of {{ perk.available }} left)</mark>
+                              {% endif %}
+
+                            </p>
+                            <p>{{ perk.text|markdown }}</p>
+                            <p class="perk_amount">{{ perk.amount|floatformat:2 }} {{ campaign.get_currency_display }}</p>
+                          <a href="{% url 'select_payment' campaign.key %}?perk={{ perk.id }}" class="btn btn-success {% if campaign.state.completed %}disabled{% endif %}">Select this perk</a>
+                        </div>
+                    {% endfor %}
+
+                    <h2>Payable using</h2>
+                    {% for method in methods %}
+                        <p>{{ method.display_name }}</p>
+                    {% endfor %}
+                </div>
+            </div><!-- /.col -->
+        </div><!-- /.row -->
+    </div><!-- /.well -->
+{% endblock container %}
+
+{% block templates %}{% endblock templates %}
+
+{% block extra_scripts %}{% endblock extra_scripts%}

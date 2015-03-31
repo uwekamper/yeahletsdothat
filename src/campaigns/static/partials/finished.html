@@ -1,0 +1,15 @@
+<div ng-include src="'/static/partials/progress_menu.html'"></div>
+
+<div class="row">
+    <div class="col-md-12">
+
+        <h3>You just created a new campaign</h3>
+
+        <div class="well">
+            Key: {{ model.campaign.key }}<br />
+            URL: <a ng-href="/yeah/{{ model.campaign.key }}/">/yeah/{{ model.campaign.key }}/</a>
+
+        </div>
+
+    </div>
+</div>

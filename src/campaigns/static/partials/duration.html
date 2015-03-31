@@ -1,0 +1,33 @@
+<div ng-include src="'/static/partials/progress_menu.html'"></div>
+
+<form ng-submit="saveDuration()">
+<div class="row">
+    <div class="col-md-12">
+        <h3>When should it start and when does it end?</h3>
+
+        <div class="form-group">
+            <label for="id_end_date">Start Date and Time</label>
+            <p class="input-group">
+                <input type="text" class="form-control" datepicker-popup="{{format}}" ng-model="model.campaign.start_date" is-open="opened_start" min-date="minDate" max-date="'2015-06-22'" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
+                <span class="input-group-btn">
+                    <button type="button" class="btn btn-default" ng-click="open_start($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+                </span>
+            </p>
+        </div>
+
+        <div class="form-group">
+            <label for="id_end_date">End Date and Time</label>
+            <p class="input-group">
+                <input type="text" class="form-control" datepicker-popup="{{format}}" ng-model="model.campaign.end_date" is-open="opened_end" min-date="minDate" max-date="'2015-06-22'" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
+                <span class="input-group-btn">
+                    <button type="button" class="btn btn-default" ng-click="open_end($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+                </span>
+            </p>
+        </div>
+    </div><!-- /.col -->
+</div><!-- /.row -->
+
+<div class="form-group">
+    <input type="submit" class="btn btn-primary" />
+</div>
+</form>

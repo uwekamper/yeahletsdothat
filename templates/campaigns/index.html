@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}Yeah Let's Do That{% endblock %}
+
+{% block container %}
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="jumbotron">
+                <h1 style="font-family: Viga, sans-serif;">Yeah Let's Do That</h1>
+
+                <p>Massive-Multinerd Enthubelung for your Hackerspace. Treib' den Hubel aus.
+                Hubeldihubelda ... life goes on. Lorem ipsum hubeli hubilo hubelus. Das ist Alles
+                eine riesengroße Hubelei.</p>
+
+                <p>
+                    <a class="btn btn-lg btn-primary" href="{% url 'auth_login' %}"
+                       role="button"><span class="glyphicon glyphicon-heart"></span>
+                        Sign up today!</a>
+                </p>
+            </div>
+        </div>
+        <!-- /.col -->
+    </div><!-- /.row -->
+
+{% endblock container %}

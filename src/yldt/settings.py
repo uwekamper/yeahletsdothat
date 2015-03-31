@@ -86,6 +86,7 @@ ROOT_URLCONF = 'yldt.urls'
 WSGI_APPLICATION = 'yldt.wsgi.application'
 
 INSTALLED_APPS = (
+    'polymorphic',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -96,11 +97,13 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
+    'django_hstore',
     'sorl.thumbnail',
     'rest_framework',
     'south',
     'registration',
-    'activities',
+    'campaigns',
+    'yldt_braintree',
 )
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
@@ -170,12 +173,10 @@ LOGGING = {
 ACCOUNT_ACTIVATION_DAYS = 7
 LOGIN_REDIRECT_URL = '/accounts/profile/'
 
+URL_COUNTER_INTERVAL = 60
+
 try:
     from local_settings import *
 except ImportError, e:
     print 'Unable to load local_settings.py:', e
 
-BTC_HOST = 'localhost'
-BTC_PORT = 18332
-BTC_USER = 'bitcoinrpc'
-BTC_PASS = 'B726rKcomZz7rWVckYX2GsJfhRh7H6AfkDNrPHTByHRw'

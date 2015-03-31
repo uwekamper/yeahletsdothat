@@ -1,0 +1,27 @@
+<div ng-include src="'/static/partials/progress_menu.html'"></div>
+
+<form name="basicForm" ng-submit="saveCampaign()" >
+
+    <h3>Basic Information</h3>
+    <div class="form-group">
+        <label for="id_name">Title</label>
+        <input type="text" ng-model="model.campaign.title" class="form-control" id="id_name" name="name"
+               placeholder="Please enter a short, meaningful title for the campaign"
+               ng-model="campaign.title">
+        <span class="help-inline"></span>
+    </div>
+
+    <div class="form-group">
+        <label for="id_description">Campaign description
+            <small>You can use Markdown syntax</small>
+        </label>
+        <textarea type="text" class="form-control" id="id_description"
+                  name="description" rows="4" ng-model="model.campaign.description"
+                  placeholder="Enter a short description about your activity."></textarea>
+    </div>
+
+    <div class="form-group">
+        <input type="submit" class="btn btn-primary" />
+    </div>
+
+</form>

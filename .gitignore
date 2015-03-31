@@ -1,11 +1,14 @@
 .Python
 *.sqlite3
 .idea
+.DS_Store
 bin
 include
+share
 lib
 *.pyc
 yldt/development.sqlite3
 local_settings.py
 static/bower_components/*
 src/activities/static/js/_jsx/*
+tmp

@@ -1,11 +1,11 @@
 {% load thumbnail %}
 {% load i18n %}
 <!DOCTYPE html>
-<html>
+<html ng-app="root">
     <head>
-    <title>{% block title %}Bootstrap 101 Template{% endblock title %}</title>
+    <title>{% block title %}Untitled{% endblock title %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Bootstrap -->
+    <!--<link href='http://fonts.googleapis.com/css?family=Viga' rel='stylesheet' type='text/css'>-->
     <link href="{{ STATIC_URL }}bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" media="screen">
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -19,6 +19,7 @@
     {% block extra_css %}{% endblock %}
     </head>
     <body>
+    {% block extra_body %}{% endblock extra_body %}
 
     <!-- Fixed navbar -->
     <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -31,26 +32,13 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="#">Project name</a>
+                <a class="navbar-brand" style="font-family: Viga, sans-serif;" href="#">Yeah Let's Do That</a>
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     <li class="active"><a href="#">Home</a></li>
                     <li><a href="#about">About</a></li>
                     <li><a href="#contact">Contact</a></li>
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b
-                                class="caret"></b></a>
-                        <ul class="dropdown-menu">
-                            <li><a href="#">Action</a></li>
-                            <li><a href="#">Another action</a></li>
-                            <li><a href="#">Something else here</a></li>
-                            <li class="divider"></li>
-                            <li class="dropdown-header">Nav header</li>
-                            <li><a href="#">Separated link</a></li>
-                            <li><a href="#">One more separated link</a></li>
-                        </ul>
-                    </li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     {% if user.is_authenticated %}
@@ -74,21 +62,19 @@
     </div>
 
     {% block body %}
+      {% block content %}
         <div class="container">
             {% block container %}{% endblock container %}
         </div>
-
+      {% endblock content %}
     {% block scripts %}
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="{{ STATIC_URL }}bower_components/jquery/jquery.js"></script>
-    <script src="{{ STATIC_URL }}bower_components/underscore/underscore.js"></script>
-    <script src="{{ STATIC_URL }}bower_components/backbone/backbone.js"></script>
+    <script src="{{ STATIC_URL }}bower_components/jquery/dist/jquery.min.js"></script>
+
 {#    <script src="{{ STATIC_URL }}bower_components/mustache/mustache.js"></script>#}
-    <script src="{{ STATIC_URL }}bower_components/handlebars/handlebars.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="{{ STATIC_URL }}bower_components/bootstrap/dist/js/bootstrap.js"></script>
 
-    <script src="{{ STATIC_URL }}bower_components/react/react.js"></script>
 
     {% block templates %}{% endblock templates %}
     {% block extra_scripts %}{% endblock extra_scripts %}

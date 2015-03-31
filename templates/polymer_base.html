@@ -1,0 +1,27 @@
+<!doctype html>
+
+<html>
+<head>
+  <title>{% block title %}{% endblock title %}</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+
+  <script src="{{ STATIC_URL }}bower_components/webcomponentsjs/webcomponents.js"></script>
+
+  {% block imports %}{% endblock imports %}
+</head>
+
+<body fullbleed layout vertical>
+  <core-header-panel mode="waterfall">
+    <core-toolbar>
+      <div class="core-header">Hello World!</div>
+    </core-toolbar>
+    <div class="content">
+      {% block content %}{% endblock %}
+    </div>
+  </core-header-panel>
+  {% block extra_scripts %}{% endblock extra_scripts %}
+</body>
+</html>

@@ -1,15 +1,15 @@
 Yeah Let's Do That
 ==================
 
-"Yeah Let's Do That" is a Bitcoin-based crowd-funding tool (early Alpha stage)
+"Yeah Let's Do That" is a self-hosted crowd-funding tool (early alpha stage)
 
 **DO NOT USE THIS!** This is early alpha stage. Really, I mean it. You could loose all your money!
 
 
-If you want to try it, use the Bitcoin testnet only.
+Configuration of the Bitcoin daemon (bitcoin.conf)
+--------------------------------------------------
 
-bitcoin.conf
-------------
+The Bitcoin payment plugin is defunct at the moment. This is just for reference.
 
 Your bitcoind/bitcoin-qt configuration file should look like this.
 
@@ -17,6 +17,4 @@ Your bitcoind/bitcoin-qt configuration file should look like this.
     server=1
     rpcuser=bitcoinrpc
     rpcpassword=*yourpassword*
-=======
-Yeah Let's Do That is a Bitcoin-based crowd-funding tool (early Alpha stage)
 

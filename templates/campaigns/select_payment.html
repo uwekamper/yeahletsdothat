@@ -50,6 +50,21 @@
 
                     </div><!-- /.col -->
                 </div><!-- /.row -->
+
+               <div class="row">
+                    <div class="col-xs-12">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label" for="id_name">{% trans "Your name" %}</label>
+
+                            <div class="col-md-4">
+                                <input id="id_name" name="name" type="text"
+                                       placeholder="John Doe" class="form-control input-md">
+                                <span class="help-block">{% trans "Your first and last name" %}</span>
+                            </div>
+                        </div><!-- /.form-group -->
+                    </div><!-- /.col -->
+                </div><!-- /.row -->
+
                 <div class="row">
                     <div class="col-xs-12">
                         <div class="form-group">
@@ -77,6 +92,16 @@
                         </div><!-- /.form-group -->
                     </div><!-- /.col -->
                 </div><!-- /.row -->
+
+               <div class="form-group">
+                  <div class="col-sm-offset-4 col-sm-10">
+                    <div class="checkbox">
+                      <label>
+                        <input type="checkbox" name="show_name">{% trans "Do not show my name on the supporter's list." %}
+                      </label>
+                    </div>
+                  </div>
+                </div>
 
                 <h2>Select your payment method</h2>
 

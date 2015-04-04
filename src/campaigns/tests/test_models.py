@@ -41,7 +41,7 @@ class TestUserProfile(CommonMethods):
 @pytest.mark.django_db
 class TestCampaigns(CommonMethods):
     """
-    Tests for activity related things.
+    Tests for campaign related things.
     """
     TEST_ACTIVITY_NAME = 'test activity'
 
@@ -81,3 +81,9 @@ class TestCampaigns(CommonMethods):
     def test_pkgen(self):
         code = pkgen()
         assert len(code) == 16
+
+    def test_has_started(self):
+        start_date = timezone.now()
+        TEST_CODE = 'WJLuiiI8NQWcJQ=='
+        campaign = mommy.make(Campaign, key=TEST_CODE, start_date=timezone.now())
+        assert campaign.has_started == True

@@ -60,6 +60,9 @@ class TransactionProjector(Projector):
             amount_received=0,
             started=event.created,
             email=event.data['email'],
+            name=event.data.get('name', ''),
+            show_name=event.data.get('show_name', True),
+            payment_method_name=event.data.get('payment_method_name', 'braintree')
         )
         try:
             perk = Perk.objects.get(pk=event.data['perk_id'])

@@ -8,17 +8,17 @@ from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
+from django.utils import timezone
 import jsonrpclib
-from rest_framework.decorators import api_view
 from rest_framework.renderers import JSONRenderer
-from rest_framework.response import Response
+from django.utils.translation import ugettext as _
 from campaigns.payment_method import get_method_by_name
 from campaigns.serializers import TransactionSerializer, CampaignSerializer, PerkSerializer
 from campaigns.utils import get_campaign_or_404, get_payment_methods
 from django.conf import settings
 
 import forms
-from models import Campaign, Transaction, Perk
+from models import Campaign, Transaction, Perk, CURRENCY_EUR
 
 from commands import begin_payment
 
@@ -55,24 +55,17 @@ def add_bankaccount(request):
     return render(request, 'campaigns/add_bankaccount.html', {'form': form})
 
 @login_required
-def new_activity(request):
+def campaign_new(request):
     """
-    View for creating new activities.
+    Creates a new Campaign instance and then redirects the user to this
+    campaign's edit page.
     """
-    # if request.method == 'POST':
-    #     form = forms.NewCampaignForm(request.user, request.POST)
-    #     if form.is_valid():
-    #         new_campaign = form.save(commit=False)
-    #         new_campaign.user = request.user
-    #         new_campaign.save()
-    #         url = reverse('campaign_details', args=(new_campaign.key,))
-    #         return HttpResponseRedirect(url)
-    #     else:
-    #         print form.errors
-    #         return render(request, 'campaigns/new_campaign.html', {'form': form})
-
-    form = forms.NewCampaignForm(user=request.user)
-    return render(request, 'campaigns/new_campaign.html', {'form': form})
+    campaign = Campaign.objects.create(
+        title=_('Unnamed Campaign'),
+        currency=0, goal=1000, start_date=timezone.now(),
+        end_date=timezone.now(), user=request.user)
+    url = reverse('campaign_edit', args=[campaign.key])
+    return HttpResponseRedirect(url)
 
 
 def campaign_details(request, key):
@@ -117,6 +110,19 @@ def campaign_edit(request, key):
 
     return render(request, 'campaigns/campaign_edit.html', context)
 
+def campaign_show_transactions(request, key):
+    """
+    Show all the transactions of one campaign.
+    """
+    campaign = get_campaign_or_404(request, key)
+    transactions = Transaction.objects.filter(campaign=campaign).order_by('started')
+
+    context = {
+        'campaign': campaign,
+        'transactions': transactions
+    }
+    return render(request, 'campaigns/campaign_show_transactions.html', context)
+
 def abort_activity(request, pk):
     """
     Abort an already started activity. If there are any already confirmed payments,
@@ -151,15 +157,19 @@ def select_payment(request, key):
         form = forms.SelectPaymentForm(campaign, perk, request.POST)
         if form.is_valid():
             amount = form.cleaned_data.get('amount')
-            method = get_method_by_name(form.cleaned_data.get('payment_method'))
+            payment_method_name= form.cleaned_data.get('payment_method')
+            method = get_method_by_name(payment_method_name)
             email = form.cleaned_data.get('email1')
+            name = form.cleaned_data.get('name')
+            show_name = form.cleaned_data.get('show_name')
 
             # Create a new payment transaction with a random ID.
             transaction_id = str(uuid.uuid4())
             perk_id = None
             if perk != None:
                 perk_id = perk.id
-            begin_payment(transaction_id, campaign.key, amount, email, perk_id)
+            begin_payment(transaction_id, campaign.key, amount, email, perk_id,
+                name, show_name, payment_method_name)
 
             # Delegate the payment transaction to the pay() method of the selected
             # payment method. The method will then redirect the user to the page it needs

@@ -38,7 +38,9 @@ router.register(r'perks', PerksViewSet)
 urlpatterns = patterns('',
     url(r'^rest/', include(router.urls)),
     url(r'^(?P<key>[\w=-]+)/pay/$', 'campaigns.views.select_payment', name='select_payment'),
-    url(r'^new/$', 'campaigns.views.new_activity', name='new_activity'),
+    url(r'^new/$', 'campaigns.views.campaign_new', name='campaign_new'),
     url(r'^(?P<key>[\w=-]+)/$', 'campaigns.views.campaign_details', name='campaign_details'),
+    url(r'^(?P<key>[\w=-]+)/transactions/$', 'campaigns.views.campaign_show_transactions',
+        name='campaign_show_transactions'),
     url(r'^(?P<key>[\w=-]+)/edit/$', 'campaigns.views.campaign_edit', name='campaign_edit'),
 )

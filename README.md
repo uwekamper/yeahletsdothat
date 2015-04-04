@@ -1,5 +1,31 @@
+
+
+
+
+
+
+
 Yeah Let's Do That
 ==================
+
+
+
+Uwe Kamper
+
+http://github.com/uwekamper/yeahletsdothat/
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 "Yeah Let's Do That" is a self-hosted crowd-funding tool (early alpha stage)
 

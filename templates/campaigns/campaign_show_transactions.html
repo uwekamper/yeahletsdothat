@@ -1,0 +1,41 @@
+{% extends "base_title.html" %}
+{% load i18n %}
+{% block title %}{{ campaign.name }} - show transactions{% endblock %}
+
+{% block titlesection %}
+    <h1>{% trans "Show Transactions for this Campaign" %}</h1>
+{% endblock titlesection %}
+
+{% block main-content %}
+<table class="table">
+  <thead>
+    <tr>
+      <th>{% trans "ID" %}</th>
+      <th>{% trans "Name" %}</th>
+      <th>{% trans "Date" %}</th>
+      <th>{% trans "Payment method" %}</th>
+      <th>{% trans "State" %}</th>
+      <th>{% trans "amount" %}</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% if transactions %}
+    {% for t in transactions %}
+    <tr>
+      <td>{{ t.transaction_id }}</td>
+      <td>{% if t.name %}{{ t.name }}{% else %}<i>N/A</i>{% endif %}</td>
+      <td>{{ t.started }}</td>
+      <td>{{ t.payment_method_name }}</td>
+      <td>{{ t.get_state_display }}</td>
+      <td>{{ t.amount|floatformat:.2 }} {{ t.campaign.get_currency_display }}</td>
+    </tr>
+    {% endfor %}
+  {% else %}
+    <tr>
+    <td colspan="6" class="text-center"><i>{% trans "There are no transactions, yet." %}</i></td>
+    </tr>
+  {% endif %}
+  </tbody>
+
+</table>
+{% endblock main-content %}

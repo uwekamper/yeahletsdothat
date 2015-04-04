@@ -9,7 +9,6 @@ from django.contrib.auth.models import User
 from django.db.models import Sum
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
-
 from django.utils.encoding import python_2_unicode_compatible
 from django_hstore.fields import DictionaryField
 from django_hstore.managers import HStoreManager
@@ -81,6 +80,10 @@ class Campaign(models.Model):
     @property
     def completed(self):
         return self.state.completed
+
+    @property
+    def has_started(self):
+        return timezone.now() >= self.start_date
 
     @property
     def days_left(self):
@@ -164,10 +167,13 @@ class CampaignState(ReadModel):
     total_supporters = models.IntegerField(default=0)
     total_pledgers = models.IntegerField(default=0)
 
-
     @property
     def completed(self):
         return self.total_received >= self.campaign.goal
+
+    @property
+    def total_incomplete(self):
+        return self.total_pledgers - self.total_supporters
 
 
 class PerkState(ReadModel):
@@ -179,6 +185,7 @@ class PerkState(ReadModel):
     def perks_left(self):
         return self.perk.available - self.total_received
 
+
 class Transaction(ReadModel):
     STATE_OPEN = 0
     STATE_COMPLETE = 200
@@ -189,17 +196,21 @@ class Transaction(ReadModel):
         (STATE_COMPLETE, _('complete')),
         (STATE_ABORTED, _('aborted'))
     )
+
     # transaction holds the UUID for this transaction
     campaign = models.ForeignKey('Campaign', null=True, blank=True)
     transaction_id = models.CharField(max_length=1024)
+    payment_method_name = models.CharField(max_length=1024)
     state = models.IntegerField(choices=STATES)
 
     amount = models.DecimalField(decimal_places=10, max_digits=20)
     amount_received = models.DecimalField(decimal_places=10, max_digits=20)
     # is_pending = models.BooleanField(default=False)
     started = models.DateTimeField()
+    name = models.CharField(max_length=1024, default='')
     email = models.EmailField(null=True, blank=True)
     perk = models.ForeignKey('Perk', null=True, blank=True)
+    show_name = models.BooleanField(default=False)
 
 
 @python_2_unicode_compatible

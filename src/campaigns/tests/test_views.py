@@ -81,7 +81,7 @@ def test_select_payment_with_right_amount(client, campaign):
             'email2': 'test@example.com',
         })
     # should redirect to a payment page.
-    assert resp.status_code == 302
+    assert resp.status_code == 200
 
 
 # class BankAccountTest(TestCase):

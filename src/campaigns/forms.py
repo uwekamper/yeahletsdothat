@@ -16,8 +16,10 @@ class SelectPaymentForm(forms.Form):
 
     payment_method = forms.ChoiceField(choices=get_payment_method_names())
     amount = forms.DecimalField()
+    name = forms.CharField(max_length=1024, required=True)
     email1 = forms.EmailField()
     email2 = forms.EmailField()
+    show_name = forms.BooleanField(initial=True)
 
     def clean(self):
         cleaned_data = super(SelectPaymentForm, self).clean()

@@ -1,5 +1,5 @@
 {% extends "base_title.html" %}
-
+{% load i18n %}
 {% block titlesection %}
 <h1>User Profile</h1>
 <div class="activity-creator">This is your personal profile</div>
@@ -8,23 +8,53 @@
 {% block main-content %}
 <div class="row">
     <div class="col-xs-12">
+        <h2>{% trans "Your Campaigns at a Glance" %}</h2>
 
-        <h2>Your Campaigns</h2>
+        <a class="btn btn-primary"
+           href="{% url 'campaign_new' %}">Create new campaign</a>
 
         {% if campaigns %}
-            <ul id="account-list">
             {% for campaign in campaigns %}
-                <li><a href="{% url 'campaign_details' campaign.key %}">{{ campaign.title }} (goto)</a>,
-                  <a href="{% url 'campaign_edit' campaign.key %}">Edit</a>
-                {% if campaign.is_private %}<abbr title="This campaign is private"><span class="glyphicon glyphicon-lock"></span></abbr>{% endif %}</li>
+              <div class="well">
+                <div>
+                  <h3>{{ campaign.title }}</h3>
+
+                  <p>{% if campaign.completed %}
+
+                    Campaign is completed
+
+                  {% else %}
+
+                    {% if campaign.has_started %}
+                      {% blocktrans with start=campaign.start_date end=campaign.end_date %}Campaign has started
+                        on {{ start }} and will end on {{ end }}{% endblocktrans %}
+                    {% else %}
+                      {% blocktrans with start_date=campaign.start_date %}Campaign will start
+                        on {{ start_date }}.{% endblocktrans %}
+                    {% endif %}
+
+                  {% endif %}</p>
+
+                  {% if campaign.is_private %}<span class="glyphicon glyphicon-lock"></span>{% trans "This is a private campaign" %}{% endif %}
+                  <br />
+                  {% trans "Number of supporters" %}:
+                  {{ campaign.state.total_supporters }} ({{ campaign.state.total_incomplete }} incomplete transactions)
+                  <br />
+
+                  <p></p>
+                </div>
+                <div>
+                  <a href="{% url 'campaign_details' campaign.key %}">View campaign on public page …</a>
+                  <a class="btn btn-default pull-right" href="{% url 'campaign_edit' campaign.key %}">{% trans "Edit"%}</a>
+                  <a class="btn btn-default pull-right" href="{% url 'campaign_show_transactions' campaign.key %}">{% trans "Show transactions" %}</a>
+                  <p class="clearfix"></p>
+                </div>
+              </div>
+
             {% endfor %}
-            </ul>
         {% else %}
             <p>You did no start any activities, yet.</p>
         {% endif %}
-
-        <a class="btn btn-primary"
-           href="{% url 'new_activity' %}">Create new campaign</a>
 
 
     </div>

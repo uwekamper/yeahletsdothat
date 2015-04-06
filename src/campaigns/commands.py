@@ -4,7 +4,7 @@ from django.core.mail import send_mail
 from django.db import transaction
 from projectors import handle_event
 from campaigns.models import BeginPaymentEvent, ReceivePaymentEvent, AbortPaymentEvent, Transaction
-from campaigns.mailing import send_payment_confirmation
+from campaigns.mailing import send_payment_confirmation, PAYMENT_CONFIRMATION_TEMPLATE
 
 """
 RULES:
@@ -91,11 +91,11 @@ class ReceivePayment(Command):
 
     def post(self):
         transaction = Transaction.objects.get(transaction_id=self.transaction_id)
-        campaign = transaction.campaign
-        template = '''Hallo {{ recipient_name }},
-your payment has been received.
-        '''
+
+        # send an email when the received amount is high enough
         if transaction.amount_received >= transaction.amount:
+            campaign = transaction.campaign
+            template = PAYMENT_CONFIRMATION_TEMPLATE
             send_payment_confirmation(campaign, transaction, template)
 
 class AbortPayment(Command):

@@ -19,7 +19,7 @@ class SelectPaymentForm(forms.Form):
     name = forms.CharField(max_length=1024, required=True)
     email1 = forms.EmailField()
     email2 = forms.EmailField()
-    show_name = forms.BooleanField(initial=True)
+    show_name = forms.BooleanField(initial=True, required=False)
 
     def clean(self):
         cleaned_data = super(SelectPaymentForm, self).clean()

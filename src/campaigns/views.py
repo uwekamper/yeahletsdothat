@@ -20,7 +20,7 @@ from django.conf import settings
 import forms
 from models import Campaign, Transaction, Perk, CURRENCY_EUR
 
-from commands import begin_payment
+from commands import BeginPayment
 
 def index(request):
     return render(request, 'campaigns/index.html', {})
@@ -168,7 +168,7 @@ def select_payment(request, key):
             perk_id = None
             if perk != None:
                 perk_id = perk.id
-            begin_payment(transaction_id, campaign.key, amount, email, perk_id,
+            BeginPayment(transaction_id, campaign.key, amount, email, perk_id,
                 name, show_name, payment_method_name)
 
             # Delegate the payment transaction to the pay() method of the selected

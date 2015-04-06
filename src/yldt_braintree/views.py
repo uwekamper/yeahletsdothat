@@ -7,7 +7,7 @@ from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
-from campaigns.commands import receive_payment
+from campaigns.commands import ReceivePayment
 
 from campaigns.models import Transaction
 from campaigns.payment_method import get_method_by_name
@@ -66,7 +66,7 @@ def payment_form(request, transaction_id, payment_method_name):
                 BrainTreeTransaction.objects.create(transaction_id=transaction_id,
                     braintree_transaction_id=result.transaction.id)
 
-                receive_payment(transaction_id, transact.amount)
+                ReceivePayment(transaction_id, transact.amount)
 
                 url = '/pay/{}/{}/success/'.format(payment_method_name, transaction_id)
                 return HttpResponseRedirect(url)

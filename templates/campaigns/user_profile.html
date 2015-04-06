@@ -38,8 +38,18 @@
                   {% if campaign.is_private %}<span class="glyphicon glyphicon-lock"></span>{% trans "This is a private campaign" %}{% endif %}
                   <br />
                   {% trans "Number of supporters" %}:
-                  {{ campaign.state.total_supporters }} ({{ campaign.state.total_incomplete }} incomplete transactions)
+                  {{ campaign.state.total_supporters }} ({{ campaign.state.pending|floatformat:-2 }} {{ campaign.get_currency_display }} still pending, {{ campaign.state.total_incomplete }} incomplete transactions)
+
                   <br />
+                  Funding status:<br />
+                  <div class="progress">
+                    <div class="progress-bar" role="progressbar"
+                         aria-valuenow="{{ campaign.state.percent_funded }}"
+                         aria-valuemin="0" aria-valuemax="100"
+                         style="min-width: 2em; width:{{ campaign.state.percent_funded|floatformat }}%;">
+                      {{ campaign.state.percent_funded|floatformat:-2 }}%
+                    </div>
+                  </div>
 
                   <p></p>
                 </div>

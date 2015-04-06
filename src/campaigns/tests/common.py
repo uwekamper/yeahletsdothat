@@ -16,7 +16,7 @@ TEST_CREDENTIALS = {'username': TEST_USERNAME, 'password': TEST_PASSWORD}
 @pytest.fixture
 def campaign():
     campaign = Campaign.objects.create(title='TestCampaign', currency=0,
-        goal='20.0', start_date=timezone.now(), end_date=timezone.now())
+        goal=Decimal(20), start_date=timezone.now(), end_date=timezone.now())
     perk = Perk.objects.create(campaign=campaign, title='TestPerk', amount=Decimal('23.0'))
 
     return campaign

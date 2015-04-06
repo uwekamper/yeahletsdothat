@@ -40,7 +40,7 @@ def pkgen():
         new_key = base64.urlsafe_b64encode(os.urandom(12))
         # TODO: Filter rude words from generated
         if Campaign.objects.filter(key=new_key).count() == 0:
-            return new_key
+                return new_key
 
 CURRENCY_EUR = (0, _('EUR'))
 CURRENCY_USD = (1, _('USD'))
@@ -174,6 +174,15 @@ class CampaignState(ReadModel):
     @property
     def total_incomplete(self):
         return self.total_pledgers - self.total_supporters
+
+    @property
+    def percent_funded(self):
+        percent = (self.total_received / self.campaign.goal) * 100
+        return percent
+
+    @property
+    def pending(self):
+        return self.total_pledged - self.total_received
 
 
 class PerkState(ReadModel):

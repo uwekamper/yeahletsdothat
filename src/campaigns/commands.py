@@ -1,7 +1,11 @@
 # -*- coding: utf-8 -*-
+from django.core.mail import send_mail
 
 from django.db import transaction
 from projectors import handle_event
+from campaigns.models import BeginPaymentEvent, ReceivePaymentEvent, AbortPaymentEvent, Transaction
+from campaigns.mailing import send_payment_confirmation
+
 """
 RULES:
   * commands must only create events
@@ -10,50 +14,98 @@ RULES:
   * you can of course check the current state of aggregate models
     to validate the input.
 """
-from campaigns.models import BeginPaymentEvent, ReceivePaymentEvent, AbortPaymentEvent
 
 
 class CommandError(Exception):
     pass
 
 
-def command(command_func):
+class Command(object):
     """
-    Decorator for commands. Applies the events automatically.
+    Base class for commands
     """
-    def wrapper(*args, **kwargs):
-        handled_events = []
-        with transaction.atomic():
-            for event in command_func(*args, **kwargs):
-                event.save()
-            handle_event(event)
-            handled_events.append(event)
-        return handled_events
-    return wrapper
+    def __init__(self):
+        self._handle()
 
-@command
-def begin_payment(id, campaign_key, amount, email, perk_id, name, show_name,
-                  payment_method_name):
+    def pre(self):
+        """
+        Overwrite this method to implement a pre-hook for a command.
+        """
+        pass
+
+    def main(self):
+        """
+        This method will always be replaced with a function
+        """
+        raise NotImplementedError()
+
+    def post(self):
+        """
+        Overwrite this method to implement a post-hook for a command.
+        """
+        pass
+
+    def _handle(self):
+        self.pre()
+        with transaction.atomic():
+            for event in self.main():
+                event.save()
+                handle_event(event)
+        self.post()
+
+
+class BeginPayment(Command):
     """
     Begin a payment procedure.
     """
-    data = dict(transaction_id=id, campaign_key=campaign_key, amount=amount,
-        email=email, perk_id=perk_id, name=name, show_name=show_name,
-        payment_method_name=payment_method_name)
-    yield BeginPaymentEvent(data=data)
+    def __init__(self, id, campaign_key, amount, email, perk_id, name, show_name,
+                 payment_method_name):
+        self.data = dict(
+            transaction_id=id,
+            campaign_key=campaign_key,
+            amount=amount,
+            email=email,
+            perk_id=perk_id,
+            name=name,
+            show_name=show_name,
+            payment_method_name=payment_method_name
+        )
+        super(BeginPayment, self).__init__()
 
-@command
-def receive_payment(id, amount):
+    def main(self):
+        yield BeginPaymentEvent(data=self.data)
+
+
+class ReceivePayment(Command):
     """
     Process a payment received for a transaction.
     """
-    data = dict(transaction_id=id, amount=amount)
-    yield ReceivePaymentEvent(data=data)
+    def __init__(self, id, amount):
+        self.transaction_id = id
+        self.amount = amount
+        super(ReceivePayment, self).__init__()
 
-@command
-def abort_payment(id):
+    def main(self):
+        self.data = dict(transaction_id=self.transaction_id, amount=self.amount)
+        yield ReceivePaymentEvent(data=self.data)
+
+    def post(self):
+        transaction = Transaction.objects.get(transaction_id=self.transaction_id)
+        campaign = transaction.campaign
+        template = '''Hallo {{ recipient_name }},
+your payment has been received.
+        '''
+        if transaction.amount_received >= transaction.amount:
+            send_payment_confirmation(campaign, transaction, template)
+
+class AbortPayment(Command):
     """
     Stop the payment process for one transaction id.
     """
-    data = dict(transaction_id=id)
-    yield AbortPaymentEvent(data=data)
+    def __init__(self, id):
+        self.id = id
+        super(AbortPayment, self).__init__()
+
+    def main(self):
+        data = dict(transaction_id=id)
+        yield AbortPaymentEvent(data=data)

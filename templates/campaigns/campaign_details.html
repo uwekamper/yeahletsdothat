@@ -17,16 +17,20 @@
                 <p>{{ campaign.description|markdown }}</p>
 
                 <hr />
-                <h3>{% trans "Public list of supporters" %} </h3>
+                <h1>{% trans "Public list of supporters" %} </h1>
+                <p>
                 {% if supporters %}
                   <ul>
                   {% for supporter in supporters %}
-                    <li>{{ supporter.name }} pledged {{ supporter.amount }}</li>
+                    <li>{% if supporter.name %}{{ supporter.name }}{% else %}An unknown user{% endif %}
+                      pledged {{ supporter.amount|floatformat:2 }} {{ campaign.get_currency_display }}</li>
                   {% endfor %}
                   </ul>
                 {% else %}
-                  <p>We cannot show any supporters publicly</p>
+                  <p>We cannot show any supporters publicly.</p>
                 {% endif %}
+                </p>
+
             </div><!-- /.col -->
             <div class="col-xs-4 activity-right">
                 <div class="activity-right-body">

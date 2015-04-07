@@ -52,7 +52,6 @@ class TransactionProjector(Projector):
 
     def handle_begin_payment(self, event):
         campaign = Campaign.objects.get(key=event.data['campaign_key'])
-        print "HAHAHAHAHAH", event.data
         trans = Transaction(
             campaign=campaign,
             transaction_id=event.data['transaction_id'],

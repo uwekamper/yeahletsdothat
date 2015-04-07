@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
-from campaigns.models import *
 from django.core.mail import send_mail
 from django.template import Context, Template
+from django.core.urlresolvers import reverse
+
 
 """
 This module contains the code concerned with sending messages
@@ -12,7 +13,10 @@ to users, e.g. payment confirmations.
 PAYMENT_CONFIRMATION_TEMPLATE = '''
 Dear {{ recipient_name }},
 
-we just received your payment of {{ amount }} earth credit units.
+thank you for supporting "{{ campaign.title }}".
+
+This email is to inform you that we just received your payment of
+{{ amount|floatformat }} earth credit units.
 
 {% if perk %}
     You select the following perk: {{ perk.title }}
@@ -20,6 +24,9 @@ we just received your payment of {{ amount }} earth credit units.
     You did not select a perk.
 {% endif %}
 
+For more details and progress about the campaign, please head over to:
+
+{{ campaign_url }}
 
 Yours truly,
 Yeah Let's Do That
@@ -36,7 +43,9 @@ def send_payment_confirmation(campaign, transaction, template):
         'recipient_address': transaction.email,
         'recipient_name': transaction.name,
         'amount': transaction.amount,
-        'perk': transaction.perk
+        'perk': transaction.perk,
+        'campaign': campaign,
+        'campaign_url': reverse('campaign_details', args=[campaign.id])
     }
     recipient_address = transaction.email
     message = render_mail_template(template, variables)

@@ -36,5 +36,3 @@ for options in settings.YLDT_PAYMENT_METHODS:
     include_module = options['module_name'] + '.urls'
     sub_url = url(pattern, include(include_module), {'payment_method_name': method.name})
     urlpatterns.append(sub_url)
-
-print urlpatterns

@@ -15,6 +15,18 @@
         <div class="row">
             <div class="col-xs-8">
                 <p>{{ campaign.description|markdown }}</p>
+
+                <hr />
+                <h3>{% trans "Public list of supporters" %} </h3>
+                {% if supporters %}
+                  <ul>
+                  {% for supporter in supporters %}
+                    <li>{{ supporter.name }} pledged {{ supporter.amount }}</li>
+                  {% endfor %}
+                  </ul>
+                {% else %}
+                  <p>We cannot show any supporters publicly</p>
+                {% endif %}
             </div><!-- /.col -->
             <div class="col-xs-4 activity-right">
                 <div class="activity-right-body">

@@ -74,7 +74,8 @@ def campaign_details(request, key):
     """
     campaign = get_campaign_or_404(request, key)
     methods = get_payment_methods()
-    context = {'campaign': campaign, 'methods': methods, }
+    supporters = Transaction.objects.filter(campaign=campaign, show_name=True)
+    context = {'campaign': campaign, 'methods': methods, 'supporters': supporters}
 
     try:
         if settings.YLDT_PLEDGE_BUTTON_TEXT:
@@ -161,7 +162,7 @@ def select_payment(request, key):
             method = get_method_by_name(payment_method_name)
             email = form.cleaned_data.get('email1')
             name = form.cleaned_data.get('name')
-            show_name = form.cleaned_data.get('show_name')
+            show_name = not form.cleaned_data['hide_name']
 
             # Create a new payment transaction with a random ID.
             transaction_id = str(uuid.uuid4())

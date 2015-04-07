@@ -52,6 +52,7 @@ class TransactionProjector(Projector):
 
     def handle_begin_payment(self, event):
         campaign = Campaign.objects.get(key=event.data['campaign_key'])
+        print "HAHAHAHAHAH", event.data
         trans = Transaction(
             campaign=campaign,
             transaction_id=event.data['transaction_id'],
@@ -61,7 +62,7 @@ class TransactionProjector(Projector):
             started=event.created,
             email=event.data['email'],
             name=event.data.get('name', ''),
-            show_name=event.data.get('show_name', True),
+            show_name=event.data.get('show_name', 'true') == 'true',
             payment_method_name=event.data.get('payment_method_name', 'braintree')
         )
         try:

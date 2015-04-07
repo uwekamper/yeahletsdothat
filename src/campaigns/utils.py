@@ -17,7 +17,6 @@ def get_campaign_or_404(request, key):
 def get_payment_methods():
     methods = []
     for options in settings.YLDT_PAYMENT_METHODS:
-        print options
         module_name = options['module_name']
         module = __import__(module_name)
         instance = module.PaymentMethod(options=options)

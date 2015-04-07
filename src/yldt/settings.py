@@ -9,10 +9,6 @@ SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
 PROJECT_ROOT = os.path.realpath(os.path.join(SITE_ROOT, '..'))
 REPOSITORY_ROOT = os.path.realpath(os.path.join(PROJECT_ROOT, '..'))
 
-print 'SITE_ROOT is "%s"' % SITE_ROOT
-print 'PROJECT_ROOT is "%s"' % PROJECT_ROOT
-print 'REPOSITORY_ROOT is "%s"' % REPOSITORY_ROOT
-
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG

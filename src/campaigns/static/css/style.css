@@ -4,6 +4,17 @@ body {
     margin-bottom: 50px;
 }
 
+.campaign-tile {
+    background-color: #f8f8f8;
+    min-height: 300px;
+    padding: 5px;
+    margin-bottom: 10px;
+}
+
+.campaign-tile-description {
+    min-height: 180px;
+}
+
 .jumbotron {
     margin-top: 50px;
 }

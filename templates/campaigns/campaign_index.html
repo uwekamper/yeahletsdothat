@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}Yeah Let's Do That{% endblock %}
+
+{% block container %}
+    <div class="row">
+      <div class="col-xs-12">
+        <h1>{% trans "Latest campaigns" %}</h1>
+      </div>
+    </div><!-- /.row -->
+    <div class="row">
+      {% for campaign in campaigns %}
+        <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
+          <div class="campaign-tile">
+            <h4>{{ campaign.title }}</h4>
+            <p class="campaign-tile-description">
+              {{ campaign.description }}
+            </p>
+            <p>
+              {% blocktrans with total_supporters=campaign.state.total_supporters %}
+                {{ total_supporters }} supporters.
+              {% endblocktrans %}
+            </p>
+            <p>
+              {% blocktrans with goal=campaign.goal|floatformat:2 currency=campaign.get_currency_display %}
+                Goal: {{ goal }} {{ currency }}
+              {% endblocktrans %}
+            </p>
+              <div class="progress">
+                <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" 
+                     aria-valuemax="100" style="min-width: 2.0em; width: {{ campaign.state.percent_funded }}%;">
+                  {{ campaign.state.percent_funded|floatformat:0 }} %
+                </div>
+              </div>
+            <p>
+              {% blocktrans with total_received=campaign.state.total_received|floatformat:2 currency=campaign.get_currency_display %}
+                {{ total_received }} {{ currency }} funded.
+              {% endblocktrans %}
+            </p>
+            <p class="text-right">
+              <a href="{% url "campaign_details" campaign.key %}">{% trans "Go to" %}
+                <span class="glyphicon glyphicon-arrow-right"></span></a>
+            </p>
+          </div><!-- /.campaign-tile -->
+        </div><!-- /.col -->
+      {% endfor %}
+    </div><!-- /.row -->
+
+{% endblock container %}

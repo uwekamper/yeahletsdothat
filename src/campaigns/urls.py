@@ -36,6 +36,7 @@ router.register(r'campaigns', CampaignsViewSet)
 router.register(r'perks', PerksViewSet)
 
 urlpatterns = patterns('',
+    url(r'^$', 'campaigns.views.campaign_index', name='campaign_index'),
     url(r'^rest/', include(router.urls)),
     url(r'^(?P<key>[\w=-]+)/pay/$', 'campaigns.views.select_payment', name='select_payment'),
     url(r'^new/$', 'campaigns.views.campaign_new', name='campaign_new'),

@@ -25,6 +25,14 @@ from commands import BeginPayment
 def index(request):
     return render(request, 'campaigns/index.html', {})
 
+def campaign_index(request):
+    """
+    Show the public campaigns in a list.
+    """
+    campaigns = Campaign.objects.filter(is_private=False)
+    return render(request, 'campaigns/campaign_index.html', {'campaigns': campaigns})
+
+
 def get_rpc_address():
     return "vla"
 

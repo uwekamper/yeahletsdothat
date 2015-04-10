@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-
+{% load i18n %}
 {% block title %}Edit Campaign{% endblock %}
 
 {% block extra_css %}
@@ -84,10 +84,12 @@
   <div class="row">
     <div class="col-xs-12">
       <div class="form-group">
-        <input type="submit" class="btn btn-default" id="saveButton"
+        <input type="submit" class="btn btn-default pull-right" id="saveButton"
                value="Save"
                ng-disabled="ctrl.isUnsaved()"
                ng-click="ctrl.onSaveButtonClick()">
+
+        <a href="{% url "campaign_details" campaign.key %}">{% trans "View campaign on page" %}</a>
       </div>
 
     </div><!-- /.col -->

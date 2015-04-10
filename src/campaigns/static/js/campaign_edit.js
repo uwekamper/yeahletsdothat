@@ -92,7 +92,12 @@ function($scope, $window, ngToast, Campaign, Perk) {
                 self.stopSaving();
                 self.savePerks();
                 $scope.editCampaignForm.$setPristine();
-                ngToast.create('<span class="glyphicon glyphicon-ok"></span> <strong>Yay!</strong> You changes have been saved.');
+                var content = '<span class="glyphicon glyphicon-ok"></span> '
+                    + '<strong>Yay!</strong> Your changes have been saved.';
+                ngToast.create({
+                    class: 'success',
+                    content: content,
+                });
             })
             .catch(function() {
                 self.stopSaving();

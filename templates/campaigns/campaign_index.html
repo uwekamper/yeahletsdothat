@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load i18n %}
+{% load campaigns_extras %}
 {% block title %}Yeah Let's Do That{% endblock %}
 
 {% block container %}
@@ -14,7 +15,7 @@
           <div class="campaign-tile">
             <h4>{{ campaign.title }}</h4>
             <p class="campaign-tile-description">
-              {{ campaign.description }}
+              {{ campaign.description|markdownexcerpt }}
             </p>
             <p>
               {% blocktrans with total_supporters=campaign.state.total_supporters %}

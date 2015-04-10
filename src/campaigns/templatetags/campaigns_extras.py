@@ -5,6 +5,8 @@ from django.utils.safestring import mark_safe
 import mistune
 import re
 import copy
+from bs4 import BeautifulSoup
+
 
 register = template.Library()
 
@@ -92,3 +94,14 @@ markdown_render = mistune.Markdown(renderer, inline=inline)
 @register.filter(name='markdown', is_safe=True)
 def markdown(value):
     return mark_safe(markdown_render(value))
+
+@register.filter(name='markdownexcerpt', is_safe=True)
+def markdown_excerpt(value):
+    html = markdown_render(value)
+    print html
+    text = BeautifulSoup(html).get_text()
+    print text
+    result = text[0:150]
+    if len(text) > 150:
+        result += '...'
+    return mark_safe(result)

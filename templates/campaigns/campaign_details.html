@@ -8,10 +8,21 @@
     <div class="activity-title">
         {% block titlesection %}
             <h1>{{ campaign.title }}</h1>
-            <div class="activity-creator">by {{ campaign.user.username }}</div>
+            <div class="activity-creator">{% blocktrans with name=campaign.user.username %}by {{ name }}{% endblocktrans %}</div>
         {% endblock titlesection %}
     </div>
+    {% if user.is_authenticated %}{% if user == campaign.user %}
+        <div class="row">
+            <div class="col-xs-12">
+                <a href="edit/" class="pull-right" style="background: #fff; padding: 15px;">{% trans "Edit campaign "%}</a>
+            </div><!-- /.row -->
+        </div><!-- /.row -->
+    {% endif %}{% endif %}
+
     <div class="main-content">
+
+
+
         <div class="row">
             <div class="col-xs-8">
                 <p>{{ campaign.description|markdown }}</p>

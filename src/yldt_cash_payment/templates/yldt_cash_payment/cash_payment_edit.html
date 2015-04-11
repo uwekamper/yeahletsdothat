@@ -1,0 +1,30 @@
+{% extends "base_title.html" %}
+{% load i18n %}
+{% block title %}{% trans "Pay with Cash" %}{% endblock %}
+
+{% block titlesection %}
+    <h1>{% trans "Pay the campaign initiator directly" %}</h1>
+{% endblock titlesection %}
+
+{% block main-content %}
+<p>
+  <strong>{{ transaction.name }}</strong> should pay<br />
+  <strong>{{ transaction.amount|floatformat:2 }} {{ campaign.get_currency_display }}</strong>
+to:
+</p>
+
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <input type="submit" value="Submit" class="btn btn-primary" />
+</form>
+
+<p>
+<a href="{% url "campaign_show_transactions" campaign.key %}">Go back to list of transactions.</a>
+</p>
+{% endblock main-content %}
+
+{% block templates %}{% endblock templates %}
+
+{% block extra_scripts %}
+{% endblock extra_scripts%}

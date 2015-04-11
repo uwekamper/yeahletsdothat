@@ -1,0 +1,27 @@
+Hello {{ transaction.name }},
+
+you just pledged for the campaign {{ campaign.title }}.
+
+You selected cash payment and because of this you need to
+meet with the project initiator
+
+    {{ campaign.user.first_name}} {{ campaign.user.last_name }}
+
+to complete the transaction.
+
+You can contact {{ campaign.user.first_name}} {{ campaign.user.last_name }}
+by sending an email to {{ campaign.user.email }}.
+
+We sent another email to the project initiator to let them know that you
+want to pay cash directly to them.
+
+For reference, the transaction ID for this payment is
+
+    {{ transaction.transaction_id }}
+
+Yours truly,
+    Yeah Let's Do That
+
+
+
+

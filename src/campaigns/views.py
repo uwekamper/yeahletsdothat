@@ -183,7 +183,7 @@ def select_payment(request, key):
             # Delegate the payment transaction to the pay() method of the selected
             # payment method. The method will then redirect the user to the page it needs
             # to complete the payment.
-            return method.pay(campaign, transaction_id)
+            return method.pay(request, campaign, transaction_id)
 
         else:
             return render(request, 'campaigns/select_payment.html', dict(context, form=form))

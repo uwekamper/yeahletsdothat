@@ -1,0 +1,18 @@
+{% extends "base_title.html" %}
+{% load i18n %}
+{% block title %}{% trans "Pay with Cash" %}{% endblock %}
+
+{% block main-content %}
+<h1>Cash payment successful</h1>
+
+<p>{{ transaction.name }} just paid {{ amount }} {{ campaign.get_currency_display }}.</p>
+
+<p>
+<a href="{% url "campaign_show_transactions" campaign.key %}">Go back to list of transactions.</a>
+</p>
+{% endblock main-content %}
+
+{% block templates %}{% endblock templates %}
+
+{% block extra_scripts %}
+{% endblock extra_scripts%}

@@ -1,0 +1,27 @@
+Hello {{ campaign.user.first_name }},
+
+{{ transaction.name }} just pledged for the campaign {{ campaign.title }}.
+
+{{ transaction.name }} pledged {{ transaction.amount|floatformat:2 }} {{ campaign.get_currency_display }}
+
+You can contact {{ transaction.name }} by sending an email to
+
+    {{ campaign.user.email }}.
+
+We sent another email to the pledger to let them know that they should contact
+you directly.
+
+For reference, the transaction ID for this payment is
+
+    {{ transaction.transaction_id }}
+
+You can add the payment easily by just clicking on:
+
+    {{ transaction_url }}
+
+Yours truly,
+    Yeah Let's Do That
+
+
+
+

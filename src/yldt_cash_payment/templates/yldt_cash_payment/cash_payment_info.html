@@ -1,0 +1,34 @@
+{% extends "base_title.html" %}
+{% load i18n %}
+{% block title %}{% trans "Pay with Cash" %}{% endblock %}
+
+{% block titlesection %}
+    <h1>{% trans "Pay the campaign initiator directly" %}</h1>
+{% endblock titlesection %}
+
+{% block main-content %}
+<p>Please pay
+  <strong>{{ transaction.amount|floatformat:2 }} {{ campaign.get_currency_display }}</strong>
+to:
+</p>
+<p>
+  {{ initiator.first_name }} {{ initiator.last_name }} ({{ initiator.username }})
+</p>
+<p>Your transaction ID is:<br />
+  {{ transaction.transaction_id }}
+</p>
+
+<p>We sent an email to your email addresse <strong>{{ transaction.email }}</strong> with
+  all of this information as well.</p>
+<p>We also sent {{ initiator.first_name }} {{ initiator.last_name }} an email, so that they
+know that you should give them money.</p>
+
+<p>
+<a href="{% url "campaign_details" campaign.key %}">Go back to the campaign.</a>
+</p>
+{% endblock main-content %}
+
+{% block templates %}{% endblock templates %}
+
+{% block extra_scripts %}
+{% endblock extra_scripts%}

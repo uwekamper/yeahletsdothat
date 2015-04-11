@@ -8,11 +8,8 @@ This module contains the base class for every payment method plugin.
 from __future__ import unicode_literals
 from django.conf import settings
 from decimal import Decimal
-import commands
 
 # TODO: Remove the registry, probably don't need it anyway
-from campaigns.models import Transaction
-
 method_registry = {}
 
 def get_method_by_name(name):
@@ -29,6 +26,9 @@ def get_method_by_name(name):
     # This means someone is trying to access a method that does not work.
     raise PaymentMethodDoseNotExist
 
+def get_actions_by_name(name, transaction_id):
+    method = get_method_by_name(name)
+    return method.get_actions(transaction_id)
 
 class PaymentException(Exception):
     """
@@ -104,3 +104,6 @@ class BasePaymentMethod(object):
         is created.
         """
         raise NotImplementedError()
+
+    def get_actions(self, transaction_id=None):
+        return []

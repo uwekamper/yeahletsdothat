@@ -1,0 +1,1 @@
+Your cash payment for {{ campaign.title }} on Yeah Let's Do That

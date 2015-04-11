@@ -12,9 +12,6 @@ denormalization, etc.) works as intended.
 @pytest.mark.django_db(transaction=True)
 class TestTransactionCommands(object):
 
-    @pytest.fixture
-    def transaction_id(self):
-        return 'e3ac5128-a8d3-11e4-9f5f-002332c62ffc'
 
     @pytest.fixture
     def perk_id(self, campaign):

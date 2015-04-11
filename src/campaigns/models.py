@@ -15,7 +15,6 @@ from django_hstore.managers import HStoreManager
 from django_hstore.query import HStoreQuerySet
 from polymorphic import PolymorphicModel, PolymorphicManager
 
-
 # @python_2_unicode_compatible
 # class BankAccount(models.Model):
 #     user = models.ForeignKey(User)
@@ -31,6 +30,9 @@ from polymorphic import PolymorphicModel, PolymorphicManager
 #             return self.description
 #         else:
 #             return _('Unnamed account')
+#from campaigns.payment_method import get_method_by_name
+from campaigns.payment_method import get_actions_by_name
+
 
 def pkgen():
     """
@@ -220,6 +222,9 @@ class Transaction(ReadModel):
     email = models.EmailField(null=True, blank=True)
     perk = models.ForeignKey('Perk', null=True, blank=True)
     show_name = models.BooleanField(default=False)
+
+    def get_actions(self):
+        return get_actions_by_name(self.payment_method_name, self.transaction_id)
 
 
 @python_2_unicode_compatible

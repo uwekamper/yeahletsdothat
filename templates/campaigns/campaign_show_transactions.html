@@ -16,6 +16,7 @@
       <th>{% trans "Payment method" %}</th>
       <th>{% trans "State" %}</th>
       <th>{% trans "amount" %}</th>
+      <th>{% trans "Actions" %}</th>
     </tr>
   </thead>
   <tbody>
@@ -28,6 +29,11 @@
       <td>{{ t.payment_method_name }}</td>
       <td>{{ t.get_state_display }}</td>
       <td>{{ t.amount|floatformat:.2 }} {{ t.campaign.get_currency_display }}</td>
+      <td>
+        {% for action in t.get_actions %}
+          <a href="{{ action.url }}">{{ action.name }}</a>
+        {% endfor %}
+      </td>
     </tr>
     {% endfor %}
   {% else %}

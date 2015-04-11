@@ -29,6 +29,25 @@ class MyRenderer(mistune.Renderer):
         '''.format(youtube_id=youtube_id, width=width, height=height)
         return embed
 
+    def image(self, src, title, text):
+        """Rendering a image with title and text.
+
+        :param src: source link of the image.
+        :param title: title text of the image.
+        :param text: alt text of the image.
+        """
+        if src.startswith('javascript:'):
+            src = ''
+        text = mistune.escape(text, quote=True)
+        if title:
+            title = mistune.escape(title, quote=True)
+            html = '<img class="img-responsive" src="%s" alt="%s" title="%s"' % (src, text, title)
+        else:
+            html = '<img class="img-responsive" src="%s" alt="%s"' % (src, text)
+        if self.options.get('use_xhtml'):
+            return '%s />' % html
+        return '%s>' % html
+
 class MyInlineGrammar(mistune.InlineGrammar):
     # regex for embeded Vimeo videos
     # ![:vimeo 600x400](13697303)

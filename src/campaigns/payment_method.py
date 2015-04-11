@@ -81,6 +81,16 @@ class BasePaymentMethod(object):
         """
         return (amount / Decimal(100)) * self.fee_percent + self.fee_per_transaction
 
+    def has_fees(self):
+        """
+        Returns true if fees apply for this payment method.
+        """
+        fee = self.calculate_fee(Decimal(100))
+        if fee > Decimal(0):
+            return True
+        else:
+            return False
+
     def pay(self, campaign_key, transaction_id):
         """
         Base payment method. We will call this method whenever a payment transaction

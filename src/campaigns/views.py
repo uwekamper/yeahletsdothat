@@ -93,6 +93,7 @@ def campaign_details(request, key):
 
     return render(request, 'campaigns/campaign_details.html', context)
 
+@login_required
 def campaign_edit(request, key):
     """
     Edit a campaign, basically delivers the angular app that changes the values via the
@@ -119,6 +120,7 @@ def campaign_edit(request, key):
 
     return render(request, 'campaigns/campaign_edit.html', context)
 
+@login_required
 def campaign_show_transactions(request, key):
     """
     Show all the transactions of one campaign.
@@ -196,6 +198,8 @@ def transaction(request, pk):
     return render(request, 'campaigns/transaction.html',
             {'transaction': transaction, 'activity': transaction.campaign})
 
+
+# TODO: move this code to the bitcoin payment module.
 def check_completion(activity):
     amount = activity.get_total_pledge_amount()
 

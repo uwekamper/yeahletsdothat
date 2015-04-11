@@ -16,23 +16,29 @@ BTC_USER = 'bitcoinrpc'
 BTC_PASS = 'xxxxxxxxxx'
 
 
+YLDT_PLEDGE_BUTTON_TEXT = "BRÖMPF!"
+
+from decimal import Decimal
 YLDT_PAYMENT_METHODS = [
     {
         'module_name': 'yldt_braintree',
         'name': 'braintree',
         'display_name': 'Braintree',
         'currencies': ['EUR'],
-        'merchant_id': 'xxxxxxxxxx',
-        'public_key': 'xxxxxxxxxx',
-        'private_key': 'xxxxxxxxxx',
-        'cse_key': 'xxxxxxxxxx+kLOLgeCxQ8CkN3C0y1zYoH7Hw2gjRskxsKL4YLVsK6v5WScqOG++J8fwQ/rYR2Rl3fymwgJv+KfOgu72IFJ8zCf6jXobg75cZ1i7zNFey7HpCiVYeLHh5ausy2/PVcojTnnhcDgtdnYnweJ9ii72xwlHSmyS7DOidverR1kEI887ZX/lb22zsg6Cr6xwS0WyuYTJLplYplUIWbEncqLQ8kvJFmyWl8o98sNFPu7qTnZMmKa1SG2NgNvrhELMv0whicKJE0OZR8+P/2/KNINvXTPerc4yIR+Gp4Omm8c/Hp5i5AWjf0XaSqXsI+weUC5A5NJvwIDAQAB'
+        'fee_per_transaction': Decimal('0.30'),
+        'fee_percent': Decimal('2.9'),
+        'environment': 'sandbox',
+        'merchant_id': 'nffgm36gc44f4yr7',
+        'public_key': 'zybbzr6mh65pq4jt',
+        'private_key': 'df93c19f950ad1ca5c34e16f5ebfe5fc',
+        'cse_key': 'MIIBCgKCAQEAzVUQOH59o4G1ek1Y+kLOLgeCxQ8CkN3C0y1zYoH7Hw2gjRskxsKL4YLVsK6v5WScqOG++J8fwQ/rYR2Rl3fymwgJv+KfOgu72IFJ8zCf6jXobg75cZ1i7zNFey7HpCiVYeLHh5ausy2/PVcojTnnhcDgtdnYnweJ9ii72xwlHSmyS7DOidverR1kEI887ZX/lb22zsg6Cr6xwS0WyuYTJLplYplUIWbEncqLQ8kvJFmyWl8o98sNFPu7qTnZMmKa1SG2NgNvrhELMv0whicKJE0OZR8+P/2/KNINvXTPerc4yIR+Gp4Omm8c/Hp5i5AWjf0XaSqXsI+weUC5A5NJvwIDAQAB'
     },
-
-    # 'bitcoin': {
-    #     'host': BTC_HOST,
-    #     'port': BTC_PORT,
-    #     'username': BTC_USER,
-    #     'password': BTC_PASS
-    # },
-# }
+    {
+        'module_name': 'yldt_cash_payment',
+        'name': 'cash',
+        'display_name': 'Cash in de Täsch',
+        'currencies': ['EUR'],
+        'fee_per_transaction': Decimal('0.0'),
+        'fee_percent': Decimal('0.0'),
+    }
 ]

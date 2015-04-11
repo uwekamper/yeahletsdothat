@@ -6,7 +6,7 @@ Hello {{ campaign.user.first_name }},
 
 You can contact {{ transaction.name }} by sending an email to
 
-    {{ campaign.user.email }}.
+    {{ transaction.email }}.
 
 We sent another email to the pledger to let them know that they should contact
 you directly.

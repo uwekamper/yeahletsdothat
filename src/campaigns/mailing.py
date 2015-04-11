@@ -42,7 +42,7 @@ def send_payment_confirmation(campaign, transaction, template):
     variables = {
         'recipient_address': transaction.email,
         'recipient_name': transaction.name,
-        'amount': transaction.amount,
+        'amount': transaction.amount_received,
         'perk': transaction.perk,
         'campaign': campaign,
         'campaign_url': reverse('campaign_details', args=[campaign.id])

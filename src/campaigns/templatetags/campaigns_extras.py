@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 
 from django import template
+from django.template.defaultfilters import truncatewords, striptags
 from django.utils.safestring import mark_safe
 import mistune
 import re
 import copy
-from bs4 import BeautifulSoup
 
 
 register = template.Library()
@@ -97,11 +97,5 @@ def markdown(value):
 
 @register.filter(name='markdownexcerpt', is_safe=True)
 def markdown_excerpt(value):
-    html = markdown_render(value)
-    print html
-    text = BeautifulSoup(html).get_text()
-    print text
-    result = text[0:150]
-    if len(text) > 150:
-        result += '...'
-    return mark_safe(result)
+    text = striptags(markdown_render(value))
+    return mark_safe(truncatewords(text, 20))

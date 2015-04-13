@@ -65,6 +65,7 @@ class Campaign(models.Model):
     user = models.ForeignKey(User, null=True, blank=True)
     title = models.CharField(max_length=200)
     description = models.TextField(blank=True)
+    contact_info = models.TextField(blank=True)
     currency = models.IntegerField(choices=CURRENCIES)
     goal = models.DecimalField(max_digits=20, decimal_places=10)
     start_date = models.DateTimeField()

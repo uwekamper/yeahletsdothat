@@ -11,6 +11,7 @@ from rest_framework.response import Response
 
 
 class CampaignsViewSet(viewsets.ModelViewSet):
+    queryset = Campaign.objects.all()
     model = Campaign
     serializer_class = CampaignSerializer
     lookup_field = 'key'
@@ -18,6 +19,7 @@ class CampaignsViewSet(viewsets.ModelViewSet):
 
 class PerksViewSet(viewsets.ModelViewSet):
     model = Perk
+    queryset = Perk.objects.all()
     serializer_class = PerkSerializer
 
     def list(self, request):

@@ -70,12 +70,12 @@ class MyInlineGrammar(mistune.InlineGrammar):
     )
 
 class MyInlineLexer(mistune.InlineLexer):
-    default_features = copy.copy(mistune.InlineLexer.default_features)
+    default_rules = copy.copy(mistune.InlineLexer.default_rules)
 
     # Add youtube_link and vimeo_link parser to default features
     # you can insert it any place you like
-    default_features.insert(1, 'vimeo_link')
-    default_features.insert(1, 'youtube_link')
+    default_rules.insert(1, 'vimeo_link')
+    default_rules.insert(1, 'youtube_link')
 
     def __init__(self, renderer, rules=None, **kwargs):
         if rules is None:

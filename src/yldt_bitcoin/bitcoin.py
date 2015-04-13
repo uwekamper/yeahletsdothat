@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import jsonrpclib
+# import jsonrpclib
 from campaigns.payment_method import BasePaymentMethod
 from django.conf import settings
 
@@ -13,7 +13,8 @@ def get_rpc_address(conf=None):
 def create_bitcoin_address(address=None):
     if not address:
         address = get_rpc_address()
-    server = jsonrpclib.Server(address)
+    server = None
+    # server = jsonrpclib.Server(address)
     new_addr = server.getnewaddress()
     return new_addr
 

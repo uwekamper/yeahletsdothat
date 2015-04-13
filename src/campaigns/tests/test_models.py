@@ -5,6 +5,8 @@ import pytest
 from common import *
 from campaigns.commands import BeginPayment, ReceivePayment
 
+pytestmark = pytest.mark.django_db
+
 class TestUserProfile(CommonMethods):
     """
     Test the user profile functions

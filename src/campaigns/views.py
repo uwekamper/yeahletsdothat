@@ -9,7 +9,6 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
-import jsonrpclib
 from rest_framework.renderers import JSONRenderer
 from django.utils.translation import ugettext as _
 from campaigns.payment_method import get_method_by_name
@@ -197,20 +196,6 @@ def transaction(request, pk):
     transaction = get_object_or_404(Transaction, pk=pk)
     return render(request, 'campaigns/transaction.html',
             {'transaction': transaction, 'activity': transaction.campaign})
-
-
-# TODO: move this code to the bitcoin payment module.
-def check_completion(activity):
-    amount = activity.get_total_pledge_amount()
-
-    if amount >= activity.goal and not activity.completed:
-        # set the activity to completed so no one else can pledge.
-        activity.completed = True
-        activity.save()
-
-        s = jsonrpclib.Server(get_rpc_address())
-        s.sendtoaddress(activity.target_account.btc_address, float(activity.goal),
-            'buy-uk-a-beer')
 
 
 # TODO: Move this into the bitcoin module

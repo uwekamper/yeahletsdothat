@@ -9,7 +9,7 @@ Check if everything connected to events and event sourcing (projections,
 denormalization, etc.) works as intended.
 """
 
-@pytest.mark.django_db(transaction=True)
+@pytest.mark.django_db
 class TestTransactionCommands(object):
 
 
@@ -28,7 +28,8 @@ class TestTransactionCommands(object):
         assert t.email == 'test@example.com'
 
     def test_handle_received_payment(self, campaign, transaction_id, perk_id):
-        BeginPayment(transaction_id, campaign.key, 23.0, 'test@example.com', perk_id)
+        BeginPayment(transaction_id, campaign.key, 23.0, 'test@example.com', perk_id,
+            'Henner Piffendeckel', True, 'braintree')
 
         # Send only half of the payable amount
         ReceivePayment(transaction_id, 11.5)
@@ -41,7 +42,8 @@ class TestTransactionCommands(object):
         assert t.state == Transaction.STATE_COMPLETE
 
     def test_abort_payment(self, campaign, transaction_id, perk_id):
-        BeginPayment(transaction_id, campaign.key, 23.0, 'test@example.com', perk_id)
+        BeginPayment(transaction_id, campaign.key, 23.0, 'test@example.com', perk_id,
+            'Henner Piffendeckel', True, 'braintree')
 
         # Abort the payment process
         AbortPayment(transaction_id)
@@ -58,7 +60,8 @@ class TestTransactionCommands(object):
 
         # add one supporter
 
-        BeginPayment(transaction_id, campaign.key, 20.0, 'test@example.com', perk_id)
+        BeginPayment(transaction_id, campaign.key, 20.0, 'test@example.com', perk_id,
+            'Henner Piffendeckel', True, 'braintree')
         changed_campaign = Campaign.objects.get(id=campaign.id)
         assert changed_campaign.state.total_pledged == Decimal('20.0')
         assert changed_campaign.state.total_received == Decimal('0.0')

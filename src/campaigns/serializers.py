@@ -17,8 +17,8 @@ class CampaignSerializer(serializers.ModelSerializer):
         exclude = ['id', ]
 
 class CampaignKeyRelatedField(serializers.PrimaryKeyRelatedField):
-    def to_native(self, value):
 
+    def to_native(self, value):
         return u'{}'.format(Campaign.objects.get(pk=value).key)
 
     def from_native(self, data):
@@ -38,7 +38,7 @@ class PerkSerializer(serializers.ModelSerializer):
     """
     TODO: write docs
     """
-    campaign = CampaignKeyRelatedField()
+    campaign = CampaignKeyRelatedField(queryset=Campaign.objects.all())
     state = serializers.SerializerMethodField('get_state')
 
 

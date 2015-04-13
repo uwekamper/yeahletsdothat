@@ -10,9 +10,8 @@ from django.db.models import Sum
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import python_2_unicode_compatible
-from django_hstore.fields import DictionaryField
-from django_hstore.managers import HStoreManager
-from django_hstore.query import HStoreQuerySet
+from django.contrib.postgres.fields import HStoreField
+
 from polymorphic import PolymorphicModel, PolymorphicManager
 
 # @python_2_unicode_compatible
@@ -234,9 +233,7 @@ class BaseEvent(PolymorphicModel):
     in our database.
     """
     created = models.DateTimeField(auto_now_add=True)
-    data = DictionaryField()
-
-    hstore_objects = HStoreManager()
+    data = HStoreField()
 
     # queryset_class = HStoreQuerySet
     # event_type = models.IntegerField()

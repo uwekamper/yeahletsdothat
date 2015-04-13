@@ -82,22 +82,21 @@ ROOT_URLCONF = 'yldt.urls'
 WSGI_APPLICATION = 'yldt.wsgi.application'
 
 INSTALLED_APPS = (
-    'polymorphic',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.postgres',
     # Uncomment the next line to enable the admin:
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
-    'django_hstore',
-    'sorl.thumbnail',
+    # 'django_hstore',
     'rest_framework',
-    'south',
-    'registration',
+    # 'registration',
+    'polymorphic',
     'campaigns',
     'yldt_braintree',
     'yldt_cash_payment',

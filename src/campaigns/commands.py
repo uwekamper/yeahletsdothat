@@ -63,11 +63,11 @@ class BeginPayment(Command):
         self.data = dict(
             transaction_id=id,
             campaign_key=campaign_key,
-            amount=amount,
+            amount=str(amount),
             email=email,
-            perk_id=perk_id,
+            perk_id=str(perk_id),
             name=name,
-            show_name=show_name,
+            show_name=str(show_name),
             payment_method_name=payment_method_name
         )
         super(BeginPayment, self).__init__()
@@ -86,7 +86,7 @@ class ReceivePayment(Command):
         super(ReceivePayment, self).__init__()
 
     def main(self):
-        self.data = dict(transaction_id=self.transaction_id, amount=self.amount)
+        self.data = dict(transaction_id=self.transaction_id, amount=str(self.amount))
         yield ReceivePaymentEvent(data=self.data)
 
     def post(self):
@@ -103,9 +103,8 @@ class AbortPayment(Command):
     Stop the payment process for one transaction id.
     """
     def __init__(self, id):
-        self.id = id
+        self.data = dict(transaction_id=str(id))
         super(AbortPayment, self).__init__()
 
     def main(self):
-        data = dict(transaction_id=id)
-        yield AbortPaymentEvent(data=data)
+        yield AbortPaymentEvent(data=self.data)

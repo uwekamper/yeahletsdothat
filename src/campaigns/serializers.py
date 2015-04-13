@@ -21,7 +21,7 @@ class CampaignKeyRelatedField(serializers.PrimaryKeyRelatedField):
     def to_native(self, value):
         return u'{}'.format(Campaign.objects.get(pk=value).key)
 
-    def from_native(self, data):
+    def to_internal_value(self, data):
         if self.queryset is None:
             raise Exception('Writable related fields must include a `queryset` argument')
         try:
@@ -39,7 +39,7 @@ class PerkSerializer(serializers.ModelSerializer):
     TODO: write docs
     """
     campaign = CampaignKeyRelatedField(queryset=Campaign.objects.all())
-    state = serializers.SerializerMethodField('get_state')
+    state = serializers.SerializerMethodField()
 
 
     def get_state(self, obj):

@@ -18,12 +18,12 @@ class Command(BaseCommand):
                 db_table = sub_class._meta.db_table
                 cursor = connection.cursor()
                 try:
-                    cursor.execute('DROP TABLE {}'.format(db_table))
+                    cursor.execute('DELETE FROM {}'.format(db_table))
                 finally:
                     cursor.close()
 
         self.stdout.write('Calling syncdb ...')
-        call_command('syncdb', interactive=False)
+        # call_command('syncdb', interactive=False)
 
         for event in BaseEvent.objects.all():
             self.stdout.write(str(event))

@@ -1,4 +1,4 @@
-{% load thumbnail %}
+{#{% load thumbnail %}#}
 {% load i18n %}
 <!DOCTYPE html>
 <html ng-app="root">
@@ -48,12 +48,15 @@
                         <ul class="dropdown-menu">
                             <li><a href="{% url 'user_profile' %}">Your profile</a></li>
                             <li class="divider"></li>
-                            <li><a href="{% url 'auth_logout' %}"><span class="glyphicon glyphicon-log-out"></span>
+{#                          {% url 'auth_logout' %}#}
+                            <li><a href=""><span class="glyphicon glyphicon-log-out"></span>
                                 Sign out</a></li>
                         </ul>
                     </li>
                     {% else %}
-                    <li><a href="{% url 'auth_login' %}">Sign in</a></li>
+{#                    <li><a href="{% url 'auth_login' %}">Sign in</a></li>#}
+
+                    <li><a href="">Sign in</a></li>
                     {% endif %}
                 </ul>
             </div>

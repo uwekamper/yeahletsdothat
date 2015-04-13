@@ -125,7 +125,6 @@ class PerkStateProjector(Projector):
     def handle_begin_payment(self, event):
         perk_id = event.data.get('perk_id', None)
         if perk_id != None:
-            
             perk = Perk.objects.get(pk=perk_id)
             perk.state.total_pledged += 1
             perk.state._super_save()

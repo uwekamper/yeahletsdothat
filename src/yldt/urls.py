@@ -19,7 +19,7 @@ urlpatterns = patterns('',
     # Uncomment the next line to enable the admin:
     url(r'^$', 'campaigns.views.index', name='index'),
     url(r'^admin/', include(admin.site.urls)),
-    # url(r'^accounts/', include('registration.backends.default.urls')),
+    url(r'^accounts/', include('registration.backends.default.urls')),
     url(r'^accounts/profile/$', 'campaigns.views.user_profile', name="user_profile"),
     url(r'^transaction/(?P<pk>\d+)/$', 'campaigns.views.transaction', name='transaction'),
     # url(r'^api/transaction/(?P<pk>\d+)/$', 'campaigns.views.transaction_api', name='transaction_api'),

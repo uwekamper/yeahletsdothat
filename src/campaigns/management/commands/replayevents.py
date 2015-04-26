@@ -25,7 +25,7 @@ class Command(BaseCommand):
         self.stdout.write('Calling syncdb ...')
         # call_command('syncdb', interactive=False)
 
-        for event in BaseEvent.objects.all():
+        for event in BaseEvent.objects.all().order_by('created'):
             self.stdout.write(str(event))
             handle_event(event)
 

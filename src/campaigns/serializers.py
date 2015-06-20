@@ -12,6 +12,7 @@ from campaigns.utils import get_payment_methods
 
 class PaymentPOSTData(serializers.Serializer):
     amount = serializers.DecimalField(max_digits=20, decimal_places=8)
+    name = serializers.CharField()
     payment_nonce = serializers.CharField()
 
 

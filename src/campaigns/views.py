@@ -22,7 +22,7 @@ from django.conf import settings
 
 import forms
 from models import Campaign, Transaction, Perk, CURRENCY_EUR
-from commands import BeginPayment
+from commands import BeginPayment, ReceivePayment
 from serializers import CampaignSerializer
 
 def index(request):
@@ -228,20 +228,41 @@ def list_payment_methods(request, key):
         context={'request': request, 'key': key})
     return Response(ser_methods.data)
 
-@api_view(['GET', 'POST'])
+@api_view(['GET'])
 def pay_with(request, key, name):
     campaign = get_object_or_404(Campaign, key=key)
     method = get_method_by_name(name)
 
+    return Response(method.get_json())
+
+@api_view(['POST'])
+def post_transaction(request, key):
     if request.method == 'POST':
         ser = PaymentPOSTData(data=request.data)
         if ser.is_valid():
-            return Response({"message": _("POST succesful"), "data": request.data})
+            amount = ser.validated_data.get('amount')
+            payment_method_name = ser.validated_data.get('name')
+            method = get_method_by_name(payment_method_name)
+            payment_nonce = ser.validated_data.get('payment_nonce')
+            name = "Urongo Krompf"
+            email = "me@uwekamper.de" # ser.validated_data.get('email1')
+            show_name = True # not ser.validated_data['hide_name']
+
+            # Create a new payment transaction with a random ID.
+            transaction_id = str(uuid.uuid4())
+            perk_id = None
+            # if perk != None:
+            #     perk_id = perk.id
+            BeginPayment(transaction_id, key, amount, email, perk_id, name, show_name,
+                    payment_method_name)
+            if method.validate_nonce(amount, payment_nonce):
+                ReceivePayment(transaction_id, amount)
+                transaction = Transaction.objects.get(transaction_id=transaction_id)
+                return Response(TransactionSerializer(transaction).data)    
+            else:
+                return Response(TransactionSerializer(transaction).data)
         else:
-            return Response(ser.errors)
-
-    return Response(method.get_json())
-
+            return Response({'result': 'error', 'errors': ser.errors})
 
 # TODO: Move this into the bitcoin module
 # @api_view(['GET'])

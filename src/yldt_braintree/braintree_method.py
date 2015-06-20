@@ -24,6 +24,12 @@ class BrainTree(BasePaymentMethod):
         else:
             self.braintree_environment = braintree.Environment.Sandbox
 
+        braintree.Configuration.configure(
+            self.braintree_environment,
+            merchant_id=self.merchant_id,
+            public_key=self.public_key,
+            private_key=self.private_key
+        )
 
     def pay(self, campaign, transaction_id):
         url = '/pay/' + self.name + '/' + str(transaction_id) + '/'
@@ -36,13 +42,14 @@ class BrainTree(BasePaymentMethod):
         return self.braintree_environment == braintree.Environment.Sandbox
 
     def get_client_token(self):
-        braintree.Configuration.configure(
-            self.braintree_environment,
-            merchant_id=self.merchant_id,
-            public_key=self.public_key,
-            private_key=self.private_key
-        )
         return braintree.ClientToken.generate()
+
+    def validate_nonce(self, amount, payment_nonce):
+        result = braintree.Transaction.sale({
+            "amount": amount,
+            "payment_method_nonce": payment_nonce,
+        })
+        return True
 
     def get_json(self):
         result = {

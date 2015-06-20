@@ -28,6 +28,8 @@ urlpatterns = patterns('',
     url(r'^yeah/', include('campaigns.urls')),
     url(r'^api/v1/campaigns/(?P<key>[\w=-]+)/$', campaigns.views.CampaignRetrieveAPI.as_view()),
     url(r'^api/v1/campaigns/(?P<key>[\w=-]+)/pay_with/(?P<name>[\w=-\_]+)/$', campaigns.views.pay_with),
+    url(r'^api/v1/campaigns/(?P<key>[\w=-]+)/transactions/$', campaigns.views.post_transaction),
+
 
 
 ) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

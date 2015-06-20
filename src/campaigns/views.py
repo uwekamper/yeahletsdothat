@@ -247,7 +247,7 @@ def post_transaction(request, key):
     if request.method == 'POST':
         ser = PaymentPOSTData(data=request.data)
         if ser.is_valid():
-            logger.debug('data is ' + ser.data)
+            logger.debug('data is ' + str(ser.data))
             amount = ser.validated_data.get('amount')
             payment_method_name = ser.validated_data.get('name')
             method = get_method_by_name(payment_method_name)

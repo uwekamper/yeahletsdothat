@@ -84,6 +84,12 @@ def campaign_details(request, key):
     View that shows a single activity.
     """
     campaign = get_campaign_or_404(request, key)
+    template_name = 'campaigns/campaign_details.html'
+
+    if request.method == 'GET':
+        if request.GET.get('embedded', None) is not None:
+            template_name = 'campaigns/campaign_details_embedded.html'
+
     methods = get_payment_methods()
     supporters = Transaction.objects.filter(campaign=campaign, show_name=True)
     context = {'campaign': campaign, 'methods': methods, 'supporters': supporters}
@@ -93,8 +99,7 @@ def campaign_details(request, key):
             context['pledge_button_text'] = settings.YLDT_PLEDGE_BUTTON_TEXT
     except AttributeError:
         pass
-
-    return render(request, 'campaigns/campaign_details.html', context)
+    return render(request, template_name, context)
 
 @login_required
 def campaign_edit(request, key):

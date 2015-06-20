@@ -1,10 +1,12 @@
-{% extends "base_title.html" %}
+{% extends "base.html" %}
 {% load i18n %}
 {% load campaigns_extras %}
 
 {% block title %}{{ activity.name }}{% endblock %}
 
-{% block container %}
+{% block body %}
+<div class="container">
+  {% block container %}
     <div class="activity-title">
         {% block titlesection %}
             <h1>{{ campaign.title }}</h1>
@@ -23,26 +25,8 @@
 
 
         <div class="row">
-            <div class="col-xs-8">
-                <p>{{ campaign.description|markdown }}</p>
 
-                <hr />
-                <h1>{% trans "Public list of supporters" %} </h1>
-                <p>
-                {% if supporters %}
-                  <ul>
-                  {% for supporter in supporters %}
-                    <li>{% if supporter.name %}{{ supporter.name }}{% else %}An unknown user{% endif %}
-                      pledged {{ supporter.amount|floatformat:2 }} {{ campaign.get_currency_display }}</li>
-                  {% endfor %}
-                  </ul>
-                {% else %}
-                  <p>We cannot show any supporters publicly.</p>
-                {% endif %}
-                </p>
-
-            </div><!-- /.col -->
-            <div class="col-xs-4 activity-right">
+            <div class="col-xs-12 activity-right">
                 <div class="activity-right-body">
                     <div class="activity-value">{{ campaign.state.total_supporters }}</div>
                     <div class="activity-unit">{% trans "supporter(s)" %}</div>
@@ -53,7 +37,6 @@
                     <div class="activity-unit">days to go</div>
 
                     <hr />
-                    Bla
 
                     {% if not campaign.completed %}
                     <div class="text-center">
@@ -97,8 +80,32 @@
                 </div>
             </div><!-- /.col -->
         </div><!-- /.row -->
+        <div class="row">
+          <div class="col-xs-12">
+                <p>{{ campaign.description|markdown }}</p>
+
+                <hr />
+                <h1>{% trans "Public list of supporters" %} </h1>
+                <p>
+                {% if supporters %}
+                  <ul>
+                  {% for supporter in supporters %}
+                    <li>{% if supporter.name %}{{ supporter.name }}{% else %}An unknown user{% endif %}
+                      pledged {{ supporter.amount|floatformat:2 }} {{ campaign.get_currency_display }}</li>
+                  {% endfor %}
+                  </ul>
+                {% else %}
+                  <p>We cannot show any supporters publicly.</p>
+                {% endif %}
+                </p>
+
+            </div><!-- /.col -->
+        </div>
     </div><!-- /.well -->
-{% endblock container %}
+  {% endblock container %}
+</div>
+
+{% endblock body %}
 
 {% block templates %}{% endblock templates %}
 

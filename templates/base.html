@@ -19,6 +19,7 @@
     {% block extra_css %}{% endblock %}
     </head>
     <body>
+    {% block body %}
     {% block extra_body %}{% endblock extra_body %}
 
     <!-- Fixed navbar -->
@@ -61,13 +62,11 @@
             <!--/.nav-collapse -->
         </div>
     </div>
-
-    {% block body %}
-      {% block content %}
-        <div class="container">
-            {% block container %}{% endblock container %}
-        </div>
-      {% endblock content %}
+    {% block content %}
+      <div class="container">
+          {% block container %}{% endblock container %}
+      </div>
+    {% endblock content %}
     {% block scripts %}
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="{{ STATIC_URL }}bower_components/jquery/dist/jquery.min.js"></script>

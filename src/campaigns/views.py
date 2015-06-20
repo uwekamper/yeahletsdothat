@@ -228,6 +228,14 @@ def list_payment_methods(request, key):
         context={'request': request, 'key': key})
     return Response(ser_methods.data)
 
+@api_view()
+def pay_with(request, key, name):
+    campaign = get_object_or_404(Campaign, key=key)
+    method = get_method_by_name(name)
+
+    return Response(method.get_json())
+
+
 # TODO: Move this into the bitcoin module
 # @api_view(['GET'])
 # def transaction_api(request, pk):

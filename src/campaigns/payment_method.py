@@ -130,3 +130,6 @@ class BasePaymentMethod(object):
     @property
     def module_name(self):
         return get_module_name_by_name(self.name)
+
+    def get_json(self):
+        return {'nothing_to_see_here': 'please go on'}

@@ -43,3 +43,9 @@ class BrainTree(BasePaymentMethod):
             private_key=self.private_key
         )
         return braintree.ClientToken.generate()
+
+    def get_json(self):
+        result = {
+            'client_token': self.get_client_token(),
+        }
+        return result

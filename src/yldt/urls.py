@@ -7,6 +7,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 admin.autodiscover()
+import campaigns.views
 
 urlpatterns = patterns('',
     # Examples:
@@ -25,6 +26,9 @@ urlpatterns = patterns('',
     # url(r'^api/transaction/(?P<pk>\d+)/$', 'campaigns.views.transaction_api', name='transaction_api'),
 
     url(r'^yeah/', include('campaigns.urls')),
+    url(r'^api/v1/campaigns/(?P<key>[\w=-]+)/$', campaigns.views.CampaignRetrieveAPI.as_view()),
+    url(r'^api/v1/campaigns/(?P<key>[\w=-]+)/payment_methods/$', campaigns.views.list_payment_methods),
+
 ) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 for options in settings.YLDT_PAYMENT_METHODS:

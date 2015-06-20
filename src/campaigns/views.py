@@ -9,17 +9,21 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
+from rest_framework.decorators import api_view
+from rest_framework.generics import RetrieveAPIView
 from rest_framework.renderers import JSONRenderer
 from django.utils.translation import ugettext as _
+from rest_framework.response import Response
 from campaigns.payment_method import get_method_by_name
-from campaigns.serializers import TransactionSerializer, CampaignSerializer, PerkSerializer
+from campaigns.serializers import TransactionSerializer, CampaignSerializer, PerkSerializer, \
+    PaymentMethodSerializer
 from campaigns.utils import get_campaign_or_404, get_payment_methods
 from django.conf import settings
 
 import forms
 from models import Campaign, Transaction, Perk, CURRENCY_EUR
-
 from commands import BeginPayment
+from serializers import CampaignSerializer
 
 def index(request):
     return render(request, 'campaigns/index.html', {})
@@ -197,6 +201,22 @@ def transaction(request, pk):
     return render(request, 'campaigns/transaction.html',
             {'transaction': transaction, 'activity': transaction.campaign})
 
+
+class CampaignRetrieveAPI(RetrieveAPIView):
+    """
+
+    """
+    serializer_class = CampaignSerializer
+    lookup_field = 'key'
+    queryset = Campaign.objects.all()
+
+@api_view()
+def list_payment_methods(request, key):
+    campaign = get_object_or_404(Campaign, key=key)
+    methods = get_payment_methods()
+    ser_methods = PaymentMethodSerializer(methods, many=True,
+        context={'request': request, 'key': key})
+    return Response(ser_methods.data)
 
 # TODO: Move this into the bitcoin module
 # @api_view(['GET'])

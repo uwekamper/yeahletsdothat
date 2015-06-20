@@ -26,6 +26,14 @@ def get_method_by_name(name):
     # This means someone is trying to access a method that does not work.
     raise PaymentMethodDoseNotExist
 
+
+def get_module_name_by_name(name):
+    for payment_plugin in settings.YLDT_PAYMENT_METHODS:
+        method_name = payment_plugin['name']
+        if method_name == name:
+            return payment_plugin['module_name']
+
+
 def get_actions_by_name(name, transaction_id):
     method = get_method_by_name(name)
     return method.get_actions(transaction_id)
@@ -117,3 +125,8 @@ class BasePaymentMethod(object):
 
     def get_actions(self, transaction_id=None):
         return []
+
+
+    @property
+    def module_name(self):
+        return get_module_name_by_name(self.name)

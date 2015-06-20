@@ -1,6 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
+import logging
 import uuid
 from decimal import Decimal
 
@@ -24,6 +26,9 @@ import forms
 from models import Campaign, Transaction, Perk, CURRENCY_EUR
 from commands import BeginPayment, ReceivePayment
 from serializers import CampaignSerializer
+
+logger = logging.getLogger(__name__)
+
 
 def index(request):
     return render(request, 'campaigns/index.html', {})
@@ -83,6 +88,8 @@ def campaign_details(request, key):
     """
     View that shows a single activity.
     """
+    logger.debug("campaign details")
+
     campaign = get_campaign_or_404(request, key)
     template_name = 'campaigns/campaign_details.html'
 
@@ -240,6 +247,7 @@ def post_transaction(request, key):
     if request.method == 'POST':
         ser = PaymentPOSTData(data=request.data)
         if ser.is_valid():
+            logger.debug('data is ' + ser.data)
             amount = ser.validated_data.get('amount')
             payment_method_name = ser.validated_data.get('name')
             method = get_method_by_name(payment_method_name)
@@ -258,11 +266,14 @@ def post_transaction(request, key):
             transaction = Transaction.objects.get(transaction_id=transaction_id)
 
             if method.validate_nonce(amount, payment_nonce):
+                logger.debug('transaction is good')
                 ReceivePayment(transaction_id, amount)
                 return Response(TransactionSerializer(transaction).data)
             else:
+                logger.debug('transaction is bad')
                 return Response(TransactionSerializer(transaction).data)
         else:
+            logger.debug("got a wrong http method")
             return Response({'result': 'error', 'errors': ser.errors})
 
 # TODO: Move this into the bitcoin module

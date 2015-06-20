@@ -228,10 +228,13 @@ def list_payment_methods(request, key):
         context={'request': request, 'key': key})
     return Response(ser_methods.data)
 
-@api_view()
+@api_view(['GET', 'POST'])
 def pay_with(request, key, name):
     campaign = get_object_or_404(Campaign, key=key)
     method = get_method_by_name(name)
+
+    if request.method == 'POST':
+        return Response({"message": "Got some data!", "data": request.data})
 
     return Response(method.get_json())
 

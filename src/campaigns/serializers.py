@@ -9,9 +9,17 @@ from rest_framework import serializers
 from campaigns.models import Transaction, Campaign, Perk
 from campaigns.utils import get_payment_methods
 
+
+class PaymentPOSTData(serializers.Serializer):
+    amount = serializers.DecimalField(max_digits=20, decimal_places=8)
+    payment_nonce = serializers.CharField()
+
+
+
 class PerkSerializer(serializers.ModelSerializer):
     class Meta:
         model = Perk
+
 
 class PaymentMethodSerializer(serializers.Serializer):
     """
@@ -26,6 +34,7 @@ class PaymentMethodSerializer(serializers.Serializer):
         key = self.context['key']
         url = request.build_absolute_uri('/yeah/' + key + '/pay/' + obj.name + '/')
         return url
+
 
 class CampaignSerializer(serializers.ModelSerializer):
     """

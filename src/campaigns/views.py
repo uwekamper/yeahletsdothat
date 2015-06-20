@@ -16,7 +16,7 @@ from django.utils.translation import ugettext as _
 from rest_framework.response import Response
 from campaigns.payment_method import get_method_by_name
 from campaigns.serializers import TransactionSerializer, CampaignSerializer, PerkSerializer, \
-    PaymentMethodSerializer
+    PaymentMethodSerializer, PaymentPOSTData
 from campaigns.utils import get_campaign_or_404, get_payment_methods
 from django.conf import settings
 
@@ -234,7 +234,11 @@ def pay_with(request, key, name):
     method = get_method_by_name(name)
 
     if request.method == 'POST':
-        return Response({"message": "Got some data!", "data": request.data})
+        ser = PaymentPOSTData(data=request.data)
+        if ser.is_valid():
+            return Response({"message": _("POST succesful"), "data": request.data})
+        else:
+            return Response(ser.errors)
 
     return Response(method.get_json())
 

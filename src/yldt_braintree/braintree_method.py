@@ -34,3 +34,12 @@ class BrainTree(BasePaymentMethod):
 
     def is_sandbox(self):
         return self.braintree_environment == braintree.Environment.Sandbox
+
+    def get_client_token(self):
+        braintree.Configuration.configure(
+            self.braintree_environment,
+            merchant_id=self.merchant_id,
+            public_key=self.public_key,
+            private_key=self.private_key
+        )
+        return braintree.ClientToken.generate()

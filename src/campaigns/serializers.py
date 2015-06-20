@@ -95,4 +95,4 @@ class PaymentMethodSerializer(serializers.Serializer):
 
         request = self.context['request']
         key = self.context['key']
-        return 'bla'
+        return obj.get_client_token()

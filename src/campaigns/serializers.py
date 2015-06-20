@@ -97,6 +97,15 @@ class TransactionSerializer(serializers.ModelSerializer):
     pledged = serializers.SerializerMethodField('_get_pledged')
     received = serializers.SerializerMethodField('_get_received')
     confirmed = serializers.SerializerMethodField('_get_confirmed')
+    amount = serializers.DecimalField(max_digits=20, decimal_places=8)
+    name = serializers.SerializerMethodField()
+    payment_nonce = serializers.SerializerMethodField()
+
+    def get_payment_nonce(self, obj):
+        return None
+
+    def get_name(self, obj):
+        return "braintree"
 
     def _get_pledged(self, obj):
         return(obj.state == Transaction.STATE_OPEN)
@@ -109,7 +118,7 @@ class TransactionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Transaction
-        fields = ('id', 'transaction_id', 'campaign', 'state', 'pledged', 'received', 'confirmed')
+        fields = ('id', 'transaction_id', 'name', 'amount', 'campaign', 'state', 'pledged', 'received', 'confirmed')
 
 
 

@@ -255,10 +255,11 @@ def post_transaction(request, key):
             #     perk_id = perk.id
             BeginPayment(transaction_id, key, amount, email, perk_id, name, show_name,
                     payment_method_name)
+            transaction = Transaction.objects.get(transaction_id=transaction_id)
+
             if method.validate_nonce(amount, payment_nonce):
                 ReceivePayment(transaction_id, amount)
-                transaction = Transaction.objects.get(transaction_id=transaction_id)
-                return Response(TransactionSerializer(transaction).data)    
+                return Response(TransactionSerializer(transaction).data)
             else:
                 return Response(TransactionSerializer(transaction).data)
         else:

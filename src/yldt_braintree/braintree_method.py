@@ -49,7 +49,9 @@ class BrainTree(BasePaymentMethod):
             "amount": amount,
             "payment_method_nonce": payment_nonce,
         })
-        return True
+        if result.is_success:
+            return True
+        return False
 
     def get_json(self):
         result = {

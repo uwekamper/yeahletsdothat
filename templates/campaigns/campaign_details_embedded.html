@@ -13,17 +13,7 @@
             <div class="activity-creator">{% blocktrans with name=campaign.user.username %}by {{ name }}{% endblocktrans %}</div>
         {% endblock titlesection %}
     </div>
-    {% if user.is_authenticated %}{% if user == campaign.user %}
-        <div class="row">
-            <div class="col-xs-12">
-                <a href="edit/" class="pull-right" style="background: #fff; padding: 15px;">{% trans "Edit campaign "%}</a>
-            </div><!-- /.row -->
-        </div><!-- /.row -->
-    {% endif %}{% endif %}
     <div class="main-content">
-
-
-
         <div class="row">
 
             <div class="col-xs-12 activity-right">
@@ -38,45 +28,45 @@
 
                     <hr />
 
-                    {% if not campaign.completed %}
-                    <div class="text-center">
-                        <a href="{% url 'select_payment' campaign.key %}"
-                           class="pledge-btn btn btn-primary">{% if pledge_button_text %}{{ pledge_button_text }}{% else %}Pledge now{% endif %}</a>
-                        {{ campaign.pledge_value }} {{ campaign.get_currency_display }}
-                        minimum pledge
-                    </div>
-                    {% else %}
-                        <div class="text-center">
-                        <a href="" disabled="disabled" class="pledge-btn btn btn-primary">Pledge now!</a>
-                        This activity was completed. Pledging is disabled.
-                    </div>
-                    {% endif %}
+{#                    {% if not campaign.completed %}#}
+{#                    <div class="text-center">#}
+{#                        <a href="{% url 'select_payment' campaign.key %}"#}
+{#                           class="pledge-btn btn btn-primary">{% if pledge_button_text %}{{ pledge_button_text }}{% else %}Pledge now{% endif %}</a>#}
+{#                        {{ campaign.pledge_value }} {{ campaign.get_currency_display }}#}
+{#                        minimum pledge#}
+{#                    </div>#}
+{#                    {% else %}#}
+{#                        <div class="text-center">#}
+{#                        <a href="" disabled="disabled" class="pledge-btn btn btn-primary">Pledge now!</a>#}
+{#                        This activity was completed. Pledging is disabled.#}
+{#                    </div>#}
+{#                    {% endif %}#}
 
-                    <h2>Available Perks</h2>
-                    {% for perk in campaign.perks.all %}
-                        <div class="well">
-                            <h3>{{ perk.title }}</h3>
-                            <p>
+{#                    <h2>Available Perks</h2>#}
+{#                    {% for perk in campaign.perks.all %}#}
+{#                        <div class="well">#}
+{#                            <h3>{{ perk.title }}</h3>#}
+{#                            <p>#}
+{##}
+{#                              {% if perk.state.total_received > 0 %}#}
+{#                                {{ perk.state.total_received }} supporter(s)#}
+{#                              {% endif %}#}
+{##}
+{#                              {% if perk.is_limited %}#}
+{#                                <mark>Limited ({{ perk.state.perks_left }} of {{ perk.available }} left)</mark>#}
+{#                              {% endif %}#}
+{##}
+{#                            </p>#}
+{#                            <p>{{ perk.text|markdown }}</p>#}
+{#                            <p class="perk_amount">{{ perk.amount|floatformat:2 }} {{ campaign.get_currency_display }}</p>#}
+{#                          <a href="{% url 'select_payment' campaign.key %}?perk={{ perk.id }}" class="btn btn-success {% if campaign.state.completed %}disabled{% endif %}">Select this perk</a>#}
+{#                        </div>#}
+{#                    {% endfor %}#}
 
-                              {% if perk.state.total_received > 0 %}
-                                {{ perk.state.total_received }} supporter(s)
-                              {% endif %}
-
-                              {% if perk.is_limited %}
-                                <mark>Limited ({{ perk.state.perks_left }} of {{ perk.available }} left)</mark>
-                              {% endif %}
-
-                            </p>
-                            <p>{{ perk.text|markdown }}</p>
-                            <p class="perk_amount">{{ perk.amount|floatformat:2 }} {{ campaign.get_currency_display }}</p>
-                          <a href="{% url 'select_payment' campaign.key %}?perk={{ perk.id }}" class="btn btn-success {% if campaign.state.completed %}disabled{% endif %}">Select this perk</a>
-                        </div>
-                    {% endfor %}
-
-                    <h2>Payable using</h2>
-                    {% for method in methods %}
-                        <p>{{ method.display_name }}</p>
-                    {% endfor %}
+{#                    <h2>Payable using</h2>#}
+{#                    {% for method in methods %}#}
+{#                        <p>{{ method.display_name }}</p>#}
+{#                    {% endfor %}#}
                 </div>
             </div><!-- /.col -->
         </div><!-- /.row -->

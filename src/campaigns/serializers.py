@@ -7,11 +7,39 @@ from django.utils.encoding import smart_text
 
 from rest_framework import serializers
 from campaigns.models import Transaction, Campaign, Perk
+from campaigns.utils import get_payment_methods
+
+class PerkSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Perk
+
+class PaymentMethodSerializer(serializers.Serializer):
+    """
+
+    """
+    module_name = serializers.CharField()
+    name = serializers.CharField()
+    fallback_url = serializers.SerializerMethodField()
+
+    def get_fallback_url(self, obj):
+        request = self.context['request']
+        key = self.context['key']
+        url = request.build_absolute_uri('/yeah/' + key + '/pay/' + obj.name + '/')
+        return url
 
 class CampaignSerializer(serializers.ModelSerializer):
     """
     # TODO: Write docs
     """
+    perks = PerkSerializer(many=True)
+    payment_methods = serializers.SerializerMethodField()
+
+    def get_payment_methods(self, obj):
+        methods = get_payment_methods()
+        context = dict(self.context, key=obj.key)
+        ser = PaymentMethodSerializer(methods, many=True, context=context)
+        return ser.data
+
     class Meta:
         model = Campaign
         exclude = ['id', ]
@@ -74,25 +102,14 @@ class TransactionSerializer(serializers.ModelSerializer):
         fields = ('id', 'transaction_id', 'campaign', 'state', 'pledged', 'received', 'confirmed')
 
 
-class PaymentMethodSerializer(serializers.Serializer):
-    """
 
-    """
-    module_name = serializers.CharField()
-    name = serializers.CharField()
-    fallback_url = serializers.SerializerMethodField()
-    client_token = serializers.SerializerMethodField()
 
-    def get_fallback_url(self, obj):
-        request = self.context['request']
-        key = self.context['key']
-        url = request.build_absolute_uri('/yeah/' + key + '/pay/' + obj.name + '/')
-        return url
-
-    def get_client_token(self, obj):
-        if obj.module_name != 'yldt_braintree':
-            return None
-
-        request = self.context['request']
-        key = self.context['key']
-        return obj.get_client_token()
+    # client_token = serializers.SerializerMethodField()
+    #
+    # def get_client_token(self, obj):
+    #     if obj.module_name != 'yldt_braintree':
+    #         return None
+    #
+    #     request = self.context['request']
+    #     key = self.context['key']
+    #     return obj.get_client_token()

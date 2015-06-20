@@ -215,6 +215,11 @@ class CampaignRetrieveAPI(RetrieveAPIView):
     lookup_field = 'key'
     queryset = Campaign.objects.all()
 
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, context={'request': request})
+        return Response(serializer.data)
+
 @api_view()
 def list_payment_methods(request, key):
     campaign = get_object_or_404(Campaign, key=key)

@@ -271,7 +271,7 @@ def post_transaction(request, key):
 
             if method.validate_nonce(amount, payment_nonce):
                 logger.debug('transaction is good')
-                ReceivePayment(transaction_id, amount)
+                ReceivePayment(transaction_id, amount, request)
                 return Response(TransactionSerializer(transaction).data)
             else:
                 logger.debug('transaction is bad')

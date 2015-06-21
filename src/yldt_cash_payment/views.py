@@ -25,7 +25,7 @@ def payment_edit(request, transaction_id, payment_method_name):
         form = CashPaymentForm(request.POST)
         if form.is_valid():
             amount = form.cleaned_data['amount']
-            commands.ReceivePayment(transaction_id, amount)
+            commands.ReceivePayment(transaction_id, amount, request)
             context = {
                 'transaction': transaction,
                 'campaign': transaction.campaign,

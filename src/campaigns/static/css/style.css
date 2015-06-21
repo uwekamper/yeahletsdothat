@@ -4,6 +4,15 @@ body {
     margin-bottom: 50px;
 }
 
+.navbar-default {
+        background-color: #5cb85c;
+}
+a.navbar-brand {
+    color: #333 !important;
+}
+ul.nav li a {
+    color: #333 !important;
+}
 .campaign-tile {
     background-color: #f8f8f8;
     min-height: 300px;

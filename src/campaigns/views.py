@@ -12,7 +12,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
 from rest_framework.decorators import api_view
-from rest_framework.generics import RetrieveAPIView
+from rest_framework.generics import RetrieveAPIView, ListAPIView
 from rest_framework.renderers import JSONRenderer
 from django.utils.translation import ugettext as _
 from rest_framework.response import Response
@@ -212,6 +212,11 @@ def transaction(request, pk):
     transaction = get_object_or_404(Transaction, pk=pk)
     return render(request, 'campaigns/transaction.html',
             {'transaction': transaction, 'activity': transaction.campaign})
+
+
+class CampaignListAPI(ListAPIView):
+    queryset = Campaign.objects.filter(is_private=False)
+    serializer_class = CampaignSerializer
 
 
 class CampaignRetrieveAPI(RetrieveAPIView):

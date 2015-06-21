@@ -26,6 +26,7 @@ urlpatterns = patterns('',
     # url(r'^api/transaction/(?P<pk>\d+)/$', 'campaigns.views.transaction_api', name='transaction_api'),
 
     url(r'^yeah/', include('campaigns.urls')),
+    url(r'^api/v1/campaigns/$', campaigns.views.CampaignListAPI.as_view()),
     url(r'^api/v1/campaigns/(?P<key>[\w=-]+)/$', campaigns.views.CampaignRetrieveAPI.as_view()),
     url(r'^api/v1/campaigns/(?P<key>[\w=-]+)/pay_with/(?P<name>[\w=-\_]+)/$', campaigns.views.pay_with),
     url(r'^api/v1/campaigns/(?P<key>[\w=-]+)/transactions/$', campaigns.views.post_transaction),

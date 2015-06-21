@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from mock import Mock, MagicMock
 from common import *
 from campaigns.models import *
 from campaigns.commands import BeginPayment, ReceivePayment, AbortPayment
@@ -13,17 +12,10 @@ denormalization, etc.) works as intended.
 @pytest.mark.django_db
 class TestTransactionCommands(object):
 
-
     @pytest.fixture
     def perk_id(self, campaign):
         perk_id = campaign.perks.all()[0].id
         return perk_id
-
-    @pytest.fixture
-    def mock_request(self):
-        request = Mock()
-        request.build_absolute_uri = MagicMock(return_value="http://example.com/")
-        return request
 
     def test_handle_begin_payment_event(self, campaign, transaction_id, perk_id):
         BeginPayment(transaction_id, campaign.key, 23.0, 'test@example.com', perk_id,

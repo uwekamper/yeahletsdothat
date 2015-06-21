@@ -1,9 +1,13 @@
+# -*- coding: utf-8 -*-
+
 import json
 from django.test import Client
 from django.core.urlresolvers import reverse
+from mock import Mock, MagicMock
 from lxml import html
 import pytest
 from decimal import Decimal
+
 from campaigns.models import *
 from django.contrib.auth.models import User
 
@@ -42,8 +46,16 @@ def create_test_user():
 @pytest.fixture
 def logged_in_client():
     client = Client()
+    if not User.objects.filter(username=TEST_USERNAME).exists():
+        create_test_user()
     client.login(username=TEST_USERNAME, password=TEST_PASSWORD)
     return client
+
+@pytest.fixture
+def mock_request():
+    request = Mock()
+    request.build_absolute_uri = MagicMock(return_value="http://example.com/")
+    return request
 
 
 

@@ -19,7 +19,6 @@ class TestUserProfile(CommonMethods):
         """
         dom = self.get_dom_by_name('user_profile', client=logged_in_client)
         header = dom.cssselect('h1')[0].text
-        header2 = dom.cssselect('h2')[0].text
         assert header == 'User Profile'
 
         acc_list = dom.cssselect('#account-list li')
@@ -45,16 +44,6 @@ class TestCampaigns(CommonMethods):
     Tests for campaign related things.
     """
     TEST_ACTIVITY_NAME = 'test activity'
-
-    def test_user_can_create_activity(self, logged_in_client):
-        """
-        Test if a logged in user can create an activity.
-        """
-        pass
-        #client = logged_in_client
-        #url = reverse('new_activity')
-        #response = client.post(url, data={'name': self.TEST_ACTIVITY_NAME})
-        #assert response.status_code == 200
 
     def test_user_can_view_campaign(self):
         """

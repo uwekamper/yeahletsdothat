@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.core.mail import send_mail
+from django.core.urlresolvers import reverse
 
 from django.db import transaction
 from projectors import handle_event
@@ -80,9 +81,15 @@ class ReceivePayment(Command):
     """
     Process a payment received for a transaction.
     """
-    def __init__(self, id, amount):
+    def __init__(self, id, amount, request):
         self.transaction_id = id
         self.amount = amount
+
+        # Construct the URL that the users can use to
+        campaign_key = Transaction.objects.get(transaction_id=id).campaign.key
+        self.campaign_url = \
+            request.build_absolute_uri(reverse('campaign_details', args=[campaign_key]))
+
         super(ReceivePayment, self).__init__()
 
     def main(self):
@@ -96,7 +103,8 @@ class ReceivePayment(Command):
         if transaction.amount_received >= transaction.amount:
             campaign = transaction.campaign
             template = PAYMENT_CONFIRMATION_TEMPLATE
-            send_payment_confirmation(campaign, transaction, template)
+            send_payment_confirmation(campaign, transaction, template, self.campaign_url)
+
 
 class AbortPayment(Command):
     """

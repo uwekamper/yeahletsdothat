@@ -27,7 +27,7 @@ class TestMailing(object):
             'test@example.com', perk_id, "Henner Piffendeckel", False,
             'braintree')
         transaction = Transaction.objects.get(transaction_id=transaction_id)
-        send_payment_confirmation(campaign, transaction, 'test')
+        send_payment_confirmation(campaign, transaction, 'test', 'http://test.de/')
 
         # Test that one message has been sent.
         assert len(mail.outbox) == 1

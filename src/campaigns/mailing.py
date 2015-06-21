@@ -38,14 +38,14 @@ def render_mail_template(template, variables):
     context = Context(variables)
     return template.render(context)
 
-def send_payment_confirmation(campaign, transaction, template):
+def send_payment_confirmation(campaign, transaction, template, url):
     variables = {
         'recipient_address': transaction.email,
         'recipient_name': transaction.name,
         'amount': transaction.amount_received,
         'perk': transaction.perk,
         'campaign': campaign,
-        'campaign_url': reverse('campaign_details', args=[campaign.id])
+        'campaign_url': url,
     }
     recipient_address = transaction.email
     message = render_mail_template(template, variables)

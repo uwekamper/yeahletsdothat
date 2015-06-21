@@ -17,15 +17,14 @@ from rest_framework.renderers import JSONRenderer
 from django.utils.translation import ugettext as _
 from rest_framework.response import Response
 from campaigns.payment_method import get_method_by_name
-from campaigns.serializers import TransactionSerializer, CampaignSerializer, PerkSerializer, \
-    PaymentMethodSerializer, PaymentPOSTData
 from campaigns.utils import get_campaign_or_404, get_payment_methods
 from django.conf import settings
 
 import forms
-from models import Campaign, Transaction, Perk, CURRENCY_EUR
+from models import Campaign, Transaction, Perk
 from commands import BeginPayment, ReceivePayment
-from serializers import CampaignSerializer
+from serializers import TransactionSerializer, PerkSerializer, PaymentMethodSerializer, \
+    CampaignSerializer, PaymentPOSTData
 
 logger = logging.getLogger(__name__)
 

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from mock import Mock, MagicMock
 from common import *
 from campaigns.models import *
 from campaigns.commands import BeginPayment, ReceivePayment, AbortPayment
@@ -18,6 +19,12 @@ class TestTransactionCommands(object):
         perk_id = campaign.perks.all()[0].id
         return perk_id
 
+    @pytest.fixture
+    def mock_request(self):
+        request = Mock()
+        request.build_absolute_uri = MagicMock(return_value="http://example.com/")
+        return request
+
     def test_handle_begin_payment_event(self, campaign, transaction_id, perk_id):
         BeginPayment(transaction_id, campaign.key, 23.0, 'test@example.com', perk_id,
             'Henner Piffendeckel', True, 'braintree')
@@ -27,17 +34,17 @@ class TestTransactionCommands(object):
         assert t.state == Transaction.STATE_OPEN
         assert t.email == 'test@example.com'
 
-    def test_handle_received_payment(self, campaign, transaction_id, perk_id):
+    def test_handle_received_payment(self, campaign, transaction_id, perk_id, mock_request):
         BeginPayment(transaction_id, campaign.key, 23.0, 'test@example.com', perk_id,
             'Henner Piffendeckel', True, 'braintree')
 
         # Send only half of the payable amount
-        ReceivePayment(transaction_id, 11.5)
+        ReceivePayment(transaction_id, 11.5, mock_request)
         t = Transaction.objects.get(transaction_id=transaction_id)
         assert t.state == Transaction.STATE_OPEN
 
         # Send the other half of the money
-        ReceivePayment(transaction_id, 11.5)
+        ReceivePayment(transaction_id, 11.5, mock_request)
         t = Transaction.objects.get(transaction_id=transaction_id)
         assert t.state == Transaction.STATE_COMPLETE
 
@@ -50,7 +57,7 @@ class TestTransactionCommands(object):
         t = Transaction.objects.get(transaction_id=transaction_id)
         assert t.state == Transaction.STATE_ABORTED
 
-    def test_campaign_state_completion(self, campaign, transaction_id, perk_id):
+    def test_campaign_state_completion(self, campaign, transaction_id, perk_id, mock_request):
         """
         Test if the campaign state goes to 'complete' if there are enough
         completed transactions.
@@ -73,7 +80,7 @@ class TestTransactionCommands(object):
         assert perk.state.total_received == 0
 
         # Complete the payment
-        ReceivePayment(transaction_id, 20.0)
+        ReceivePayment(transaction_id, 20.0, mock_request)
 
         # check everything on  the completed campaign.
         changed_campaign = Campaign.objects.get(id=campaign.id)
@@ -85,23 +92,23 @@ class TestTransactionCommands(object):
         assert perk.state.total_pledged == 1
         assert perk.state.total_received == 1
 
-    def test_campaign_state_percent(self, campaign, transaction_id, perk_id):
+    def test_campaign_state_percent(self, campaign, transaction_id, perk_id, mock_request):
         """
         Check if the model shows the correct percentage
         """
         BeginPayment(transaction_id, campaign.key, Decimal(10), 'test@example.com', perk_id,
             'Testuser', True, 'braintree')
-        ReceivePayment(transaction_id, Decimal(10))
+        ReceivePayment(transaction_id, Decimal(10), mock_request)
         assert campaign.state.percent_funded == Decimal(50.0)
 
-    def test_campaign_state_pending(self, campaign, transaction_id, perk_id):
+    def test_campaign_state_pending(self, campaign, transaction_id, perk_id, mock_request):
         """
         Check if the model shows the amount of pending amounts.
         """
         BeginPayment(transaction_id, campaign.key, Decimal(10), 'test@example.com', perk_id,
             'Testuser', True, 'braintree')
         assert campaign.state.pending == Decimal(10)
-        ReceivePayment(transaction_id, Decimal(10))
+        ReceivePayment(transaction_id, Decimal(10), mock_request)
 
         changed_campaign = Campaign.objects.get(id=campaign.id)
         assert changed_campaign.state.pending == Decimal(0)

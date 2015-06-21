@@ -14,6 +14,7 @@ from campaigns.payment_method import get_method_by_name
 from forms import BrainTreeForm
 from yldt_braintree.models import BrainTreeTransaction
 
+def store_
 def do_transaction(payment_method, transaction, form):
     """
     Subroutine that send the transaction data to the Braintree servers.
@@ -63,8 +64,9 @@ def payment_form(request, transaction_id, payment_method_name):
             result = do_transaction(payment_method, transact, form)
 
             if result.is_success:
-                BrainTreeTransaction.objects.create(transaction_id=transaction_id,
-                    braintree_transaction_id=result.transaction.id)
+                # TODO: store the customer ID in the database
+                # BrainTreeTransaction.objects.create(transaction_id=transaction_id,
+                #    braintree_transaction_id=result.transaction.id)
 
                 ReceivePayment(transaction_id, transact.amount, request)
 

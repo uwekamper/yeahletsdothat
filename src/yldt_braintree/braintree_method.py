@@ -31,7 +31,7 @@ class BrainTree(BasePaymentMethod):
             private_key=self.private_key
         )
 
-    def pay(self, campaign, transaction_id):
+    def pay(self, request, campaign, transaction_id):
         url = '/pay/' + self.name + '/' + str(transaction_id) + '/'
         return HttpResponseRedirect(url)
 

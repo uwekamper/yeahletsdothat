@@ -66,7 +66,7 @@ def payment_form(request, transaction_id, payment_method_name):
                 BrainTreeTransaction.objects.create(transaction_id=transaction_id,
                     braintree_transaction_id=result.transaction.id)
 
-                ReceivePayment(transaction_id, transact.amount)
+                ReceivePayment(transaction_id, transact.amount, request)
 
                 url = '/pay/{}/{}/success/'.format(payment_method_name, transaction_id)
                 return HttpResponseRedirect(url)

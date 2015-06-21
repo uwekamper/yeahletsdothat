@@ -55,38 +55,41 @@
         {% endif %}
         <form method="POST" id="braintree-payment-form">
             {% csrf_token %}
-            {% if form.errors %}
-                {{ form.errors }}
-            {% endif %}
-            {% if braintree_error %}
-                <div class="alert alert-danger">
-                    {{ braintree_error }}
-                </div>
-            {% endif %}
-            <p>
-                <label for="id_number">Card Number</label>
-                <input id="id_number" value="" type="text" size="20" autocomplete="off"
-                       data-encrypted-name="number"/>
-                {% if is_sandbox %}<p class="help-block">Card number for sandbox testing:
-                  4111111111111111</p>{% endif %}
-            </p>
-
-            <p>
-                <label for="id_cvv">CVV</label>
-                <input id="id_cvv" value="" type="text" size="4" autocomplete="off"
-                       data-encrypted-name="cvv"/>
-                <p class="help-block">3 or 4 digit security code located on the back of the card.
-                  {% if is_sandbox %}CVV number for sandbox testing: 111{% endif %}</p>
-
-            </p>
-
-            <p>
-                <label for="id_month">Expiration date (MM/YYYY)</label>
-                <input id="id_month" value="" type="text" size="2" data-encrypted-name="month"/>
-                / <input value="" type="text" size="4" data-encrypted-name="year"/>
-
-                {% if is_sandbox %}<p class="help-block">Date for sandbox testing: 11/2015</p>{% endif %}
-            </p>
+            <input type='hidden' value='{{ first_name }}' name='first_name' />
+            <input type='hidden' value='{{ last_name }}' name='last_name' />
+            <div id="checkout"></div>
+{#            {% if form.errors %}#}
+{#                {{ form.errors }}#}
+{#            {% endif %}#}
+{#            {% if braintree_error %}#}
+{#                <div class="alert alert-danger">#}
+{#                    {{ braintree_error }}#}
+{#                </div>#}
+{#            {% endif %}#}
+{#            <p>#}
+{#                <label for="id_number">Card Number</label>#}
+{#                <input id="id_number" value="" type="text" size="20" autocomplete="off"#}
+{#                       data-encrypted-name="number"/>#}
+{#                {% if is_sandbox %}<p class="help-block">Card number for sandbox testing:#}
+{#                  4111111111111111</p>{% endif %}#}
+{#            </p>#}
+{##}
+{#            <p>#}
+{#                <label for="id_cvv">CVV</label>#}
+{#                <input id="id_cvv" value="" type="text" size="4" autocomplete="off"#}
+{#                       data-encrypted-name="cvv"/>#}
+{#                <p class="help-block">3 or 4 digit security code located on the back of the card.#}
+{#                  {% if is_sandbox %}CVV number for sandbox testing: 111{% endif %}</p>#}
+{##}
+{#            </p>#}
+{##}
+{#            <p>#}
+{#                <label for="id_month">Expiration date (MM/YYYY)</label>#}
+{#                <input id="id_month" value="" type="text" size="2" data-encrypted-name="month"/>#}
+{#                / <input value="" type="text" size="4" data-encrypted-name="year"/>#}
+{##}
+{#                {% if is_sandbox %}<p class="help-block">Date for sandbox testing: 11/2015</p>{% endif %}#}
+{#            </p>#}
 
             <input class="btn btn-primary" type="submit" id="submit"/>
         </form>
@@ -96,9 +99,10 @@
 {% block templates %}{% endblock templates %}
 
 {% block extra_scripts %}
-<script type="text/javascript" src="https://js.braintreegateway.com/v1/braintree.js"></script>
-<script type="text/javascript">
-    var braintree = Braintree.create("{{ client_side_encryption_key }}");
-    braintree.onSubmitEncryptForm('braintree-payment-form');
+<script src="https://js.braintreegateway.com/v2/braintree.js"></script>
+<script charset='utf-8'>
+  braintree.setup("{{ client_token }}", 'dropin', {
+    container: 'checkout'
+  });
 </script>
 {% endblock extra_scripts%}

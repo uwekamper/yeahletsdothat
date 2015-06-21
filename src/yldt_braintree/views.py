@@ -14,7 +14,6 @@ from campaigns.payment_method import get_method_by_name
 from forms import BrainTreeForm
 from yldt_braintree.models import BrainTreeTransaction
 
-def store_
 def do_transaction(payment_method, transaction, form):
     """
     Subroutine that send the transaction data to the Braintree servers.
@@ -28,15 +27,6 @@ def do_transaction(payment_method, transaction, form):
     # create the transaction on Braintree's side
     result = braintree.Transaction.sale({
         'amount': "{0:.2f}".format(transaction.amount),
-        'credit_card': {
-            'number': form.cleaned_data['number'],
-            'cvv': form.cleaned_data['cvv'],
-            'expiration_month': form.cleaned_data['month'],
-            'expiration_year': form.cleaned_data['year']
-        },
-        'options': {
-            'submit_for_settlement': True
-        }
     })
 
     return result
@@ -51,8 +41,9 @@ def payment_form(request, transaction_id, payment_method_name):
                 {'transaction': transact})
 
     payment_method = get_method_by_name(payment_method_name)
-    client_side_encryption_key = payment_method.cse_key
 
+    first_name, last_name = transact.name.split(' ', 2)
+    email = transact.email
     amount = transact.amount
     fee = payment_method.calculate_fee(amount)
     total = amount + fee
@@ -61,13 +52,22 @@ def payment_form(request, transaction_id, payment_method_name):
     if request.method == "POST":
         form = BrainTreeForm(request.POST)
         if form.is_valid():
-            result = do_transaction(payment_method, transact, form)
-
+            result = braintree.Customer.create({
+                "first_name": first_name,
+                "last_name": last_name,
+                "email": email,
+                "payment_method_nonce": form.cleaned_data['payment_method_nonce'],
+                # "custom_fields": {
+                #     "yldt_campaign_key": transact.campaign.key,
+                #     "yldt_transaction_id": transact.transaction_id,
+                #     "yldt_amount": amount,
+                #     "yldt_perk_id": transact.perk.id if transact.perk != None else None,
+                # }
+            })
             if result.is_success:
-                # TODO: store the customer ID in the database
-                # BrainTreeTransaction.objects.create(transaction_id=transaction_id,
-                #    braintree_transaction_id=result.transaction.id)
-
+                bt, _ = BrainTreeTransaction.objects.get_or_create(transaction_id=transact.transaction_id)
+                bt.braintree_customer_id = result.customer.id
+                bt.save()
                 ReceivePayment(transaction_id, transact.amount, request)
 
                 url = '/pay/{}/{}/success/'.format(payment_method_name, transaction_id)
@@ -80,17 +80,23 @@ def payment_form(request, transaction_id, payment_method_name):
                     'total': total,
                     'is_sandbox': payment_method.is_sandbox(),
                     'transaction': transact,
-                    'client_side_encryption_key': client_side_encryption_key,
-                    'form': form
+                    'client_token': payment_method.get_client_token(),
+                    'form': form,
                 }
                 return render(request, 'yldt_braintree/payment_form.html', context)
 
         # The user entered invalid data
         else:
+            print form.errors
             context = {
                 'transaction': transact,
-                'client_side_encryption_key': client_side_encryption_key,
-                'form': form
+                'amount': amount,
+                'fee': fee,
+                'total': total,
+                'is_sandbox': payment_method.is_sandbox(),
+                'client_token': payment_method.get_client_token(),
+                'form': form,
+
             }
             return render(request, 'yldt_braintree/payment_form.html', context)
 
@@ -102,9 +108,8 @@ def payment_form(request, transaction_id, payment_method_name):
             'fee': fee,
             'total': total,
             'is_sandbox': payment_method.is_sandbox(),
-            'client_side_encryption_key': client_side_encryption_key,
-            'form': BrainTreeForm()
-
+            'client_token': payment_method.get_client_token(),
+            'form': BrainTreeForm(),
         }
         return render(request, 'yldt_braintree/payment_form.html', context)
 

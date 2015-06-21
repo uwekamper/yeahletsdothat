@@ -99,7 +99,7 @@ class BasePaymentMethod(object):
         else:
             return False
 
-    def pay(self, campaign_key, transaction_id):
+    def pay(self, request, campaign_key, transaction_id):
         """
         Base payment method. We will call this method whenever a payment transaction
         is created.

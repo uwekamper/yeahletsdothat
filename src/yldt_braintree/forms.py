@@ -11,7 +11,8 @@ class BrainTreeForm(forms.Form):
     """
     # All the values are encrypted by the javascript before we get them.
     # That is the reason, why all these fields are so large.
-    number = forms.CharField(max_length=1024)
-    cvv = forms.CharField(max_length=1024)
-    month = forms.CharField(max_length=1024)
-    year = forms.CharField(max_length=1024)
+    # number = forms.CharField(max_length=1024)
+    # cvv = forms.CharField(max_length=1024)
+    # month = forms.CharField(max_length=1024)
+    # year = forms.CharField(max_length=1024)
+    payment_method_nonce = forms.CharField()

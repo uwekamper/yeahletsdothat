@@ -94,7 +94,7 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
     # 'django_hstore',
-    'registration',
+    # 'registration',
     'rest_framework',
     # 'registration',
     'polymorphic',

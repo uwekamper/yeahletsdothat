@@ -7,7 +7,16 @@ from django.utils.encoding import smart_text
 
 from rest_framework import serializers
 from campaigns.models import Transaction, Campaign, Perk
+from campaigns.templatetags.campaigns_extras import markdown_render
 from campaigns.utils import get_payment_methods
+
+
+class MarkdownField(serializers.Field):
+    """
+    Color objects are serialized into 'rgb(#, #, #)' notation.
+    """
+    def to_representation(self, obj):
+        return markdown_render(obj)
 
 
 class PaymentPOSTData(serializers.Serializer):
@@ -18,6 +27,8 @@ class PaymentPOSTData(serializers.Serializer):
 
 
 class PerkSerializer(serializers.ModelSerializer):
+    text = MarkdownField()
+    
     class Meta:
         model = Perk
 
@@ -43,6 +54,8 @@ class CampaignSerializer(serializers.ModelSerializer):
     """
     perks = PerkSerializer(many=True)
     payment_methods = serializers.SerializerMethodField()
+    currency = serializers.CharField(source='get_currency_display')
+    description = MarkdownField()
 
     def get_payment_methods(self, obj):
         methods = get_payment_methods()

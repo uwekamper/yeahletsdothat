@@ -28,7 +28,7 @@ class PaymentPOSTData(serializers.Serializer):
 
 class PerkSerializer(serializers.ModelSerializer):
     text = MarkdownField()
-    
+
     class Meta:
         model = Perk
 
@@ -56,6 +56,7 @@ class CampaignSerializer(serializers.ModelSerializer):
     payment_methods = serializers.SerializerMethodField()
     currency = serializers.CharField(source='get_currency_display')
     description = MarkdownField()
+    username = serializers.CharField(source='user.username')
 
     def get_payment_methods(self, obj):
         methods = get_payment_methods()
@@ -65,7 +66,7 @@ class CampaignSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Campaign
-        exclude = ['id', ]
+        exclude = ['id', 'user', ]
 
 class CampaignKeyRelatedField(serializers.PrimaryKeyRelatedField):
 

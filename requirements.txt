@@ -5,9 +5,11 @@ bpython==0.14.1
 braintree==3.16.0
 cssselect==0.9.1
 curtsies==0.1.19
+django-pipeline==1.5.4
 django-polymorphic==0.7
 django-registration-redux==1.1
 djangorestframework==3.1.1
+futures==3.0.3
 greenlet==0.4.5
 lxml==3.4.2
 mistune==0.5.1

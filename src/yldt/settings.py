@@ -54,7 +54,11 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 #    'django.contrib.staticfiles.finders.DefaultStorageFinder',
+    'pipeline.finders.PipelineFinder',
 )
+
+STATICFILES_STORAGE = 'pipeline.storage.PipelineCachedStorage'
+
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = '^j%^e_s1)3(t(us5ic%^&)!1114d2n2ofy=!7g8dwh$9zf(p7d'
@@ -98,6 +102,9 @@ INSTALLED_APPS = (
     'rest_framework',
     # 'registration',
     'polymorphic',
+    'pipeline',
+
+    # Own apps start here
     'campaigns',
     'yldt_braintree',
     'yldt_cash_payment',
@@ -129,6 +136,23 @@ STATICFILES_DIRS = (
     # Don't forget to use absolute paths, not relative paths.
     os.path.realpath(os.path.join(REPOSITORY_ROOT, 'static')),
 )
+
+PIPELINE_COMPILERS = (
+    'pipeline.compilers.es6.ES6Compiler',
+    'pipeline_browserify.compiler.BrowserifyCompiler',
+)
+
+PIPELINE_BROWSERIFY_ARGUMENTS = '-d'
+
+PIPELINE_JS = {
+    'browserify': {
+        'source_filenames': (
+          'js/main.es6',
+          'js/entrypoint.browserify.js',
+        ),
+        'output_filename': 'js/browserified.js',
+    }
+}
 
 TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".

@@ -1,0 +1,27 @@
+{
+  "name": "yeahletsdothat",
+  "version": "1.0.0",
+  "description": "Yeah Let's Do That",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/uwekamper/yeahletsdothat.git"
+  },
+  "author": "Uwe Kamper <info@uwekamper.de>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/uwekamper/yeahletsdothat/issues"
+  },
+  "homepage": "https://github.com/uwekamper/yeahletsdothat#readme",
+  "dependencies": {
+    "react": "^0.13.3"
+  },
+  "devDependencies": {
+    "browserify": "^11.1.0",
+    "gulp": "^3.9.0",
+    "vinyl-buffer": "^1.0.0",
+    "vinyl-source-stream": "^1.1.0"
+  }
+}

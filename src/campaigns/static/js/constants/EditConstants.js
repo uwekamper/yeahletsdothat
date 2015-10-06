@@ -1,0 +1,10 @@
+'use strict';
+
+module.exports = {
+  SWITCH_TAB: 'SWITCH_TAB',
+  ADD_PERK: 'ADD_PERK',
+  EDIT_PERK: 'EDIT_PERK',
+  UNEDIT_PERK: 'UNEDIT_PERK',
+  SAVE_ITEM: 'SAVE_ITEM',
+  REMOVE_ITEM: 'REMOVE_ITEM'
+};

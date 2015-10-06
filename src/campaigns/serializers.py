@@ -42,9 +42,9 @@ class PaymentMethodSerializer(serializers.Serializer):
     fallback_url = serializers.SerializerMethodField()
 
     def get_fallback_url(self, obj):
-        request = self.context['request']
+        # request = self.context['request']
         key = self.context['key']
-        url = request.build_absolute_uri('/yeah/' + key + '/pay/' + obj.name + '/')
+        url = '/yeah/' + key + '/pay/' + obj.name + '/'
         return url
 
 

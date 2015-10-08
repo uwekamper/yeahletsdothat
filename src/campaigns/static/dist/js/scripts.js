@@ -20517,6 +20517,7 @@ module.exports = Object.assign || function (target, source) {
 
 var AppDispatcher = require('../dispatcher/AppDispatcher');
 var EditConstants = require('../constants/EditConstants');
+var EditStore = require('../stores/EditStore');
 
 module.exports = {
 
@@ -20559,11 +20560,47 @@ module.exports = {
       actionType: EditConstants.REMOVE_ITEM,
       index: index
     });
+  },
+
+  updateCampaign: function(data) {
+    AppDispatcher.handleViewAction({
+      actionType: EditConstants.UPDATE_CAMPAIGN,
+      data: data
+    });
+  },
+
+  updateREST: function(data) {
+    AppDispatcher.handleServerAction({
+      actionType: EditConstants.UPDATE_REST,
+      data: data
+    });
+  },
+
+  saveCampaign: function() {
+    console.log('Saving campaign...');
+
+    var url = 'http://localhost:8000/yeah/rest/campaigns/p655SzwbICQ33UfR';
+    $.ajax({
+      url: url,
+      method: 'PUT',
+      dataType: 'json',
+      contentType: "application/json",
+      data: JSON.stringify(EditStore.getCampaign()),
+      success: function(data) {
+        AppDispatcher.handleViewAction({
+          actionType: EditConstants.UPDATE_REST,
+          data: data
+        });
+      },
+      error: function(e) {
+        alert("SAVE ERROR: " + e)
+      }
+    });
   }
 
 };
 
-},{"../constants/EditConstants":171,"../dispatcher/AppDispatcher":172}],163:[function(require,module,exports){
+},{"../constants/EditConstants":171,"../dispatcher/AppDispatcher":172,"../stores/EditStore":174}],163:[function(require,module,exports){
 'use strict';
 
 // React components
@@ -20574,12 +20611,16 @@ var TabContent = require('./TabContent');
 var React = require('react');
 
 var EditApp = React.createClass({displayName: "EditApp",
-
+  _onSave: function(e) {
+    e.preventDefault();
+    EditActions.saveCampaign();
+  },
   render: function() {
       return (
           React.createElement("div", null, 
               React.createElement(Tabs, null), 
-              React.createElement(TabContent, null)
+              React.createElement(TabContent, null), 
+              React.createElement("a", {href: "#", onClick: this._onSave, className: "btn"}, "Save")
           )
       );
   },
@@ -20595,92 +20636,117 @@ module.exports = EditApp;
 },{"../actions/EditActions":162,"./TabContent":169,"./Tabs":170,"react":155}],164:[function(require,module,exports){
 'use strict';
 
+var EditActions = require('../actions/EditActions');
 var React = require('react');
 
 var BasicTab = React.createClass({displayName: "BasicTab",
-    render: function() {
-        return (
-            React.createElement("div", {className: "row"}, 
-              React.createElement("div", {className: "col-xs-12"}, 
+  //getInitialState: function() {
+  //  return {
+  //    title: this.props.title,
+  //    description: this.props.description
+  //  };
+  //},
+  _changeTitle: function(event) {
+    EditActions.updateCampaign({
+       title: event.target.value
+    });
+  },
+  _changeDescription: function(event) {
+    EditActions.updateCampaign({
+      description: event.target.value
+    });
+  },
+  render: function() {
+    return (
+      React.createElement("div", {className: "row"}, 
+        React.createElement("div", {className: "col-xs-12"}, 
 
-                React.createElement("h3", null, "Basic Information"), 
+          React.createElement("h3", null, "Basic Information"), 
 
-                React.createElement("div", {className: "form-group"}, 
-                  React.createElement("label", {for: "id_title"}, "Title"), 
-                  React.createElement("input", {type: "text", id: "id_title", className: "form-control", "ng-model": "ctrl.campaign.title"})
-                ), 
+          React.createElement("div", {className: "form-group"}, 
+            React.createElement("label", {for: "id_title"}, "Title"), 
+            React.createElement("input", {type: "text", id: "id_title", className: "form-control", 
+              onChange: this._changeTitle, value: this.props.title})
+          ), 
 
-                React.createElement("div", {className: "form-group"}, 
-                  React.createElement("label", {for: "id_description"}, "Description"), 
-                  React.createElement("textarea", {id: "id_description", rows: "20", className: "form-control", 
-                            "ng-model": "ctrl.campaign.description"})
-                )
+          React.createElement("div", {className: "form-group"}, 
+            React.createElement("label", {for: "id_description"}, "Description"), 
+            React.createElement("textarea", {id: "id_description", rows: "20", className: "form-control", 
+                onChange: this._changeDescription, value: this.props.description})
+          )
 
-              )
-            )
-        );
-    }
+        )
+      )
+    );
+  }
 });
 
 module.exports = BasicTab;
 
-},{"react":155}],165:[function(require,module,exports){
+},{"../actions/EditActions":162,"react":155}],165:[function(require,module,exports){
 'use strict';
 
+var updateCampaign = require('../actions/EditActions').updateCampaign;
 var React = require('react');
 
 var DateTab = React.createClass({displayName: "DateTab",
-    render: function() {
-        return (
-            React.createElement("div", {className: "row"}, 
-              React.createElement("div", {className: "col-xs-12"}, 
-                React.createElement("h3", null, "Dates"), 
+  _changeStartDate: function(event) {
+    updateCampaign({start_date: event.target.value});
+  },
+  _changeEndDate: function(event) {
+    updateCampaign({end_date: event.target.value});
+  },
+  render: function() {
+    return (
+      React.createElement("div", {className: "row"}, 
+        React.createElement("div", {className: "col-xs-12"}, 
+          React.createElement("h3", null, "Dates"), 
 
-                React.createElement("div", {className: "form-group"}, 
-                  React.createElement("label", {for: "id_start_date"}, "Start date and time"), 
-                  React.createElement("div", {className: "input-group date", id: "datetimepicker3"}, 
-                    React.createElement("input", {type: "text", id: "id_start_date", className: "form-control", name: "is_private", 
-                           "ng-model": "ctrl.campaign.start_date", "date-time-picker": true}), 
-                    React.createElement("span", {className: "input-group-addon"}, React.createElement("span", {className: "glyphicon glyphicon-calendar"})
-                    )
-                  )
-                ), 
-
-                React.createElement("div", {className: "form-group"}, 
-                  React.createElement("label", {for: "id_end_date"}, "End date and time"), 
-                  React.createElement("div", {className: "input-group date", id: "datetimepicker3"}, 
-
-                    React.createElement("input", {type: "text", id: "id_end_date", className: "form-control", name: "is_private", 
-                           "ng-model": "ctrl.campaign.end_date", "date-time-picker": true}), 
-                    React.createElement("span", {className: "input-group-addon"}, React.createElement("span", {className: "glyphicon glyphicon-calendar"})
-                    )
-                  )
-                ), 
-
-                React.createElement("h3", null, "Preferences"), 
-
-                React.createElement("div", {className: "form-group"}, 
-                  React.createElement("label", {for: "id_is_private"}, 
-                    React.createElement("input", {type: "checkbox", id: "id_is_private", name: "is_private", 
-                           "ng-model": "ctrl.campaign.is_private"}), 
-                    "Make this campaign private."
-                  )
-                ), 
-                React.createElement("div", {className: "form-group"}, 
-                  React.createElement("label", {for: "id_end_when_goal_reached"}, 
-                    React.createElement("input", {type: "checkbox", id: "id_end_when_goal_reached", name: "is_private"}), 
-                    "End this campaign before the end date when the campaign goal is reached."
-                  )
-                )
+          React.createElement("div", {className: "form-group"}, 
+            React.createElement("label", {for: "id_start_date"}, "Start date and time"), 
+            React.createElement("div", {className: "input-group date", id: "datetimepicker3"}, 
+              React.createElement("input", {type: "text", id: "id_start_date", className: "form-control", 
+                value: this.props.start_date, onChange: this._changeStartDate, "date-time-picker": true}), 
+              React.createElement("span", {className: "input-group-addon"}, React.createElement("span", {className: "glyphicon glyphicon-calendar"})
               )
             )
-        );
-    }
+          ), 
+
+          React.createElement("div", {className: "form-group"}, 
+            React.createElement("label", {for: "id_end_date"}, "End date and time"), 
+            React.createElement("div", {className: "input-group date", id: "datetimepicker3"}, 
+
+              React.createElement("input", {type: "text", id: "id_end_date", className: "form-control", name: "is_private", 
+                value: this.props.end_date, onChange: this._changeEndDate, "date-time-picker": true}), 
+              React.createElement("span", {className: "input-group-addon"}, React.createElement("span", {className: "glyphicon glyphicon-calendar"})
+              )
+            )
+          ), 
+
+          React.createElement("h3", null, "Preferences"), 
+
+          React.createElement("div", {className: "form-group"}, 
+            React.createElement("label", {for: "id_is_private"}, 
+              React.createElement("input", {type: "checkbox", id: "id_is_private", name: "is_private", 
+                     "ng-model": "ctrl.campaign.is_private"}), 
+              "Make this campaign private."
+            )
+          ), 
+          React.createElement("div", {className: "form-group"}, 
+            React.createElement("label", {for: "id_end_when_goal_reached"}, 
+              React.createElement("input", {type: "checkbox", id: "id_end_when_goal_reached", name: "is_private"}), 
+              "End this campaign before the end date when the campaign goal is reached."
+            )
+          )
+        )
+      )
+    );
+  }
 });
 
 module.exports = DateTab;
 
-},{"react":155}],166:[function(require,module,exports){
+},{"../actions/EditActions":162,"react":155}],166:[function(require,module,exports){
 'use strict';
 
 var React = require('react');
@@ -20944,12 +21010,13 @@ var TabContent = React.createClass({displayName: "TabContent",
 
     render: function() {
         var activeTab;
+        var campaign = EditStore.getCampaign();
         switch (this.state.activeTab) {
             case 'basic':
-                activeTab = React.createElement(BasicTab, null)
+                activeTab = React.createElement(BasicTab, {title: campaign.title, description: campaign.description})
                 break;
             case 'date':
-                activeTab = React.createElement(DateTab, null)
+                activeTab = React.createElement(DateTab, {start_date: campaign.start_date, end_date: campaign.end_date})
                 break;
             case 'goals':
                 activeTab = React.createElement(GoalsTab, null)
@@ -20958,6 +21025,7 @@ var TabContent = React.createClass({displayName: "TabContent",
                 activeTab = React.createElement(PerksTab, null)
                 break;
         }
+
         return (
             React.createElement("div", {className: "row"}, 
                 React.createElement("div", {className: "col-xs-12"}, 
@@ -21060,7 +21128,9 @@ module.exports = {
   EDIT_PERK: 'EDIT_PERK',
   UNEDIT_PERK: 'UNEDIT_PERK',
   SAVE_ITEM: 'SAVE_ITEM',
-  REMOVE_ITEM: 'REMOVE_ITEM'
+  REMOVE_ITEM: 'REMOVE_ITEM',
+  UPDATE_REST: 'UPDATE_REST',
+  SAVE_CAMPAIGN: 'SAVE_CAMPAIGN'
 };
 
 },{}],172:[function(require,module,exports){
@@ -21089,15 +21159,34 @@ module.exports = AppDispatcher;
 },{"flux":158}],173:[function(require,module,exports){
 'use strict';
 
+var enableCSRF = require('./utils/CSRFProtection')
 var EditApp = require('./components/App')
+var EditActions = require('./actions/EditActions')
 var React = require('react');
+
+enableCSRF($);
 
 React.render(
   React.createElement(EditApp, null)
   , document.getElementById('app')
 );
 
-},{"./components/App":163,"react":155}],174:[function(require,module,exports){
+function loadStuff() {
+  var url = 'http://localhost:8000/yeah/rest/campaigns/p655SzwbICQ33UfR';
+  $.ajax({
+    url: url,
+    success: function(data) {
+      EditActions.updateREST(data);
+    },
+    error: function(data) {
+      alert("AJAX ERROER");
+    }
+  });
+}
+
+loadStuff();
+
+},{"./actions/EditActions":162,"./components/App":163,"./utils/CSRFProtection":175,"react":155}],174:[function(require,module,exports){
 var AppDispatcher = require('../dispatcher/AppDispatcher');
 var EditConstants = require('../constants/EditConstants');
 var ObjectAssign = require('object-assign');
@@ -21120,10 +21209,24 @@ function getEmptyPerk() {
 var _store = {
   activeTab: 'basic',
   goal: 0.0,
-  perks: [],
   list: [],
   editing: false
 };
+
+var _campaign = {
+  title: 'Title not loaded',
+  perks: [],
+};
+
+function updateCampaign(data) {
+  for (var key in data) {
+    if(typeof data[key] != 'undefined') {
+      _campaign[key] = data[key];
+    }
+  }
+  console.log('Campaign updated');
+  console.log(_campaign);
+}
 
 // Define the public event listeners and getters that
 // the views will use to listen for changes and retrieve
@@ -21139,11 +21242,19 @@ var EditStore = ObjectAssign( {}, EventEmitter.prototype, {
   },
 
   getPerks: function() {
-    return _store.perks;
+    return _campaign.perks;
   },
 
   getActiveTab: function() {
     return _store.activeTab;
+  },
+
+  getTitle: function() {
+    return _campaign.title
+  },
+
+  getCampaign: function() {
+    return _campaign;
   }
 
 });
@@ -21155,7 +21266,6 @@ AppDispatcher.register(function(payload) {
   switch(action.actionType) {
 
     case EditConstants.SWITCH_TAB:
-
       // Add the data defined in the TodoActions
       // which the View will pass as a payload
       _store.activeTab = action.tabName;
@@ -21163,30 +21273,95 @@ AppDispatcher.register(function(payload) {
       break;
 
     case EditConstants.ADD_PERK:
-      _store.perks.push(getEmptyPerk());
+      _campaign.perks.push(getEmptyPerk());
       EditStore.emit(CHANGE_EVENT);
       break;
 
     case EditConstants.EDIT_PERK:
-      _store.perks[action.index].state = 'EDITABLE';
+      _campaign.perks[action.index].state = 'EDITABLE';
       EditStore.emit(CHANGE_EVENT);
       break;
 
     case EditConstants.UNEDIT_PERK:
-      _store.perks[action.index].state = 'OK';
+      _campaign.perks[action.index].state = 'OK';
       EditStore.emit(CHANGE_EVENT);
       break;
+
+    case EditConstants.UPDATE_CAMPAIGN:
+      updateCampaign(action.data);
+      EditStore.emit(CHANGE_EVENT);
+      break;
+
+    case EditConstants.UPDATE_REST:
+      console.log('DATA: ', action.data);
+      _campaign = action.data;
+      _campaign.perks = [];
+      for (var i = 0; i < _campaign.perks.length; i++) {
+        _campaign.perks[i].state = 'OK';
+      }
+      console.log('_CAMPAIGN' + _campaign);
+      EditStore.emit(CHANGE_EVENT);
+      break;
+
+//    case EditConstants.SAVE_CAMPAIGN:
+
 
     default:
       return true;
 
   }
 
-  });
+});
 
 module.exports = EditStore;
 
-},{"../constants/EditConstants":171,"../dispatcher/AppDispatcher":172,"events":156,"object-assign":161}]},{},[173])
+},{"../constants/EditConstants":171,"../dispatcher/AppDispatcher":172,"events":156,"object-assign":161}],175:[function(require,module,exports){
+'use strict';
+
+// using jQuery
+function getCookie(name) {
+  var cookieValue = null;
+  if (document.cookie && document.cookie != '') {
+    var cookies = document.cookie.split(';');
+    for (var i = 0; i < cookies.length; i++) {
+      var cookie = jQuery.trim(cookies[i]);
+      // Does this cookie string begin with the name we want?
+      if (cookie.substring(0, name.length + 1) == (name + '=')) {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        break;
+      }
+    }
+  }
+  return cookieValue;
+}
+
+function getToken() {
+  return getCookie('csrftoken');
+}
+
+function csrfSafeMethod(method) {
+  // these HTTP methods do not require CSRF protection
+  return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+}
+
+/**
+ * This function needs to be called right at the beginning before you can
+ * call any CSRF protected calls.
+ */
+function enableCSRF(jQuery) {
+  var csrftoken = getToken();
+  jQuery.ajaxSetup({
+    beforeSend: function(xhr, settings) {
+      if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+          xhr.setRequestHeader("X-CSRFToken", csrftoken);
+      }
+    }
+  });
+}
+
+module.exports = enableCSRF;
+
+},{}]},{},[173])
 
 
 //# sourceMappingURL=scripts.js.map

@@ -20,10 +20,24 @@ function getEmptyPerk() {
 var _store = {
   activeTab: 'basic',
   goal: 0.0,
-  perks: [],
   list: [],
   editing: false
 };
+
+var _campaign = {
+  title: 'Title not loaded',
+  perks: [],
+};
+
+function updateCampaign(data) {
+  for (var key in data) {
+    if(typeof data[key] != 'undefined') {
+      _campaign[key] = data[key];
+    }
+  }
+  console.log('Campaign updated');
+  console.log(_campaign);
+}
 
 // Define the public event listeners and getters that
 // the views will use to listen for changes and retrieve
@@ -39,11 +53,19 @@ var EditStore = ObjectAssign( {}, EventEmitter.prototype, {
   },
 
   getPerks: function() {
-    return _store.perks;
+    return _campaign.perks;
   },
 
   getActiveTab: function() {
     return _store.activeTab;
+  },
+
+  getTitle: function() {
+    return _campaign.title
+  },
+
+  getCampaign: function() {
+    return _campaign;
   }
 
 });
@@ -55,7 +77,6 @@ AppDispatcher.register(function(payload) {
   switch(action.actionType) {
 
     case EditConstants.SWITCH_TAB:
-
       // Add the data defined in the TodoActions
       // which the View will pass as a payload
       _store.activeTab = action.tabName;
@@ -63,25 +84,44 @@ AppDispatcher.register(function(payload) {
       break;
 
     case EditConstants.ADD_PERK:
-      _store.perks.push(getEmptyPerk());
+      _campaign.perks.push(getEmptyPerk());
       EditStore.emit(CHANGE_EVENT);
       break;
 
     case EditConstants.EDIT_PERK:
-      _store.perks[action.index].state = 'EDITABLE';
+      _campaign.perks[action.index].state = 'EDITABLE';
       EditStore.emit(CHANGE_EVENT);
       break;
 
     case EditConstants.UNEDIT_PERK:
-      _store.perks[action.index].state = 'OK';
+      _campaign.perks[action.index].state = 'OK';
       EditStore.emit(CHANGE_EVENT);
       break;
+
+    case EditConstants.UPDATE_CAMPAIGN:
+      updateCampaign(action.data);
+      EditStore.emit(CHANGE_EVENT);
+      break;
+
+    case EditConstants.UPDATE_REST:
+      console.log('DATA: ', action.data);
+      _campaign = action.data;
+      _campaign.perks = [];
+      for (var i = 0; i < _campaign.perks.length; i++) {
+        _campaign.perks[i].state = 'OK';
+      }
+      console.log('_CAMPAIGN' + _campaign);
+      EditStore.emit(CHANGE_EVENT);
+      break;
+
+//    case EditConstants.SAVE_CAMPAIGN:
+
 
     default:
       return true;
 
   }
 
-  });
+});
 
 module.exports = EditStore;

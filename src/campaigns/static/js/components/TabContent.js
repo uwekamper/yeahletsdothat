@@ -31,12 +31,13 @@ var TabContent = React.createClass({
 
     render: function() {
         var activeTab;
+        var campaign = EditStore.getCampaign();
         switch (this.state.activeTab) {
             case 'basic':
-                activeTab = <BasicTab />
+                activeTab = <BasicTab title={campaign.title} description={campaign.description}/>
                 break;
             case 'date':
-                activeTab = <DateTab />
+                activeTab = <DateTab start_date={campaign.start_date} end_date={campaign.end_date}/>
                 break;
             case 'goals':
                 activeTab = <GoalsTab />
@@ -45,6 +46,7 @@ var TabContent = React.createClass({
                 activeTab = <PerksTab />
                 break;
         }
+
         return (
             <div className="row">
                 <div className="col-xs-12">

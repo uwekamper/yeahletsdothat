@@ -18,6 +18,9 @@ class MarkdownField(serializers.Field):
     def to_representation(self, obj):
         return markdown_render(obj)
 
+    def to_internal_value(self, value):
+        return value;
+
 
 class PaymentPOSTData(serializers.Serializer):
     amount = serializers.DecimalField(max_digits=20, decimal_places=8)
@@ -52,11 +55,11 @@ class CampaignSerializer(serializers.ModelSerializer):
     """
     # TODO: Write docs
     """
-    perks = PerkSerializer(many=True)
-    payment_methods = serializers.SerializerMethodField()
+    perks = PerkSerializer(many=True, read_only=True)
+    # payment_methods = serializers.SerializerMethodField(read_only=True)
     currency = serializers.CharField(source='get_currency_display')
-    description = MarkdownField()
-    username = serializers.CharField(source='user.username')
+    description = serializers.CharField(required=True)
+    username = serializers.CharField(source='user.username', required=False)
     completed = serializers.BooleanField(source='state.completed')
     percent_funded = serializers.FloatField(source='state.percent_funded')
 

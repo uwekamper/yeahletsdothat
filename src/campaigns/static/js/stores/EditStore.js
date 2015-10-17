@@ -106,7 +106,6 @@ AppDispatcher.register(function(payload) {
     case EditConstants.UPDATE_REST:
       console.log('DATA: ', action.data);
       _campaign = action.data;
-      _campaign.perks = [];
       for (var i = 0; i < _campaign.perks.length; i++) {
         _campaign.perks[i].state = 'OK';
       }

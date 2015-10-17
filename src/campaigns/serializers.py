@@ -59,9 +59,9 @@ class CampaignSerializer(serializers.ModelSerializer):
     # payment_methods = serializers.SerializerMethodField(read_only=True)
     currency = serializers.CharField(source='get_currency_display')
     description = serializers.CharField(required=True)
-    username = serializers.CharField(source='user.username', required=False)
-    completed = serializers.BooleanField(source='state.completed')
-    percent_funded = serializers.FloatField(source='state.percent_funded')
+    username = serializers.CharField(source='user.username', required=False, read_only=True)
+    completed = serializers.BooleanField(source='state.completed', read_only=True)
+    percent_funded = serializers.FloatField(source='state.percent_funded', read_only=True)
 
     def get_payment_methods(self, obj):
         methods = get_payment_methods()

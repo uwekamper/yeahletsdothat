@@ -65,12 +65,14 @@ module.exports = {
     console.log('Saving campaign...');
 
     var url = 'http://localhost:8000/yeah/rest/campaigns/p655SzwbICQ33UfR';
+    var save_data = EditStore.getCampaign();
+    delete save_data.perks;
     $.ajax({
       url: url,
       method: 'PUT',
       dataType: 'json',
       contentType: "application/json",
-      data: JSON.stringify(EditStore.getCampaign()),
+      data: JSON.stringify(save_data),
       success: function(data) {
         AppDispatcher.handleViewAction({
           actionType: EditConstants.UPDATE_REST,

@@ -1,8 +1,8 @@
 'use strict';
 
-var enableCSRF = require('./utils/CSRFProtection')
-var EditApp = require('./components/App')
-var EditActions = require('./actions/EditActions')
+var enableCSRF = require('./utils/CSRFProtection');
+var EditApp = require('./components/App');
+var EditActions = require('./actions/EditActions');
 var React = require('react');
 
 enableCSRF($);

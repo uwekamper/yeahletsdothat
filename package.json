@@ -15,7 +15,11 @@
     "url": "https://github.com/uwekamper/yeahletsdothat/issues"
   },
   "homepage": "https://github.com/uwekamper/yeahletsdothat#readme",
-  "dependencies": {},
+  "dependencies": {
+    "moment": "^2.10.6",
+    "react": "^0.14.0",
+    "react-dom": "^0.14.0"
+  },
   "devDependencies": {
     "browserify": "^11.1.0",
     "flux": "^2.1.1",

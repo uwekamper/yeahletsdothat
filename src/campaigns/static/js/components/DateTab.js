@@ -1,6 +1,8 @@
 'use strict';
 
 var updateCampaign = require('../actions/EditActions').updateCampaign;
+var Datetime = require('react-datetime');
+var DateTimePicker = require('./DateTimePicker');
 var React = require('react');
 
 var DateTab = React.createClass({
@@ -10,7 +12,12 @@ var DateTab = React.createClass({
   _changeEndDate: function(event) {
     updateCampaign({end_date: event.target.value});
   },
+      //<input type="text" id="id_end_date" className="form-control" name="is_private"
+    //            value={this.props.end_date} onChange={this._changeEndDate} date-time-picker />
+    //          <span className="input-group-addon"><span className="glyphicon glyphicon-calendar"></span>
+
   render: function() {
+
     return (
       <div className="row">
         <div className="col-xs-12">
@@ -19,8 +26,7 @@ var DateTab = React.createClass({
           <div className="form-group">
             <label for="id_start_date">Start date and time</label>
             <div className='input-group date' id='datetimepicker3'>
-              <input type="text" id="id_start_date" className="form-control"
-                value={this.props.start_date} onChange={this._changeStartDate} date-time-picker />
+              <DateTimePicker value="01/01/2015 02:00" />
               <span className="input-group-addon"><span className="glyphicon glyphicon-calendar"></span>
               </span>
             </div>
@@ -28,10 +34,8 @@ var DateTab = React.createClass({
 
           <div className="form-group">
             <label for="id_end_date">End date and time</label>
-            <div className='input-group date' id='datetimepicker3'>
-
-              <input type="text" id="id_end_date" className="form-control" name="is_private"
-                value={this.props.end_date} onChange={this._changeEndDate} date-time-picker />
+            <div className='input-group date' id='datetimepicker4'>
+              <DateTimePicker value="01/01/2015 02:00" />
               <span className="input-group-addon"><span className="glyphicon glyphicon-calendar"></span>
               </span>
             </div>

@@ -23978,9 +23978,11 @@ var React = require('react');
 
 var DateTab = React.createClass({displayName: "DateTab",
   _changeStartDate: function(event) {
+    console.log(event);
     updateCampaign({start_date: event.target.value});
   },
   _changeEndDate: function(event) {
+    console.log(event);
     updateCampaign({end_date: event.target.value});
   },
       //<input type="text" id="id_end_date" className="form-control" name="is_private"
@@ -23997,7 +23999,7 @@ var DateTab = React.createClass({displayName: "DateTab",
           React.createElement("div", {className: "form-group"}, 
             React.createElement("label", {for: "id_start_date"}, "Start date and time"), 
             React.createElement("div", {className: "input-group date", id: "datetimepicker3"}, 
-              React.createElement(DateTimePicker, {value: "01/01/2015 02:00"}), 
+              React.createElement(DateTimePicker, {value: this.props.start_date, onChange: this._changeStartDate}), 
               React.createElement("span", {className: "input-group-addon"}, React.createElement("span", {className: "glyphicon glyphicon-calendar"})
               )
             )
@@ -24006,7 +24008,7 @@ var DateTab = React.createClass({displayName: "DateTab",
           React.createElement("div", {className: "form-group"}, 
             React.createElement("label", {for: "id_end_date"}, "End date and time"), 
             React.createElement("div", {className: "input-group date", id: "datetimepicker4"}, 
-              React.createElement(DateTimePicker, {value: "01/01/2015 02:00"}), 
+              React.createElement(DateTimePicker, {value: this.props.end_date}), 
               React.createElement("span", {className: "input-group-addon"}, React.createElement("span", {className: "glyphicon glyphicon-calendar"})
               )
             )
@@ -24039,20 +24041,31 @@ module.exports = DateTab;
 'use strict';
 
 var React = require('react');
+var moment = require('moment');
 var ReactDOM = require('react-dom');
 
 var DateTimePicker = React.createClass({displayName: "DateTimePicker",
+  _onDateChange: function(event) {
+    alert("Hallo!");
+    console.log('On DateChange');
+    debugger;
+    this.props.onChange('bla');
+  },
+
   render: function() {
+    var lts_value = moment(this.props.value).format( 'LLL');
+
     // don't render anything, this is where we open the portal
-    return React.createElement("input", {type: "text", className: "form-control", value: this.props.value});
+    return React.createElement("input", {type: "text", className: "form-control", value: lts_value, 
+                  onChange: this._onDateChange, onBlur: this._onDateChange});
   },
 
   componentDidMount: function() {
     this.node = ReactDOM.findDOMNode(this);
 
     // do the old-school stuff
+    $(this.node).datetimepicker({format: 'LLL'});
 
-    $(this.node).datetimepicker();
     // start a new React render tree with our node and the children
     // passed in from above, this is the other side of the portal.
     //<input type="text" id="id_start_date" className="form-control"
@@ -24072,7 +24085,7 @@ var DateTimePicker = React.createClass({displayName: "DateTimePicker",
 
 module.exports = DateTimePicker;
 
-},{"react":170,"react-dom":15}],176:[function(require,module,exports){
+},{"moment":6,"react":170,"react-dom":15}],176:[function(require,module,exports){
 'use strict';
 
 var React = require('react');

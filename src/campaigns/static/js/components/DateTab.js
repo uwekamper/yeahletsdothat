@@ -7,9 +7,11 @@ var React = require('react');
 
 var DateTab = React.createClass({
   _changeStartDate: function(event) {
+    console.log(event);
     updateCampaign({start_date: event.target.value});
   },
   _changeEndDate: function(event) {
+    console.log(event);
     updateCampaign({end_date: event.target.value});
   },
       //<input type="text" id="id_end_date" className="form-control" name="is_private"
@@ -26,7 +28,7 @@ var DateTab = React.createClass({
           <div className="form-group">
             <label for="id_start_date">Start date and time</label>
             <div className='input-group date' id='datetimepicker3'>
-              <DateTimePicker value="01/01/2015 02:00" />
+              <DateTimePicker value={this.props.start_date} onChange={this._changeStartDate} />
               <span className="input-group-addon"><span className="glyphicon glyphicon-calendar"></span>
               </span>
             </div>
@@ -35,7 +37,7 @@ var DateTab = React.createClass({
           <div className="form-group">
             <label for="id_end_date">End date and time</label>
             <div className='input-group date' id='datetimepicker4'>
-              <DateTimePicker value="01/01/2015 02:00" />
+              <DateTimePicker value={this.props.end_date} />
               <span className="input-group-addon"><span className="glyphicon glyphicon-calendar"></span>
               </span>
             </div>

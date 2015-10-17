@@ -1,21 +1,31 @@
 'use strict';
 
 var React = require('react');
+var moment = require('moment');
 var ReactDOM = require('react-dom');
 
 var DateTimePicker = React.createClass({
+  _onDateChange: function(event) {
+    alert("Hallo!");
+    console.log('On DateChange');
+    debugger;
+    this.props.onChange('bla');
+  },
+
   render: function() {
+    var lts_value = moment(this.props.value).format( 'LLL');
+
     // don't render anything, this is where we open the portal
-    return <input type="text" className="form-control" value={this.props.value} />;
+    return <input type="text" className="form-control" value={lts_value}
+                  onChange={this._onDateChange} onBlur={this._onDateChange}/>;
   },
 
   componentDidMount: function() {
     this.node = ReactDOM.findDOMNode(this);
 
     // do the old-school stuff
+    $(this.node).datetimepicker({format: 'LLL'});
 
-    $(this.node).datetimepicker();
-    debugger;
     // start a new React render tree with our node and the children
     // passed in from above, this is the other side of the portal.
     //<input type="text" id="id_start_date" className="form-control"

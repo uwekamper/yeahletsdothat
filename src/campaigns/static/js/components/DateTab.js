@@ -11,9 +11,13 @@ var DateTab = React.createClass({
     updateCampaign({start_date: startDate});
   },
   _changeEndDate: function(endDate) {
-    console.log(endDate);
     updateCampaign({end_date: endDate});
   },
+  onIsPrivateChange: function(event) {
+    debugger;
+    updateCampaign({is_private: jQuery(event.target).is(':checked')});
+  },
+
   render: function() {
 
     return (
@@ -25,7 +29,8 @@ var DateTab = React.createClass({
             <label for="id_start_date">Start date and time</label>
             <div className='input-group date' id='datetimepicker3'>
               <DateTimePicker value={this.props.start_date} onChange={this._changeStartDate} />
-              <span className="input-group-addon"><span className="glyphicon glyphicon-calendar"></span>
+              <span className="input-group-addon">
+                <span className="glyphicon glyphicon-calendar"></span>
               </span>
             </div>
           </div>
@@ -34,7 +39,8 @@ var DateTab = React.createClass({
             <label for="id_end_date">End date and time</label>
             <div className='input-group date' id='datetimepicker4'>
               <DateTimePicker value={this.props.end_date} onChange={this._changeEndDate} />
-              <span className="input-group-addon"><span className="glyphicon glyphicon-calendar"></span>
+              <span className="input-group-addon">
+                <span className="glyphicon glyphicon-calendar"></span>
               </span>
             </div>
           </div>
@@ -44,7 +50,8 @@ var DateTab = React.createClass({
           <div className="form-group">
             <label for="id_is_private">
               <input type="checkbox" id="id_is_private" name="is_private"
-                     ng-model="ctrl.campaign.is_private"/>
+                     ng-model="ctrl.campaign.is_private" value
+                     onChange={this.onIsPrivateChange} />
               Make this campaign private.
             </label>
           </div>

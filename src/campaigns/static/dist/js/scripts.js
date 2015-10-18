@@ -23982,9 +23982,13 @@ var DateTab = React.createClass({displayName: "DateTab",
     updateCampaign({start_date: startDate});
   },
   _changeEndDate: function(endDate) {
-    console.log(endDate);
     updateCampaign({end_date: endDate});
   },
+  onIsPrivateChange: function(event) {
+    debugger;
+    updateCampaign({is_private: jQuery(event.target).is(':checked')});
+  },
+
   render: function() {
 
     return (
@@ -23996,7 +24000,8 @@ var DateTab = React.createClass({displayName: "DateTab",
             React.createElement("label", {for: "id_start_date"}, "Start date and time"), 
             React.createElement("div", {className: "input-group date", id: "datetimepicker3"}, 
               React.createElement(DateTimePicker, {value: this.props.start_date, onChange: this._changeStartDate}), 
-              React.createElement("span", {className: "input-group-addon"}, React.createElement("span", {className: "glyphicon glyphicon-calendar"})
+              React.createElement("span", {className: "input-group-addon"}, 
+                React.createElement("span", {className: "glyphicon glyphicon-calendar"})
               )
             )
           ), 
@@ -24005,7 +24010,8 @@ var DateTab = React.createClass({displayName: "DateTab",
             React.createElement("label", {for: "id_end_date"}, "End date and time"), 
             React.createElement("div", {className: "input-group date", id: "datetimepicker4"}, 
               React.createElement(DateTimePicker, {value: this.props.end_date, onChange: this._changeEndDate}), 
-              React.createElement("span", {className: "input-group-addon"}, React.createElement("span", {className: "glyphicon glyphicon-calendar"})
+              React.createElement("span", {className: "input-group-addon"}, 
+                React.createElement("span", {className: "glyphicon glyphicon-calendar"})
               )
             )
           ), 
@@ -24015,7 +24021,8 @@ var DateTab = React.createClass({displayName: "DateTab",
           React.createElement("div", {className: "form-group"}, 
             React.createElement("label", {for: "id_is_private"}, 
               React.createElement("input", {type: "checkbox", id: "id_is_private", name: "is_private", 
-                     "ng-model": "ctrl.campaign.is_private"}), 
+                     "ng-model": "ctrl.campaign.is_private", value: true, 
+                     onChange: this.onIsPrivateChange}), 
               "Make this campaign private."
             )
           ), 

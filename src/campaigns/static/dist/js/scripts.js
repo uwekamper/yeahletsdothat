@@ -24004,7 +24004,7 @@ var DateTab = React.createClass({displayName: "DateTab",
           React.createElement("div", {className: "form-group"}, 
             React.createElement("label", {for: "id_end_date"}, "End date and time"), 
             React.createElement("div", {className: "input-group date", id: "datetimepicker4"}, 
-              React.createElement(DateTimePicker, {value: this.props.end_date}), 
+              React.createElement(DateTimePicker, {value: this.props.end_date, onChange: this._changeEndDate}), 
               React.createElement("span", {className: "input-group-addon"}, React.createElement("span", {className: "glyphicon glyphicon-calendar"})
               )
             )

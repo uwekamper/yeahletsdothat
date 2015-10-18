@@ -33,7 +33,7 @@ var DateTab = React.createClass({
           <div className="form-group">
             <label for="id_end_date">End date and time</label>
             <div className='input-group date' id='datetimepicker4'>
-              <DateTimePicker value={this.props.end_date} />
+              <DateTimePicker value={this.props.end_date} onChange={this._changeEndDate} />
               <span className="input-group-addon"><span className="glyphicon glyphicon-calendar"></span>
               </span>
             </div>

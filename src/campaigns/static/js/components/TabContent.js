@@ -32,12 +32,14 @@ var TabContent = React.createClass({
     render: function() {
         var activeTab;
         var campaign = EditStore.getCampaign();
+        debugger;
         switch (this.state.activeTab) {
             case 'basic':
                 activeTab = <BasicTab title={campaign.title} description={campaign.description}/>
                 break;
             case 'date':
-                activeTab = <DateTab start_date={campaign.start_date} end_date={campaign.end_date}/>
+                activeTab = <DateTab start_date={campaign.start_date} end_date={campaign.end_date}
+                                     is_private={campaign.is_private} />
                 break;
             case 'goals':
                 activeTab = <GoalsTab goal={campaign.goal} />

@@ -24394,7 +24394,6 @@ var DateTab = React.createClass({displayName: "DateTab",
     updateCampaign({end_date: endDate});
   },
   _onIsPrivateChange: function(event) {
-    debugger;
     updateCampaign({is_private: jQuery(event.target).is(':checked')});
   },
   render: function() {
@@ -24428,8 +24427,7 @@ var DateTab = React.createClass({displayName: "DateTab",
           React.createElement("div", {className: "form-group"}, 
             React.createElement("label", {for: "id_is_private"}, 
               React.createElement("input", {type: "checkbox", id: "id_is_private", name: "is_private", 
-                     "ng-model": "ctrl.campaign.is_private", value: true, 
-                     onChange: this._onIsPrivateChange}), 
+                     checked: this.props.is_private, onChange: this._onIsPrivateChange}), 
               "Make this campaign private."
             )
           ), 
@@ -24771,12 +24769,14 @@ var TabContent = React.createClass({displayName: "TabContent",
     render: function() {
         var activeTab;
         var campaign = EditStore.getCampaign();
+        debugger;
         switch (this.state.activeTab) {
             case 'basic':
                 activeTab = React.createElement(BasicTab, {title: campaign.title, description: campaign.description})
                 break;
             case 'date':
-                activeTab = React.createElement(DateTab, {start_date: campaign.start_date, end_date: campaign.end_date})
+                activeTab = React.createElement(DateTab, {start_date: campaign.start_date, end_date: campaign.end_date, 
+                                     is_private: campaign.is_private})
                 break;
             case 'goals':
                 activeTab = React.createElement(GoalsTab, {goal: campaign.goal})

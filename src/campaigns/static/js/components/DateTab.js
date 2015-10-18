@@ -13,13 +13,11 @@ var DateTab = React.createClass({
   _changeEndDate: function(endDate) {
     updateCampaign({end_date: endDate});
   },
-  onIsPrivateChange: function(event) {
+  _onIsPrivateChange: function(event) {
     debugger;
     updateCampaign({is_private: jQuery(event.target).is(':checked')});
   },
-
   render: function() {
-
     return (
       <div className="row">
         <div className="col-xs-12">
@@ -51,7 +49,7 @@ var DateTab = React.createClass({
             <label for="id_is_private">
               <input type="checkbox" id="id_is_private" name="is_private"
                      ng-model="ctrl.campaign.is_private" value
-                     onChange={this.onIsPrivateChange} />
+                     onChange={this._onIsPrivateChange} />
               Make this campaign private.
             </label>
           </div>

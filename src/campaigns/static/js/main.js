@@ -20,7 +20,7 @@ function loadStuff() {
       EditActions.updateREST(data);
     },
     error: function(data) {
-      alert("AJAX ERROER");
+      alert("AJAX ERROR");
     }
   });
 }

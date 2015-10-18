@@ -4,12 +4,6 @@ var EditActions = require('../actions/EditActions');
 var React = require('react');
 
 var BasicTab = React.createClass({
-  //getInitialState: function() {
-  //  return {
-  //    title: this.props.title,
-  //    description: this.props.description
-  //  };
-  //},
   _changeTitle: function(event) {
     EditActions.updateCampaign({
        title: event.target.value

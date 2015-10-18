@@ -16,6 +16,7 @@
   },
   "homepage": "https://github.com/uwekamper/yeahletsdothat#readme",
   "dependencies": {
+    "accounting": "^0.4.1",
     "moment": "^2.10.6",
     "react": "^0.14.0",
     "react-dom": "^0.14.0"

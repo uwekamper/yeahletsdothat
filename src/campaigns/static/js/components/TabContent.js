@@ -40,7 +40,7 @@ var TabContent = React.createClass({
                 activeTab = <DateTab start_date={campaign.start_date} end_date={campaign.end_date}/>
                 break;
             case 'goals':
-                activeTab = <GoalsTab />
+                activeTab = <GoalsTab goal={campaign.goal} />
                 break;
             case 'perks':
                 activeTab = <PerksTab />

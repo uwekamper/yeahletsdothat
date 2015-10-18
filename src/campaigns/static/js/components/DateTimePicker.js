@@ -17,7 +17,7 @@ var DateTimePicker = React.createClass({
 
     // don't render anything, this is where we open the portal
     return <input type="text" className="form-control" value={lts_value}
-                  onChange={this._onDateChange} onBlur={this._onDateChange}/>;
+                  onChange={this._onDateChange} onBlur={this._onDateChange} />;
   },
 
   componentDidMount: function() {

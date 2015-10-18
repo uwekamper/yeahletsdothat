@@ -23977,18 +23977,14 @@ var DateTimePicker = require('./DateTimePicker');
 var React = require('react');
 
 var DateTab = React.createClass({displayName: "DateTab",
-  _changeStartDate: function(event) {
-    console.log(event);
-    updateCampaign({start_date: event.target.value});
+  _changeStartDate: function(startDate) {
+    console.log(startDate);
+    updateCampaign({start_date: startDate});
   },
-  _changeEndDate: function(event) {
-    console.log(event);
-    updateCampaign({end_date: event.target.value});
+  _changeEndDate: function(endDate) {
+    console.log(endDate);
+    updateCampaign({end_date: endDate});
   },
-      //<input type="text" id="id_end_date" className="form-control" name="is_private"
-    //            value={this.props.end_date} onChange={this._changeEndDate} date-time-picker />
-    //          <span className="input-group-addon"><span className="glyphicon glyphicon-calendar"></span>
-
   render: function() {
 
     return (
@@ -24046,17 +24042,15 @@ var ReactDOM = require('react-dom');
 
 var DateTimePicker = React.createClass({displayName: "DateTimePicker",
   _onDateChange: function(event) {
-    alert("Hallo!");
-    console.log('On DateChange');
-    debugger;
-    this.props.onChange('bla');
+    var value = moment(event.target.value).format('YYYY-MM-DDThh:mm');
+    this.props.onChange(value);
   },
 
   render: function() {
-    var lts_value = moment(this.props.value).format( 'LLL');
+    var localized_value = moment(this.props.value).format('LLL');
 
     // don't render anything, this is where we open the portal
-    return React.createElement("input", {type: "text", className: "form-control", value: lts_value, 
+    return React.createElement("input", {type: "text", className: "form-control", value: localized_value, 
                   onChange: this._onDateChange, onBlur: this._onDateChange});
   },
 

@@ -6,17 +6,15 @@ var ReactDOM = require('react-dom');
 
 var DateTimePicker = React.createClass({
   _onDateChange: function(event) {
-    alert("Hallo!");
-    console.log('On DateChange');
-    debugger;
-    this.props.onChange('bla');
+    var value = moment(event.target.value).format('YYYY-MM-DDThh:mm');
+    this.props.onChange(value);
   },
 
   render: function() {
-    var lts_value = moment(this.props.value).format( 'LLL');
+    var localized_value = moment(this.props.value).format('LLL');
 
     // don't render anything, this is where we open the portal
-    return <input type="text" className="form-control" value={lts_value}
+    return <input type="text" className="form-control" value={localized_value}
                   onChange={this._onDateChange} onBlur={this._onDateChange} />;
   },
 

@@ -6,18 +6,14 @@ var DateTimePicker = require('./DateTimePicker');
 var React = require('react');
 
 var DateTab = React.createClass({
-  _changeStartDate: function(event) {
-    console.log(event);
-    updateCampaign({start_date: event.target.value});
+  _changeStartDate: function(startDate) {
+    console.log(startDate);
+    updateCampaign({start_date: startDate});
   },
-  _changeEndDate: function(event) {
-    console.log(event);
-    updateCampaign({end_date: event.target.value});
+  _changeEndDate: function(endDate) {
+    console.log(endDate);
+    updateCampaign({end_date: endDate});
   },
-      //<input type="text" id="id_end_date" className="form-control" name="is_private"
-    //            value={this.props.end_date} onChange={this._changeEndDate} date-time-picker />
-    //          <span className="input-group-addon"><span className="glyphicon glyphicon-calendar"></span>
-
   render: function() {
 
     return (

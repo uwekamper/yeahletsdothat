@@ -32,7 +32,6 @@ var TabContent = React.createClass({
     render: function() {
         var activeTab;
         var campaign = EditStore.getCampaign();
-        debugger;
         switch (this.state.activeTab) {
             case 'basic':
                 activeTab = <BasicTab title={campaign.title} description={campaign.description}/>

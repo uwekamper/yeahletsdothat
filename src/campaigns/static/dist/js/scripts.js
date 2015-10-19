@@ -24769,7 +24769,6 @@ var TabContent = React.createClass({displayName: "TabContent",
     render: function() {
         var activeTab;
         var campaign = EditStore.getCampaign();
-        debugger;
         switch (this.state.activeTab) {
             case 'basic':
                 activeTab = React.createElement(BasicTab, {title: campaign.title, description: campaign.description})

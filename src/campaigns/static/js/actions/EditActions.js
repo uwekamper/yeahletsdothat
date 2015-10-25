@@ -3,6 +3,22 @@
 var AppDispatcher = require('../dispatcher/AppDispatcher');
 var EditConstants = require('../constants/EditConstants');
 var EditStore = require('../stores/EditStore');
+var MessageStore = require('../stores/MessageStore');
+
+// Show a message on top of the UI.
+function _showMessage(type, message) {
+  AppDispatcher.handleViewAction({
+    actionType: EditConstants.SHOW_MESSAGE,
+    type: type,
+    message: message
+  });
+}
+
+function _hideMessage() {
+  AppDispatcher.handleViewAction({
+    actionType: EditConstants.HIDE_MESSAGE
+  });
+}
 
 module.exports = {
 
@@ -26,9 +42,24 @@ module.exports = {
     });
   },
 
-  uneditPerk: function(index) {
+  uneditPerk: function(index, data) {
     AppDispatcher.handleViewAction({
       actionType: EditConstants.UNEDIT_PERK,
+      index: index,
+      data: data
+    });
+  },
+
+  deletePerk: function(index) {
+    AppDispatcher.handleViewAction({
+      actionType: EditConstants.DELETE_PERK,
+      index: index
+    });
+  },
+
+  undeletePerk: function(index) {
+    AppDispatcher.handleViewAction({
+      actionType: EditConstants.UNDELETE_PERK,
       index: index
     });
   },
@@ -61,6 +92,7 @@ module.exports = {
     });
   },
 
+  // Save the whole campaing object to the REST backend.
   saveCampaign: function() {
     console.log('Saving campaign...');
 
@@ -78,11 +110,20 @@ module.exports = {
           actionType: EditConstants.UPDATE_REST,
           data: data
         });
+        _showMessage('success', 'Your changes were saved.');
+        setTimeout(_hideMessage, 5000);
       },
       error: function(e) {
-        alert("SAVE ERROR: " + e)
+        alert("SAVE ERROR: " + e);
+        _showMessage('danger', 'Error saving.')
       }
     });
-  }
+  },
+
+  // Show a message on top of the UI.
+  showMessage: _showMessage,
+
+  // Show a message on top of the UI.
+  hideMessage: _hideMessage
 
 };

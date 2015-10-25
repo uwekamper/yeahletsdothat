@@ -24216,6 +24216,22 @@ module.exports = require('./lib/React');
 var AppDispatcher = require('../dispatcher/AppDispatcher');
 var EditConstants = require('../constants/EditConstants');
 var EditStore = require('../stores/EditStore');
+var MessageStore = require('../stores/MessageStore');
+
+// Show a message on top of the UI.
+function _showMessage(type, message) {
+  AppDispatcher.handleViewAction({
+    actionType: EditConstants.SHOW_MESSAGE,
+    type: type,
+    message: message
+  });
+}
+
+function _hideMessage() {
+  AppDispatcher.handleViewAction({
+    actionType: EditConstants.HIDE_MESSAGE
+  });
+}
 
 module.exports = {
 
@@ -24239,9 +24255,24 @@ module.exports = {
     });
   },
 
-  uneditPerk: function(index) {
+  uneditPerk: function(index, data) {
     AppDispatcher.handleViewAction({
       actionType: EditConstants.UNEDIT_PERK,
+      index: index,
+      data: data
+    });
+  },
+
+  deletePerk: function(index) {
+    AppDispatcher.handleViewAction({
+      actionType: EditConstants.DELETE_PERK,
+      index: index
+    });
+  },
+
+  undeletePerk: function(index) {
+    AppDispatcher.handleViewAction({
+      actionType: EditConstants.UNDELETE_PERK,
       index: index
     });
   },
@@ -24274,6 +24305,7 @@ module.exports = {
     });
   },
 
+  // Save the whole campaing object to the REST backend.
   saveCampaign: function() {
     console.log('Saving campaign...');
 
@@ -24291,38 +24323,102 @@ module.exports = {
           actionType: EditConstants.UPDATE_REST,
           data: data
         });
+        _showMessage('success', 'Your changes were saved.');
+        setTimeout(_hideMessage, 5000);
       },
       error: function(e) {
-        alert("SAVE ERROR: " + e)
+        alert("SAVE ERROR: " + e);
+        _showMessage('danger', 'Error saving.')
       }
     });
-  }
+  },
+
+  // Show a message on top of the UI.
+  showMessage: _showMessage,
+
+  // Show a message on top of the UI.
+  hideMessage: _hideMessage
 
 };
 
-},{"../constants/EditConstants":182,"../dispatcher/AppDispatcher":183,"../stores/EditStore":185}],173:[function(require,module,exports){
+},{"../constants/EditConstants":182,"../dispatcher/AppDispatcher":183,"../stores/EditStore":185,"../stores/MessageStore":186}],173:[function(require,module,exports){
 'use strict';
 
 // React components
 var EditActions = require('../actions/EditActions');
 var Tabs = require('./Tabs');
 var TabContent = require('./TabContent');
+var EditStore = require('../stores/EditStore');
+var MessageStore = require('../stores/MessageStore');
 
 var React = require('react');
 
 var EditApp = React.createClass({displayName: "EditApp",
+
   _onSave: function(e) {
     e.preventDefault();
     EditActions.saveCampaign();
   },
-  render: function() {
+
+  _onMessageClick: function(e) {
+    e.preventDefault();
+    EditActions.hideMessage();
+  },
+
+  getInitialState: function() {
+    return {
+      pristine: true,
+      message: 'Initial state message',
+      show_message: false
+    };
+  },
+
+  _onChange: function() {
+    this.setState({
+      pristine: EditStore.getIsPristine()
+    });
+
+  },
+  _onMessageChange: function() {
+    this.setState(MessageStore.getMessage());
+  },
+
+  // Add change listeners to stores
+  componentDidMount: function() {
+    EditStore.addChangeListener(this._onChange);
+    MessageStore.addChangeListener(this._onMessageChange);
+  },
+
+  // Remove change listers from stores
+  componentWillUnmount: function() {
+    EditStore.removeChangeListener(this._onChange);
+    MessageStore.removeChangeListener(this._onMessageChange);
+  },
+
+  // show a message above the whole thing
+  renderMessage: function() {
+    if (this.state.show_message) {
       return (
-          React.createElement("div", null, 
-              React.createElement(Tabs, null), 
-              React.createElement(TabContent, null), 
-              React.createElement("a", {href: "#", onClick: this._onSave, className: "btn"}, "Save")
-          )
+        React.createElement("div", {className: "alert alert-success alert-dismissible", role: "alter"}, 
+          React.createElement("button", {type: "button", className: "close", "aria-label": "Close", 
+                  onClick: this._onMessageClick}, React.createElement("span", {"aria-hidden": "true"}, "×")), 
+          React.createElement("strong", null, "Message:"), " ", this.state.message
+        )
       );
+    }
+  },
+
+  // main rendering of the whole edit form app.
+  render: function() {
+    return (
+      React.createElement("div", null, 
+        this.renderMessage(), 
+        React.createElement(Tabs, null), 
+        React.createElement(TabContent, null), 
+        React.createElement("button", {type: "button", className: "btn btn-primary btn-lg", 
+                onClick: this._onSave, disabled: this.state.pristine}, "Save")
+      )
+    );
   },
 
   _delete: function() {
@@ -24333,7 +24429,7 @@ var EditApp = React.createClass({displayName: "EditApp",
 
 module.exports = EditApp;
 
-},{"../actions/EditActions":172,"./TabContent":180,"./Tabs":181,"react":171}],174:[function(require,module,exports){
+},{"../actions/EditActions":172,"../stores/EditStore":185,"../stores/MessageStore":186,"./TabContent":180,"./Tabs":181,"react":171}],174:[function(require,module,exports){
 'use strict';
 
 var EditActions = require('../actions/EditActions');
@@ -24544,13 +24640,49 @@ var GoalsTab = React.createClass({displayName: "GoalsTab",
 
 module.exports = GoalsTab;
 
-},{"../actions/EditActions":172,"../utils/currency":187,"react":171}],178:[function(require,module,exports){
+},{"../actions/EditActions":172,"../utils/currency":188,"react":171}],178:[function(require,module,exports){
 'use strict';
 
 var EditActions = require('../actions/EditActions');
+var EditStore = require('../stores/EditStore');
+var currency = require('../utils/currency');
+
 var React = require('react');
 
 var Perk = React.createClass({displayName: "Perk",
+
+  getInitialState: function() {
+    var perk = this.props.perk;
+    return {
+      title: perk.title,
+      text: perk.text,
+      state: perk.state,
+      amount: currency.format(perk.amount),
+      currency: EditStore.getCampaign().currency,
+      available: perk.available
+    }
+  },
+
+  onChangeTitle: function(e) {
+    this.setState({title: e.target.value});
+  },
+
+  onChangeDescription: function(e) {
+    this.setState({description: e.target.value});
+  },
+
+  onChangeAmount: function(e) {
+    this.setState({amount: e.target.value});
+  },
+
+  onChangeAvailable: function(e) {
+    this.setState({available: e.target.value});
+  },
+
+  onBlurAmount: function(e) {
+    var value = currency.unformat(e.target.value);
+    this.setState({amount: currency.format(value)});
+  },
 
   editPerk: function(e) {
     e.preventDefault();
@@ -24561,9 +24693,21 @@ var Perk = React.createClass({displayName: "Perk",
   uneditPerk: function(e) {
     e.preventDefault();
     var index = this.props.index;
-    EditActions.uneditPerk(index);
+    var data = this.state;
+    EditActions.uneditPerk(index, data);
   },
 
+  deletePerk: function(e) {
+    e.preventDefault();
+    var index = this.props.index;
+    EditActions.deletePerk(index);
+  },
+
+  undeletePerk: function(e) {
+    e.preventDefault();
+    var index = this.props.index;
+    EditActions.undeletePerk(index);
+  },
 
   renderStateOK: function() {
     var perk = this.props.perk;
@@ -24589,7 +24733,7 @@ var Perk = React.createClass({displayName: "Perk",
               ), 
           React.createElement("br", null), 
           React.createElement("br", null), 
-          React.createElement("a", {"ng-click": "ctrl.delete_perk($index)"}, "Delete"), 
+          React.createElement("a", {onClick: this.deletePerk}, "Delete"), 
           React.createElement("a", {onClick: this.editPerk}, "Edit")
         )
       )
@@ -24597,7 +24741,7 @@ var Perk = React.createClass({displayName: "Perk",
   },
 
   renderStateEditable: function() {
-    var perk = this.props.perk;
+    var perk = this.state;
     var index = this.props.index;
     var idTitle = 'id-title-' + index;
     var idDescription = 'id-description-' + index;
@@ -24606,22 +24750,23 @@ var Perk = React.createClass({displayName: "Perk",
         React.createElement("div", {className: "perk-wrapper"}, 
           React.createElement("div", {className: "input-group"}, 
             React.createElement("label", {htmlFor: idTitle}, "Title"), 
-            React.createElement("input", {className: "form-control perk-title-input", 
-                   id: idTitle, type: "text", value: perk.title})
+            React.createElement("input", {type: "text", className: "form-control perk-title-input", id: idTitle, 
+                   value: this.state.title, onChange: this.onChangeTitle})
           ), 
           React.createElement("div", {className: "input-group"}, 
             React.createElement("label", {htmlFor: idDescription}, "Description ", React.createElement("small", null, "supports Markdown")), 
-            React.createElement("textarea", {className: "form-control perk-text-input", 
-                      id: idDescription}, perk.text)
+            React.createElement("textarea", {className: "form-control perk-text-input", onChange: this.onChangeDescription, 
+                      id: idDescription}, this.state.text)
           ), 
           React.createElement("div", {className: "input-group"}, 
-            React.createElement("input", {className: "form-control perk-amount-input", type: "text", value: perk.amount}), 
-            React.createElement("span", {className: "input-group-addon"}, perk.currency)
+            React.createElement("input", {className: "form-control perk-amount-input", type: "text", 
+                   value: this.state.amount, onChange: this.onChangeAmount, onBlur: this.onBlurAmount}), 
+            React.createElement("span", {className: "input-group-addon"}, this.state.currency)
           ), 
 
           React.createElement("div", {className: "input-group"}, 
             React.createElement("input", {className: "form-control perk-available-input", type: "number", 
-                   "ng-model": "perk.available"})
+                   value: this.state.available, onChange: this.onChangeAvailable})
           ), 
           React.createElement("br", null), 
           React.createElement("a", {onClick: this.uneditPerk}, "Done")
@@ -24631,14 +24776,15 @@ var Perk = React.createClass({displayName: "Perk",
   },
 
   renderStateDeleted: function() {
+    var perk = this.props.perk;
     return (
-      React.createElement("div", {"ng-if": "perk.state == 'DELETED' ", className: "col-xs-6"}, 
+      React.createElement("div", {className: "col-xs-6"}, 
         React.createElement("div", {className: "perk-wrapper perk-deleted"}, 
-          React.createElement("h3", null,  perk.title), 
-          React.createElement("span", {className: "perk-amount"},  perk.amount|currency), 
-          React.createElement("span", {className: "perk-currency"},  ctrl.getCurrencyDisplay() ), 
+          React.createElement("h3", null, perk.title), 
+          React.createElement("span", {className: "perk-amount"}, perk.amount), 
+          React.createElement("span", {className: "perk-currency"}, perk.currency), 
           React.createElement("br", null), 
-          React.createElement("a", {"ng-click": "ctrl.undelete_perk($index)"}, "Undo")
+          React.createElement("a", {onClick: this.undeletePerk}, "Undo")
         )
       )
     );
@@ -24661,7 +24807,7 @@ var Perk = React.createClass({displayName: "Perk",
 
 module.exports = Perk;
 
-},{"../actions/EditActions":172,"react":171}],179:[function(require,module,exports){
+},{"../actions/EditActions":172,"../stores/EditStore":185,"../utils/currency":188,"react":171}],179:[function(require,module,exports){
 'use strict';
 
 var EditStore = require('../stores/EditStore');
@@ -24886,10 +25032,15 @@ module.exports = {
   ADD_PERK: 'ADD_PERK',
   EDIT_PERK: 'EDIT_PERK',
   UNEDIT_PERK: 'UNEDIT_PERK',
+  DELETE_PERK: 'DELETE_PERK',
+  UNDELETE_PERK: 'UNDELETE_PERK',
   SAVE_ITEM: 'SAVE_ITEM',
   REMOVE_ITEM: 'REMOVE_ITEM',
   UPDATE_REST: 'UPDATE_REST',
-  SAVE_CAMPAIGN: 'SAVE_CAMPAIGN'
+  SAVE_CAMPAIGN: 'SAVE_CAMPAIGN',
+  SHOW_MESSAGE: 'SHOW_MESSAGE',
+  HIDE_MESSAGE: 'HIDE_MESSAGE',
+
 };
 
 },{}],183:[function(require,module,exports){
@@ -24904,14 +25055,14 @@ AppDispatcher.handleViewAction = function(action) {
     source: 'VIEW_ACTION',
     action: action
   });
-}
+};
 
 AppDispatcher.handleServerAction = function(action) {
   this.dispatch({
     source: 'SERVER_ACTION',
     action: action
   });
-}
+};
 
 module.exports = AppDispatcher;
 
@@ -24945,7 +25096,9 @@ function loadStuff() {
 
 loadStuff();
 
-},{"./actions/EditActions":172,"./components/App":173,"./utils/CSRFProtection":186,"react":171}],185:[function(require,module,exports){
+},{"./actions/EditActions":172,"./components/App":173,"./utils/CSRFProtection":187,"react":171}],185:[function(require,module,exports){
+'use strict';
+
 var AppDispatcher = require('../dispatcher/AppDispatcher');
 var EditConstants = require('../constants/EditConstants');
 var ObjectAssign = require('object-assign');
@@ -24960,16 +25113,19 @@ function getEmptyPerk() {
     state: 'OK',
     amount: 0.0,
     currency: 'EUR',
-    available: 0,
+    available: 0
   };
 }
+
+
 
 // Define the store as an empty array
 var _store = {
   activeTab: 'basic',
   goal: 0.0,
   list: [],
-  editing: false
+  editing: false,
+  is_pristine: true
 };
 
 var _campaign = {
@@ -24983,8 +25139,7 @@ function updateCampaign(data) {
       _campaign[key] = data[key];
     }
   }
-  console.log('Campaign updated');
-  console.log(_campaign);
+  _store.is_pristine = false;
 }
 
 // Define the public event listeners and getters that
@@ -25014,6 +25169,10 @@ var EditStore = ObjectAssign( {}, EventEmitter.prototype, {
 
   getCampaign: function() {
     return _campaign;
+  },
+
+  getIsPristine: function() {
+    return _store.is_pristine;
   }
 
 });
@@ -25033,6 +25192,7 @@ AppDispatcher.register(function(payload) {
 
     case EditConstants.ADD_PERK:
       _campaign.perks.push(getEmptyPerk());
+      _store.is_pristine = false;
       EditStore.emit(CHANGE_EVENT);
       break;
 
@@ -25042,7 +25202,21 @@ AppDispatcher.register(function(payload) {
       break;
 
     case EditConstants.UNEDIT_PERK:
+      _campaign.perks[action.index] = ObjectAssign(_campaign.perks[action.index], action.data);
       _campaign.perks[action.index].state = 'OK';
+      _store.is_pristine = false;
+      EditStore.emit(CHANGE_EVENT);
+      break;
+
+    case EditConstants.DELETE_PERK:
+      _campaign.perks[action.index].state = 'DELETED';
+      _store.is_pristine = false;
+      EditStore.emit(CHANGE_EVENT);
+      break;
+
+    case EditConstants.UNDELETE_PERK:
+      _campaign.perks[action.index].state = 'OK';
+      _store.is_pristine = false;
       EditStore.emit(CHANGE_EVENT);
       break;
 
@@ -25058,11 +25232,9 @@ AppDispatcher.register(function(payload) {
         _campaign.perks[i].state = 'OK';
       }
       console.log('_CAMPAIGN' + _campaign);
+      _store.is_pristine = true;
       EditStore.emit(CHANGE_EVENT);
       break;
-
-//    case EditConstants.SAVE_CAMPAIGN:
-
 
     default:
       return true;
@@ -25074,6 +25246,65 @@ AppDispatcher.register(function(payload) {
 module.exports = EditStore;
 
 },{"../constants/EditConstants":182,"../dispatcher/AppDispatcher":183,"events":2,"object-assign":8}],186:[function(require,module,exports){
+'use strict';
+
+var AppDispatcher = require('../dispatcher/AppDispatcher');
+var EditConstants = require('../constants/EditConstants');
+var ObjectAssign = require('object-assign');
+var EventEmitter = require('events').EventEmitter;
+
+var CHANGE_EVENT = 'change';
+
+var _message = {
+  type: 'success',
+  message: 'Everything is okay',
+  show_message: false
+};
+
+// Define the public event listeners and getters that
+// the views will use to listen for changes and retrieve
+// the store
+var MessageStore = ObjectAssign({}, EventEmitter.prototype, {
+  addChangeListener: function(cb) {
+    this.on(CHANGE_EVENT, cb);
+  },
+
+  removeChangeListener: function(cb) {
+    this.removeListener(CHANGE_EVENT, cb);
+  },
+
+  getMessage: function() {
+    return _message;
+  }
+});
+
+AppDispatcher.register(function(payload) {
+  var action = payload.action;
+  switch (action.actionType) {
+
+    case EditConstants.SHOW_MESSAGE:
+      // Add the data defined in the TodoActions
+      // which the View will pass as a payload
+      _message.type = action.type;
+      _message.message = action.message;
+      _message.show_message = true;
+      MessageStore.emit(CHANGE_EVENT);
+      break;
+
+     case EditConstants.HIDE_MESSAGE:
+      // Add the data defined in the TodoActions
+      // which the View will pass as a payload
+      _message.show_message = false;
+      MessageStore.emit(CHANGE_EVENT);
+      break;
+    default:
+      return true;
+  }
+});
+
+module.exports = MessageStore;
+
+},{"../constants/EditConstants":182,"../dispatcher/AppDispatcher":183,"events":2,"object-assign":8}],187:[function(require,module,exports){
 'use strict';
 
 // using jQuery
@@ -25119,7 +25350,7 @@ function enableCSRF(jQuery) {
 
 module.exports = enableCSRF;
 
-},{}],187:[function(require,module,exports){
+},{}],188:[function(require,module,exports){
 'use strict';
 
 var accounting = require('accounting');

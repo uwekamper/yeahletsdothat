@@ -1,9 +1,45 @@
 'use strict';
 
 var EditActions = require('../actions/EditActions');
+var EditStore = require('../stores/EditStore');
+var currency = require('../utils/currency');
+
 var React = require('react');
 
 var Perk = React.createClass({
+
+  getInitialState: function() {
+    var perk = this.props.perk;
+    return {
+      title: perk.title,
+      text: perk.text,
+      state: perk.state,
+      amount: currency.format(perk.amount),
+      currency: EditStore.getCampaign().currency,
+      available: perk.available
+    }
+  },
+
+  onChangeTitle: function(e) {
+    this.setState({title: e.target.value});
+  },
+
+  onChangeDescription: function(e) {
+    this.setState({description: e.target.value});
+  },
+
+  onChangeAmount: function(e) {
+    this.setState({amount: e.target.value});
+  },
+
+  onChangeAvailable: function(e) {
+    this.setState({available: e.target.value});
+  },
+
+  onBlurAmount: function(e) {
+    var value = currency.unformat(e.target.value);
+    this.setState({amount: currency.format(value)});
+  },
 
   editPerk: function(e) {
     e.preventDefault();
@@ -14,9 +50,21 @@ var Perk = React.createClass({
   uneditPerk: function(e) {
     e.preventDefault();
     var index = this.props.index;
-    EditActions.uneditPerk(index);
+    var data = this.state;
+    EditActions.uneditPerk(index, data);
   },
 
+  deletePerk: function(e) {
+    e.preventDefault();
+    var index = this.props.index;
+    EditActions.deletePerk(index);
+  },
+
+  undeletePerk: function(e) {
+    e.preventDefault();
+    var index = this.props.index;
+    EditActions.undeletePerk(index);
+  },
 
   renderStateOK: function() {
     var perk = this.props.perk;
@@ -42,7 +90,7 @@ var Perk = React.createClass({
               </span>
           <br/>
           <br/>
-          <a ng-click="ctrl.delete_perk($index)">Delete</a>
+          <a onClick={this.deletePerk}>Delete</a>
           <a onClick={this.editPerk}>Edit</a>
         </div>
       </div>
@@ -50,7 +98,7 @@ var Perk = React.createClass({
   },
 
   renderStateEditable: function() {
-    var perk = this.props.perk;
+    var perk = this.state;
     var index = this.props.index;
     var idTitle = 'id-title-' + index;
     var idDescription = 'id-description-' + index;
@@ -59,22 +107,23 @@ var Perk = React.createClass({
         <div className="perk-wrapper">
           <div className="input-group">
             <label htmlFor={idTitle}>Title</label>
-            <input className="form-control perk-title-input"
-                   id={idTitle} type="text" value={perk.title} />
+            <input type="text" className="form-control perk-title-input" id={idTitle}
+                   value={this.state.title} onChange={this.onChangeTitle} />
           </div>
           <div className="input-group">
             <label htmlFor={idDescription}>Description <small>supports Markdown</small></label>
-            <textarea className="form-control perk-text-input"
-                      id={idDescription}>{perk.text}</textarea>
+            <textarea className="form-control perk-text-input" onChange={this.onChangeDescription}
+                      id={idDescription}>{this.state.text}</textarea>
           </div>
           <div className="input-group">
-            <input className="form-control perk-amount-input" type="text" value={perk.amount} />
-            <span className="input-group-addon">{perk.currency}</span>
+            <input className="form-control perk-amount-input" type="text"
+                   value={this.state.amount} onChange={this.onChangeAmount} onBlur={this.onBlurAmount} />
+            <span className="input-group-addon">{this.state.currency}</span>
           </div>
 
           <div className="input-group">
             <input className="form-control perk-available-input" type="number"
-                   ng-model="perk.available"/>
+                   value={this.state.available} onChange={this.onChangeAvailable} />
           </div>
           <br/>
           <a onClick={this.uneditPerk}>Done</a>
@@ -84,14 +133,15 @@ var Perk = React.createClass({
   },
 
   renderStateDeleted: function() {
+    var perk = this.props.perk;
     return (
-      <div ng-if="perk.state == 'DELETED' " className="col-xs-6">
+      <div className="col-xs-6">
         <div className="perk-wrapper perk-deleted">
-          <h3>{ perk.title }</h3>
-          <span className="perk-amount">{ perk.amount|currency }</span>
-          <span className="perk-currency">{ ctrl.getCurrencyDisplay() }</span>
+          <h3>{perk.title}</h3>
+          <span className="perk-amount">{perk.amount}</span>
+          <span className="perk-currency">{perk.currency}</span>
           <br/>
-          <a ng-click="ctrl.undelete_perk($index)">Undo</a>
+          <a onClick={this.undeletePerk}>Undo</a>
         </div>
       </div>
     );

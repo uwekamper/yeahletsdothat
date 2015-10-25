@@ -1,3 +1,5 @@
+'use strict';
+
 var AppDispatcher = require('../dispatcher/AppDispatcher');
 var EditConstants = require('../constants/EditConstants');
 var ObjectAssign = require('object-assign');
@@ -12,16 +14,19 @@ function getEmptyPerk() {
     state: 'OK',
     amount: 0.0,
     currency: 'EUR',
-    available: 0,
+    available: 0
   };
 }
+
+
 
 // Define the store as an empty array
 var _store = {
   activeTab: 'basic',
   goal: 0.0,
   list: [],
-  editing: false
+  editing: false,
+  is_pristine: true
 };
 
 var _campaign = {
@@ -35,8 +40,7 @@ function updateCampaign(data) {
       _campaign[key] = data[key];
     }
   }
-  console.log('Campaign updated');
-  console.log(_campaign);
+  _store.is_pristine = false;
 }
 
 // Define the public event listeners and getters that
@@ -66,6 +70,10 @@ var EditStore = ObjectAssign( {}, EventEmitter.prototype, {
 
   getCampaign: function() {
     return _campaign;
+  },
+
+  getIsPristine: function() {
+    return _store.is_pristine;
   }
 
 });
@@ -85,6 +93,7 @@ AppDispatcher.register(function(payload) {
 
     case EditConstants.ADD_PERK:
       _campaign.perks.push(getEmptyPerk());
+      _store.is_pristine = false;
       EditStore.emit(CHANGE_EVENT);
       break;
 
@@ -94,7 +103,21 @@ AppDispatcher.register(function(payload) {
       break;
 
     case EditConstants.UNEDIT_PERK:
+      _campaign.perks[action.index] = ObjectAssign(_campaign.perks[action.index], action.data);
       _campaign.perks[action.index].state = 'OK';
+      _store.is_pristine = false;
+      EditStore.emit(CHANGE_EVENT);
+      break;
+
+    case EditConstants.DELETE_PERK:
+      _campaign.perks[action.index].state = 'DELETED';
+      _store.is_pristine = false;
+      EditStore.emit(CHANGE_EVENT);
+      break;
+
+    case EditConstants.UNDELETE_PERK:
+      _campaign.perks[action.index].state = 'OK';
+      _store.is_pristine = false;
       EditStore.emit(CHANGE_EVENT);
       break;
 
@@ -110,11 +133,9 @@ AppDispatcher.register(function(payload) {
         _campaign.perks[i].state = 'OK';
       }
       console.log('_CAMPAIGN' + _campaign);
+      _store.is_pristine = true;
       EditStore.emit(CHANGE_EVENT);
       break;
-
-//    case EditConstants.SAVE_CAMPAIGN:
-
 
     default:
       return true;

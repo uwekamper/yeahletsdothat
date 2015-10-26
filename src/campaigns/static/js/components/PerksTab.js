@@ -2,6 +2,7 @@
 
 var EditStore = require('../stores/EditStore');
 var EditActions = require('../actions/EditActions');
+var Perkulator3000 = require('../components/Perkulator3000');
 var Perk = require('./Perk');
 var React = require('react');
 
@@ -38,7 +39,7 @@ var PerksTab = React.createClass({
       var perk = this.state.perks[i];
       perkComponents.push(<Perk perk={perk} index={i}/>);
     }
-
+    var campaignGoal = EditStore.getCampaign().goal;
     return (
       <div className="row">
         <div className="col-xs-6">
@@ -58,6 +59,7 @@ var PerksTab = React.createClass({
           </div>
 
         </div>
+        <Perkulator3000 perks={this.state.perks} goal={campaignGoal} />
       </div>
     );
   },

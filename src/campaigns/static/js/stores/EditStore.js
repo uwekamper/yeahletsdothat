@@ -11,14 +11,12 @@ var CHANGE_EVENT = 'change';
 function getEmptyPerk() {
   return {
     title: 'No title',
-    state: 'OK',
+    ui_state: 'OK',
     amount: 0.0,
     currency: 'EUR',
     available: 0
   };
 }
-
-
 
 // Define the store as an empty array
 var _store = {
@@ -31,7 +29,7 @@ var _store = {
 
 var _campaign = {
   title: 'Title not loaded',
-  perks: [],
+  perks: []
 };
 
 function updateCampaign(data) {
@@ -98,25 +96,25 @@ AppDispatcher.register(function(payload) {
       break;
 
     case EditConstants.EDIT_PERK:
-      _campaign.perks[action.index].state = 'EDITABLE';
+      _campaign.perks[action.index].ui_state = 'EDITABLE';
       EditStore.emit(CHANGE_EVENT);
       break;
 
     case EditConstants.UNEDIT_PERK:
       _campaign.perks[action.index] = ObjectAssign(_campaign.perks[action.index], action.data);
-      _campaign.perks[action.index].state = 'OK';
+      _campaign.perks[action.index].ui_state = 'OK';
       _store.is_pristine = false;
       EditStore.emit(CHANGE_EVENT);
       break;
 
     case EditConstants.DELETE_PERK:
-      _campaign.perks[action.index].state = 'DELETED';
+      _campaign.perks[action.index].ui_state = 'DELETED';
       _store.is_pristine = false;
       EditStore.emit(CHANGE_EVENT);
       break;
 
     case EditConstants.UNDELETE_PERK:
-      _campaign.perks[action.index].state = 'OK';
+      _campaign.perks[action.index].ui_state = 'OK';
       _store.is_pristine = false;
       EditStore.emit(CHANGE_EVENT);
       break;
@@ -127,10 +125,9 @@ AppDispatcher.register(function(payload) {
       break;
 
     case EditConstants.UPDATE_REST:
-      console.log('DATA: ', action.data);
       _campaign = action.data;
       for (var i = 0; i < _campaign.perks.length; i++) {
-        _campaign.perks[i].state = 'OK';
+        _campaign.perks[i].ui_state = 'OK';
       }
       console.log('_CAMPAIGN' + _campaign);
       _store.is_pristine = true;

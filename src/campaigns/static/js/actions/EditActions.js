@@ -98,7 +98,8 @@ module.exports = {
 
     var url = 'http://localhost:8000/yeah/rest/campaigns/p655SzwbICQ33UfR';
     var save_data = EditStore.getCampaign();
-    delete save_data.perks;
+    debugger;
+    //delete save_data.perks;
     $.ajax({
       url: url,
       method: 'PUT',

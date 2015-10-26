@@ -116,6 +116,14 @@ class Perk(models.Model):
     available = models.IntegerField(blank=True, null=True)
 
     @property
+    def ui_state(self):
+        return 'OK'
+
+    @ui_state.setter
+    def ui_state(self, value):
+        pass
+
+    @property
     def state(self):
         try:
             return self.state_of

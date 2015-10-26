@@ -13,7 +13,7 @@ var Perk = React.createClass({
     return {
       title: perk.title,
       text: perk.text,
-      state: perk.state,
+      ui_state: perk.ui_state,
       amount: currency.format(perk.amount),
       currency: EditStore.getCampaign().currency,
       available: perk.available
@@ -25,7 +25,7 @@ var Perk = React.createClass({
   },
 
   onChangeDescription: function(e) {
-    this.setState({description: e.target.value});
+    this.setState({text: e.target.value});
   },
 
   onChangeAmount: function(e) {
@@ -98,7 +98,6 @@ var Perk = React.createClass({
   },
 
   renderStateEditable: function() {
-    var perk = this.state;
     var index = this.props.index;
     var idTitle = 'id-title-' + index;
     var idDescription = 'id-description-' + index;
@@ -148,7 +147,7 @@ var Perk = React.createClass({
   },
 
   render: function() {
-    switch(this.props.perk.state) {
+    switch(this.props.perk.ui_state) {
       case 'OK':
         return this.renderStateOK();
         break;

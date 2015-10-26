@@ -19,7 +19,7 @@ class MarkdownField(serializers.Field):
         return markdown_render(obj)
 
     def to_internal_value(self, value):
-        return value;
+        return value
 
 
 class PaymentPOSTData(serializers.Serializer):
@@ -29,11 +29,40 @@ class PaymentPOSTData(serializers.Serializer):
 
 
 
+class UIStateField(serializers.Field):
+    """
+    Color objects are serialized into 'rgb(#, #, #)' notation.
+    """
+    def to_representation(self, obj):
+        return 'OK'
+
+    def to_internal_value(self, value):
+        return value
+
+class NestedPerkSerializer(serializers.Serializer):
+    id = serializers.IntegerField(required=False)
+    title = serializers.CharField()
+    text = serializers.CharField(required=False)
+    amount = serializers.DecimalField(max_digits=20, decimal_places=8)
+    available = serializers.IntegerField()
+    ui_state = UIStateField(default='OK', allow_null=True, read_only=False)
+
+
+
 class PerkSerializer(serializers.ModelSerializer):
-    text = MarkdownField()
+    id = serializers.IntegerField(required=False)
+    ui_state = UIStateField(default='OK', source='state', read_only=False)
+
+    def get_ui_state(self, obj):
+        return 'OK'
+
+    def update(self, instance, validated_data):
+        return instance
 
     class Meta:
         model = Perk
+        fields = ['id', 'title', 'text', 'amount', 'available', 'ui_state']
+        # exclude = ['campaign',]
 
 
 class PaymentMethodSerializer(serializers.Serializer):
@@ -55,7 +84,7 @@ class CampaignSerializer(serializers.ModelSerializer):
     """
     # TODO: Write docs
     """
-    perks = PerkSerializer(many=True, read_only=True)
+    perks = NestedPerkSerializer(many=True)
     # payment_methods = serializers.SerializerMethodField(read_only=True)
     currency = serializers.CharField(source='get_currency_display')
     description = serializers.CharField(required=True)
@@ -69,9 +98,29 @@ class CampaignSerializer(serializers.ModelSerializer):
         ser = PaymentMethodSerializer(methods, many=True, context=context)
         return ser.data
 
+    def update(self, instance, validated_data):
+        perks_data = validated_data.pop('perks')
+        for perk_data in perks_data:
+            perk_id = perk_data.get('id', None)
+            if perk_id != None:
+                perk = instance.perks.get(pk=perk_data['id'])
+                new_state = perk_data.get('ui_state', 'OK')
+                if new_state == 'DELETED':
+                    perk.delete()
+                else:
+                    perk.title = perk_data.get('title')
+                    perk.text = perk_data.get('text')
+                    perk.amount = perk_data.get('amount', 0)
+                    perk.available = perk_data.get('available', 0)
+                    perk.save()
+            else:
+                Perk.objects.create(campaign=instance, **perk_data)
+        return instance
+
     class Meta:
         model = Campaign
         exclude = ['id', 'user', ]
+        depth = 1
 
 class CampaignKeyRelatedField(serializers.PrimaryKeyRelatedField):
 

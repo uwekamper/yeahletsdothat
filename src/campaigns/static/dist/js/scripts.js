@@ -24311,7 +24311,8 @@ module.exports = {
 
     var url = 'http://localhost:8000/yeah/rest/campaigns/p655SzwbICQ33UfR';
     var save_data = EditStore.getCampaign();
-    delete save_data.perks;
+    debugger;
+    //delete save_data.perks;
     $.ajax({
       url: url,
       method: 'PUT',
@@ -24341,7 +24342,7 @@ module.exports = {
 
 };
 
-},{"../constants/EditConstants":182,"../dispatcher/AppDispatcher":183,"../stores/EditStore":185,"../stores/MessageStore":186}],173:[function(require,module,exports){
+},{"../constants/EditConstants":183,"../dispatcher/AppDispatcher":184,"../stores/EditStore":186,"../stores/MessageStore":187}],173:[function(require,module,exports){
 'use strict';
 
 // React components
@@ -24429,7 +24430,7 @@ var EditApp = React.createClass({displayName: "EditApp",
 
 module.exports = EditApp;
 
-},{"../actions/EditActions":172,"../stores/EditStore":185,"../stores/MessageStore":186,"./TabContent":180,"./Tabs":181,"react":171}],174:[function(require,module,exports){
+},{"../actions/EditActions":172,"../stores/EditStore":186,"../stores/MessageStore":187,"./TabContent":181,"./Tabs":182,"react":171}],174:[function(require,module,exports){
 'use strict';
 
 var EditActions = require('../actions/EditActions');
@@ -24640,7 +24641,7 @@ var GoalsTab = React.createClass({displayName: "GoalsTab",
 
 module.exports = GoalsTab;
 
-},{"../actions/EditActions":172,"../utils/currency":188,"react":171}],178:[function(require,module,exports){
+},{"../actions/EditActions":172,"../utils/currency":189,"react":171}],178:[function(require,module,exports){
 'use strict';
 
 var EditActions = require('../actions/EditActions');
@@ -24656,7 +24657,7 @@ var Perk = React.createClass({displayName: "Perk",
     return {
       title: perk.title,
       text: perk.text,
-      state: perk.state,
+      ui_state: perk.ui_state,
       amount: currency.format(perk.amount),
       currency: EditStore.getCampaign().currency,
       available: perk.available
@@ -24668,7 +24669,7 @@ var Perk = React.createClass({displayName: "Perk",
   },
 
   onChangeDescription: function(e) {
-    this.setState({description: e.target.value});
+    this.setState({text: e.target.value});
   },
 
   onChangeAmount: function(e) {
@@ -24741,7 +24742,6 @@ var Perk = React.createClass({displayName: "Perk",
   },
 
   renderStateEditable: function() {
-    var perk = this.state;
     var index = this.props.index;
     var idTitle = 'id-title-' + index;
     var idDescription = 'id-description-' + index;
@@ -24791,7 +24791,7 @@ var Perk = React.createClass({displayName: "Perk",
   },
 
   render: function() {
-    switch(this.props.perk.state) {
+    switch(this.props.perk.ui_state) {
       case 'OK':
         return this.renderStateOK();
         break;
@@ -24807,11 +24807,12 @@ var Perk = React.createClass({displayName: "Perk",
 
 module.exports = Perk;
 
-},{"../actions/EditActions":172,"../stores/EditStore":185,"../utils/currency":188,"react":171}],179:[function(require,module,exports){
+},{"../actions/EditActions":172,"../stores/EditStore":186,"../utils/currency":189,"react":171}],179:[function(require,module,exports){
 'use strict';
 
 var EditStore = require('../stores/EditStore');
 var EditActions = require('../actions/EditActions');
+var Perkulator3000 = require('../components/Perkulator3000');
 var Perk = require('./Perk');
 var React = require('react');
 
@@ -24848,7 +24849,7 @@ var PerksTab = React.createClass({displayName: "PerksTab",
       var perk = this.state.perks[i];
       perkComponents.push(React.createElement(Perk, {perk: perk, index: i}));
     }
-
+    var campaignGoal = EditStore.getCampaign().goal;
     return (
       React.createElement("div", {className: "row"}, 
         React.createElement("div", {className: "col-xs-6"}, 
@@ -24867,7 +24868,8 @@ var PerksTab = React.createClass({displayName: "PerksTab",
               )
           )
 
-        )
+        ), 
+        React.createElement(Perkulator3000, {perks: this.state.perks, goal: campaignGoal})
       )
     );
   },
@@ -24880,7 +24882,126 @@ var PerksTab = React.createClass({displayName: "PerksTab",
 
 module.exports = PerksTab;
 
-},{"../actions/EditActions":172,"../stores/EditStore":185,"./Perk":178,"react":171}],180:[function(require,module,exports){
+},{"../actions/EditActions":172,"../components/Perkulator3000":180,"../stores/EditStore":186,"./Perk":178,"react":171}],180:[function(require,module,exports){
+'use strict';
+
+var EditStore = require('../stores/EditStore');
+var currency = require('../utils/currency');
+var React = require('react');
+
+var Perkulator3000 = React.createClass({displayName: "Perkulator3000",
+  /**
+   * Calculate the total sum of all the perks times availability
+   */
+  getPerksTotal: function() {
+    var sum = 0.0;
+    for(var i = 0; i < this.state.perks.length; i++ ) {
+        // TODO: check if perk is not deleted
+        sum = sum + (this.state.perks[i].amount * this.state.perks[i].available)
+    }
+    return sum;
+  },
+  goalIsReachable: function() {
+    return this.getPerksTotal() >= this.state.goal;
+  },
+  getInitialState: function() {
+    return {
+      perks: this.props.perks,
+      goal: this.props.goal
+    };
+  },
+  renderTableLine: function(perk) {
+    return (
+        React.createElement("tr", null, 
+          React.createElement("td", null,  perk.title), 
+          React.createElement("td", null,  perk.available), 
+
+          React.createElement("td", null,  currency.format(perk.amount), " CURR"), 
+          React.createElement("td", null,  currency.format(perk.amount * perk.available), " CURR")
+        )
+    );
+  },
+  renderTable: function() {
+    var lines = [];
+    var perks = this.state.perks;
+    for(var i = 0; i < perks.length; i++) {
+      if (perks[i].ui_state != 'DELETED') {
+        lines.push(this.renderTableLine(perks[i]));
+      }
+    }
+    var tdStyle = {
+      textAlign: 'right'
+    };
+    var total = currency.format(this.getPerksTotal());
+    var goal = currency.format(this.state.goal);
+    return (
+      React.createElement("table", {className: "table"}, 
+        React.createElement("thead", null, 
+          React.createElement("tr", null, 
+            React.createElement("th", null, "Title"), 
+            React.createElement("th", null, "Available"), 
+            React.createElement("th", null, "Price per Perk"), 
+            React.createElement("th", null, "Total")
+          )
+        ), 
+        React.createElement("tbody", null, 
+          lines, 
+          React.createElement("tr", null, 
+            React.createElement("td", {colspan: "3", style: tdStyle}, "Total"), 
+            React.createElement("td", null,  total, " CURR")
+          ), 
+          React.createElement("tr", null, 
+            React.createElement("td", {colspan: "3", style: tdStyle}, "Campaign goal"), 
+            React.createElement("td", null,  goal )
+          )
+        )
+
+      )
+    );
+  },
+  renderAlert: function() {
+    if (this.goalIsReachable()) {
+      return (
+        React.createElement("div", {className: "alert alert-success", role: "alert"}, 
+          "You have enough perks to meet your campaign goal."
+        )
+      );
+    }
+    else {
+      return (
+        React.createElement("div", {className: "alert alert-danger", role: "alert"}, 
+          "You do not have enough perks or your perks are not expensive enough." + ' ' +
+          "This campaign could never reach its goal. You can either lower your goal" + ' ' +
+          "or add more perks and raise prices."
+        )
+      );
+    }
+  },
+  render: function() {
+    var myTable = this.renderTable();
+    var myAlert = this.renderAlert();
+    return (
+      React.createElement("div", {className: "col-xs-6"}, 
+        React.createElement("div", {className: "row"}, 
+          React.createElement("div", {className: "col-xs-11"}, 
+            React.createElement("h3", null, "Perk-u-Lator 3000 (perk calculator)"), 
+            myTable
+          )
+        ), 
+        React.createElement("div", {className: "row"}, 
+          React.createElement("div", {className: "col-xs-8 col-xs-offset-3"}, 
+            myAlert
+          )
+        )
+      )
+    );
+  }
+
+});
+
+module.exports = Perkulator3000;
+
+},{"../stores/EditStore":186,"../utils/currency":189,"react":171}],181:[function(require,module,exports){
 'use strict';
 
 var EditStore = require('../stores/EditStore');
@@ -24954,7 +25075,7 @@ var TabContent = React.createClass({displayName: "TabContent",
 
 module.exports = TabContent;
 
-},{"../stores/EditStore":185,"./BasicTab":174,"./DateTab":175,"./GoalsTab":177,"./PerksTab":179,"react":171}],181:[function(require,module,exports){
+},{"../stores/EditStore":186,"./BasicTab":174,"./DateTab":175,"./GoalsTab":177,"./PerksTab":179,"react":171}],182:[function(require,module,exports){
 'use strict';
 var EditActions = require('../actions/EditActions');
 var React = require('react');
@@ -25024,7 +25145,7 @@ var Tabs = React.createClass({displayName: "Tabs",
 
 module.exports = Tabs;
 
-},{"../actions/EditActions":172,"react":171}],182:[function(require,module,exports){
+},{"../actions/EditActions":172,"react":171}],183:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -25043,7 +25164,7 @@ module.exports = {
 
 };
 
-},{}],183:[function(require,module,exports){
+},{}],184:[function(require,module,exports){
 'use strict';
 
 var Dispatcher = require('flux').Dispatcher;
@@ -25066,7 +25187,7 @@ AppDispatcher.handleServerAction = function(action) {
 
 module.exports = AppDispatcher;
 
-},{"flux":4}],184:[function(require,module,exports){
+},{"flux":4}],185:[function(require,module,exports){
 'use strict';
 
 var enableCSRF = require('./utils/CSRFProtection');
@@ -25096,7 +25217,7 @@ function loadStuff() {
 
 loadStuff();
 
-},{"./actions/EditActions":172,"./components/App":173,"./utils/CSRFProtection":187,"react":171}],185:[function(require,module,exports){
+},{"./actions/EditActions":172,"./components/App":173,"./utils/CSRFProtection":188,"react":171}],186:[function(require,module,exports){
 'use strict';
 
 var AppDispatcher = require('../dispatcher/AppDispatcher');
@@ -25110,14 +25231,12 @@ var CHANGE_EVENT = 'change';
 function getEmptyPerk() {
   return {
     title: 'No title',
-    state: 'OK',
+    ui_state: 'OK',
     amount: 0.0,
     currency: 'EUR',
     available: 0
   };
 }
-
-
 
 // Define the store as an empty array
 var _store = {
@@ -25130,7 +25249,7 @@ var _store = {
 
 var _campaign = {
   title: 'Title not loaded',
-  perks: [],
+  perks: []
 };
 
 function updateCampaign(data) {
@@ -25197,25 +25316,25 @@ AppDispatcher.register(function(payload) {
       break;
 
     case EditConstants.EDIT_PERK:
-      _campaign.perks[action.index].state = 'EDITABLE';
+      _campaign.perks[action.index].ui_state = 'EDITABLE';
       EditStore.emit(CHANGE_EVENT);
       break;
 
     case EditConstants.UNEDIT_PERK:
       _campaign.perks[action.index] = ObjectAssign(_campaign.perks[action.index], action.data);
-      _campaign.perks[action.index].state = 'OK';
+      _campaign.perks[action.index].ui_state = 'OK';
       _store.is_pristine = false;
       EditStore.emit(CHANGE_EVENT);
       break;
 
     case EditConstants.DELETE_PERK:
-      _campaign.perks[action.index].state = 'DELETED';
+      _campaign.perks[action.index].ui_state = 'DELETED';
       _store.is_pristine = false;
       EditStore.emit(CHANGE_EVENT);
       break;
 
     case EditConstants.UNDELETE_PERK:
-      _campaign.perks[action.index].state = 'OK';
+      _campaign.perks[action.index].ui_state = 'OK';
       _store.is_pristine = false;
       EditStore.emit(CHANGE_EVENT);
       break;
@@ -25226,10 +25345,9 @@ AppDispatcher.register(function(payload) {
       break;
 
     case EditConstants.UPDATE_REST:
-      console.log('DATA: ', action.data);
       _campaign = action.data;
       for (var i = 0; i < _campaign.perks.length; i++) {
-        _campaign.perks[i].state = 'OK';
+        _campaign.perks[i].ui_state = 'OK';
       }
       console.log('_CAMPAIGN' + _campaign);
       _store.is_pristine = true;
@@ -25245,7 +25363,7 @@ AppDispatcher.register(function(payload) {
 
 module.exports = EditStore;
 
-},{"../constants/EditConstants":182,"../dispatcher/AppDispatcher":183,"events":2,"object-assign":8}],186:[function(require,module,exports){
+},{"../constants/EditConstants":183,"../dispatcher/AppDispatcher":184,"events":2,"object-assign":8}],187:[function(require,module,exports){
 'use strict';
 
 var AppDispatcher = require('../dispatcher/AppDispatcher');
@@ -25304,7 +25422,7 @@ AppDispatcher.register(function(payload) {
 
 module.exports = MessageStore;
 
-},{"../constants/EditConstants":182,"../dispatcher/AppDispatcher":183,"events":2,"object-assign":8}],187:[function(require,module,exports){
+},{"../constants/EditConstants":183,"../dispatcher/AppDispatcher":184,"events":2,"object-assign":8}],188:[function(require,module,exports){
 'use strict';
 
 // using jQuery
@@ -25350,7 +25468,7 @@ function enableCSRF(jQuery) {
 
 module.exports = enableCSRF;
 
-},{}],188:[function(require,module,exports){
+},{}],189:[function(require,module,exports){
 'use strict';
 
 var accounting = require('accounting');
@@ -25364,7 +25482,7 @@ module.exports = {
   }
 };
 
-},{"accounting":1}]},{},[184])
+},{"accounting":1}]},{},[185])
 
 
 //# sourceMappingURL=scripts.js.map

@@ -11,8 +11,11 @@ var Perkulator3000 = React.createClass({
   getPerksTotal: function() {
     var sum = 0.0;
     for(var i = 0; i < this.state.perks.length; i++ ) {
-        // TODO: check if perk is not deleted
-        sum = sum + (this.state.perks[i].amount * this.state.perks[i].available)
+      var perk = this.state.perks[i];
+      if (perk.ui_state == 'DELETED') {
+        continue;
+      }
+      sum = sum + (currency.unformat(perk.amount) * perk.available);
     }
     return sum;
   },
@@ -31,8 +34,8 @@ var Perkulator3000 = React.createClass({
           <td>{ perk.title }</td>
           <td>{ perk.available }</td>
 
-          <td>{ currency.format(perk.amount) }&nbsp;CURR</td>
-          <td>{ currency.format(perk.amount * perk.available )}&nbsp;CURR</td>
+          <td>{ currency.format(currency.unformat(perk.amount)) }&nbsp;CURR</td>
+          <td>{ currency.format(currency.unformat(perk.amount) * perk.available )}&nbsp;CURR</td>
         </tr>
     );
   },
@@ -62,11 +65,11 @@ var Perkulator3000 = React.createClass({
         <tbody>
           {lines}
           <tr>
-            <td colspan="3" style={tdStyle}>Total</td>
+            <td colSpan="3" style={tdStyle}>Total</td>
             <td>{ total } CURR</td>
           </tr>
           <tr>
-            <td colspan="3" style={tdStyle}>Campaign goal</td>
+            <td colSpan="3" style={tdStyle}>Campaign goal</td>
             <td>{ goal }</td>
           </tr>
         </tbody>

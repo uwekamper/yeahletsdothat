@@ -24896,8 +24896,11 @@ var Perkulator3000 = React.createClass({displayName: "Perkulator3000",
   getPerksTotal: function() {
     var sum = 0.0;
     for(var i = 0; i < this.state.perks.length; i++ ) {
-        // TODO: check if perk is not deleted
-        sum = sum + (this.state.perks[i].amount * this.state.perks[i].available)
+      var perk = this.state.perks[i];
+      if (perk.ui_state == 'DELETED') {
+        continue;
+      }
+      sum = sum + (currency.unformat(perk.amount) * perk.available);
     }
     return sum;
   },
@@ -24916,8 +24919,8 @@ var Perkulator3000 = React.createClass({displayName: "Perkulator3000",
           React.createElement("td", null,  perk.title), 
           React.createElement("td", null,  perk.available), 
 
-          React.createElement("td", null,  currency.format(perk.amount), " CURR"), 
-          React.createElement("td", null,  currency.format(perk.amount * perk.available), " CURR")
+          React.createElement("td", null,  currency.format(currency.unformat(perk.amount)), " CURR"), 
+          React.createElement("td", null,  currency.format(currency.unformat(perk.amount) * perk.available), " CURR")
         )
     );
   },
@@ -24947,11 +24950,11 @@ var Perkulator3000 = React.createClass({displayName: "Perkulator3000",
         React.createElement("tbody", null, 
           lines, 
           React.createElement("tr", null, 
-            React.createElement("td", {colspan: "3", style: tdStyle}, "Total"), 
+            React.createElement("td", {colSpan: "3", style: tdStyle}, "Total"), 
             React.createElement("td", null,  total, " CURR")
           ), 
           React.createElement("tr", null, 
-            React.createElement("td", {colspan: "3", style: tdStyle}, "Campaign goal"), 
+            React.createElement("td", {colSpan: "3", style: tdStyle}, "Campaign goal"), 
             React.createElement("td", null,  goal )
           )
         )

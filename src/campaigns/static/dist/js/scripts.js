@@ -24309,7 +24309,7 @@ module.exports = {
   saveCampaign: function() {
     console.log('Saving campaign...');
 
-    var url = 'http://localhost:8000/yeah/rest/campaigns/p655SzwbICQ33UfR';
+    var url = window.campaignUrl;
     var save_data = EditStore.getCampaign();
     debugger;
     //delete save_data.perks;
@@ -24760,7 +24760,8 @@ var Perk = React.createClass({displayName: "Perk",
           ), 
           React.createElement("div", {className: "input-group"}, 
             React.createElement("input", {className: "form-control perk-amount-input", type: "text", 
-                   value: this.state.amount, onChange: this.onChangeAmount, onBlur: this.onBlurAmount}), 
+                   value: this.state.amount, onChange: this.onChangeAmount, 
+                   onBlur: this.onBlurAmount}), 
             React.createElement("span", {className: "input-group-addon"}, this.state.currency)
           ), 
 
@@ -25206,7 +25207,7 @@ React.render(
 );
 
 function loadStuff() {
-  var url = 'http://localhost:8000/yeah/rest/campaigns/p655SzwbICQ33UfR';
+  var url = window.campaignUrl;
   $.ajax({
     url: url,
     success: function(data) {

@@ -96,7 +96,7 @@ module.exports = {
   saveCampaign: function() {
     console.log('Saving campaign...');
 
-    var url = 'http://localhost:8000/yeah/rest/campaigns/p655SzwbICQ33UfR';
+    var url = window.campaignUrl;
     var save_data = EditStore.getCampaign();
     debugger;
     //delete save_data.perks;

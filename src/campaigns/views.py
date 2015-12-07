@@ -114,6 +114,7 @@ def campaign_edit(request, key):
     REST backend.
     """
     campaign = get_campaign_or_404(request, key)
+    rest_url = request.build_absolute_uri('/yeah/rest/campaigns/{}'.format(campaign.key))
     methods = get_payment_methods()
     currencies = [{'id': x[0], 'display_name': x[1]} for x in Campaign.CURRENCIES]
     campaign_ser = CampaignSerializer(campaign)
@@ -125,6 +126,7 @@ def campaign_edit(request, key):
         accepted_media_type='application/json; indent=4')
 
     context = {
+        'rest_url': rest_url,
         'campaign': campaign,
         'methods': methods,
         'initial_data': initial_data,

@@ -13,7 +13,7 @@ React.render(
 );
 
 function loadStuff() {
-  var url = 'http://localhost:8000/yeah/rest/campaigns/p655SzwbICQ33UfR';
+  var url = window.campaignUrl;
   $.ajax({
     url: url,
     success: function(data) {

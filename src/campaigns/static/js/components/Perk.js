@@ -116,7 +116,8 @@ var Perk = React.createClass({
           </div>
           <div className="input-group">
             <input className="form-control perk-amount-input" type="text"
-                   value={this.state.amount} onChange={this.onChangeAmount} onBlur={this.onBlurAmount} />
+                   value={this.state.amount} onChange={this.onChangeAmount}
+                   onBlur={this.onBlurAmount} />
             <span className="input-group-addon">{this.state.currency}</span>
           </div>
 

@@ -113,6 +113,9 @@
 {% endblock %}
 
 {% block extra_scripts %}
+    <script>
+      window.campaignUrl = "{{ rest_url }}";
+    </script>
     <script src="{{ STATIC_URL }}dist/js/scripts.js"></script>
 {#    <script src="{{ STATIC_URL }}bower_components/bootstrap/js/tab.js"></script>#}
 {#    <script src="{{ STATIC_URL }}bower_components/angular/angular.min.js" type="text/javascript"></script>#}

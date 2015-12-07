@@ -100,6 +100,7 @@ class CampaignSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         perks_data = validated_data.pop('perks')
+        instance = super(CampaignSerializer, self).update(instance, validated_data)
         for perk_data in perks_data:
             perk_id = perk_data.get('id', None)
             if perk_id != None:

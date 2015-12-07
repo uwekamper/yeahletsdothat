@@ -102,7 +102,6 @@ INSTALLED_APPS = (
     'rest_framework',
     # 'registration',
     'polymorphic',
-    'pipeline',
 
     # Own apps start here
     'campaigns',
@@ -144,15 +143,15 @@ PIPELINE_COMPILERS = (
 
 PIPELINE_BROWSERIFY_ARGUMENTS = '-d'
 
-PIPELINE_JS = {
-    'browserify': {
-        'source_filenames': (
-          'js/main.es6',
-          'js/entrypoint.browserify.js',
-        ),
-        'output_filename': 'js/browserified.js',
-    }
-}
+# PIPELINE_JS = {
+#     'browserify': {
+#         'source_filenames': (
+#           'js/main.es6',
+#           'js/entrypoint.browserify.js',
+#         ),
+#         'output_filename': 'js/browserified.js',
+#     }
+# }
 
 TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".

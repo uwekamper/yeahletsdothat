@@ -112,7 +112,11 @@ markdown_render = mistune.Markdown(renderer, inline=inline)
 
 @register.filter(name='markdown', is_safe=True)
 def markdown(value):
-    return mark_safe(markdown_render(value))
+    try:
+        return mark_safe(markdown_render(value))
+    except TypeError:
+        # TypeError is raised when the text value is e.g. None object.
+        return ''
 
 @register.filter(name='markdownexcerpt', is_safe=True)
 def markdown_excerpt(value):

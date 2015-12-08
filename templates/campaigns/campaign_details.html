@@ -41,7 +41,7 @@
             </div><!-- /.col -->
             <div class="col-xs-4 activity-right">
                 <div class="activity-right-body">
-                    <div class="activity-value">{{ campaign.state.total_supporters }}</div>
+                    <div class="activity-value">{{ campaign.state.total_pledgers }}</div>
                     <div class="activity-unit">{% trans "supporter(s)" %}</div>
                     <div class="activity-value">{% if campaign.state.total_pledged %}{{ campaign.state.total_pledged|floatformat:2 }}{% else %}0{% endif %} {{ campaign.get_currency_display }}</div>
                     <div class="activity-unit">pledged of {{ campaign.goal|floatformat:2 }}

@@ -23,7 +23,7 @@ class TestMailing(object):
         return perk_id
 
     def test_send_payment_confirmation(self, campaign, transaction_id, perk_id):
-        commands.BeginPayment(transaction_id, campaign.key, Decimal(20),
+        commands.PledgePayment(transaction_id, campaign.key, Decimal(20),
             'test@example.com', perk_id, "Henner Piffendeckel", False,
             'braintree')
         transaction = Transaction.objects.get(transaction_id=transaction_id)

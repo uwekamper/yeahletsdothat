@@ -36,7 +36,7 @@ def payment_form(request, transaction_id, payment_method_name):
     Show a payment form to the user.
     """
     transact = get_object_or_404(Transaction, transaction_id=transaction_id)
-    if transact.state != Transaction.STATE_OPEN:
+    if transact.state != Transaction.STATE_PLEDGED:
         return render(request, 'yldt_braintree/transaction_error.html',
                 {'transaction': transact})
 

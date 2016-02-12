@@ -3,7 +3,7 @@ from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
 
 from django.db import transaction
-from projectors import handle_event
+from .projectors import handle_event
 from campaigns.models import BeginPaymentEvent, ReceivePaymentEvent, AbortPaymentEvent, Transaction
 from campaigns.mailing import send_payment_confirmation, PAYMENT_CONFIRMATION_TEMPLATE
 
@@ -55,7 +55,7 @@ class Command(object):
         self.post()
 
 
-class BeginPayment(Command):
+class PledgePayment(Command):
     """
     Begin a payment procedure.
     """
@@ -71,7 +71,7 @@ class BeginPayment(Command):
             show_name=str(show_name),
             payment_method_name=payment_method_name
         )
-        super(BeginPayment, self).__init__()
+        super(PledgePayment, self).__init__()
 
     def main(self):
         yield BeginPaymentEvent(data=self.data)

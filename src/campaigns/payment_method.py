@@ -63,7 +63,7 @@ class PaymentMethodDoseNotExist(PaymentException):
 
 class BasePaymentMethod(object):
     """
-    Basal peyment method, contains the things that are common to all
+    Basal payment method, contains the things that are common to all
     payment methods.
     """
     def __init__(self, options):

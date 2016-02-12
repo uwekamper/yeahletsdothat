@@ -12,7 +12,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import python_2_unicode_compatible
 from django.contrib.postgres.fields import HStoreField
 
-from polymorphic import PolymorphicModel, PolymorphicManager
+from polymorphic.models import PolymorphicModel, PolymorphicManager
 
 # @python_2_unicode_compatible
 # class BankAccount(models.Model):
@@ -202,18 +202,24 @@ class PerkState(ReadModel):
 
     @property
     def perks_left(self):
-        return self.perk.available - self.total_received
+        return self.perk.available - self.total_pledgedx
 
 
 class Transaction(ReadModel):
-    STATE_OPEN = 0
-    STATE_COMPLETE = 200
-    STATE_ABORTED = 500
+    STATE_PLEDGED    = 0
+    STATE_UNVERIFIED = 30
+    STATE_VERIFIED   = 60
+    STATE_PROCESSING = 100
+    STATE_COMPLETE   = 200
+    STATE_ABORTED    = 500
 
     STATES = (
-        (STATE_OPEN, _('open')),
-        (STATE_COMPLETE, _('complete')),
-        (STATE_ABORTED, _('aborted'))
+        (STATE_PLEDGED,    _('pledged')),
+        (STATE_UNVERIFIED, _('unverified')),
+        (STATE_VERIFIED,   _('verified')),
+        (STATE_PROCESSING, _('payment processing')),
+        (STATE_COMPLETE,   _('complete')),
+        (STATE_ABORTED,    _('aborted'))
     )
 
     # transaction holds the UUID for this transaction

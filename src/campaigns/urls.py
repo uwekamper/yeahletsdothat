@@ -4,7 +4,7 @@
 __author__ = 'uk'
 
 from django.conf.urls import patterns, include, url
-from models import Campaign, Perk
+from .models import Campaign, Perk
 from rest_framework import viewsets, routers
 from campaigns.serializers import CampaignSerializer, PerkSerializer
 from rest_framework.response import Response

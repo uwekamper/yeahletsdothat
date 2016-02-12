@@ -3,7 +3,7 @@ from decimal import Decimal
 from model_mommy import mommy
 import pytest
 from common import *
-from campaigns.commands import BeginPayment, ReceivePayment
+from campaigns.commands import PledgePayment, ReceivePayment
 
 pytestmark = pytest.mark.django_db
 

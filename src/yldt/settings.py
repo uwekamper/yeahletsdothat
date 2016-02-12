@@ -86,8 +86,10 @@ ROOT_URLCONF = 'yldt.urls'
 WSGI_APPLICATION = 'yldt.wsgi.application'
 
 INSTALLED_APPS = (
-    'django.contrib.auth',
+    'polymorphic',
     'django.contrib.contenttypes',
+
+    'django.contrib.auth',
     'django.contrib.sessions',
     'django.contrib.sites',
     'django.contrib.messages',
@@ -101,12 +103,11 @@ INSTALLED_APPS = (
     # 'registration',
     'rest_framework',
     # 'registration',
-    'polymorphic',
 
     # Own apps start here
     'campaigns',
-    'yldt_braintree',
-    'yldt_cash_payment',
+    #'yldt_braintree',
+    #'yldt_cash_payment',
 )
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
@@ -196,7 +197,7 @@ LOGIN_REDIRECT_URL = '/accounts/profile/'
 URL_COUNTER_INTERVAL = 60
 
 try:
-    from local_settings import *
-except ImportError, e:
-    print 'Unable to load local_settings.py:', e
+    from .local_settings import *
+except ImportError as e:
+    print('Unable to load local_settings.py:', e)
 

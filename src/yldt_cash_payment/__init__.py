@@ -2,4 +2,4 @@
 
 __author__ = 'Uwe Kamper'
 
-from cash_payment_method import PaymentMethod
+from .cash_payment_method import PaymentMethod

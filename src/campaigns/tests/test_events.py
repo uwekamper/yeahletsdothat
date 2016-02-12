@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from common import *
+from common import campaign, transaction_id
 from campaigns.models import *
-from campaigns.commands import BeginPayment, ReceivePayment, AbortPayment
+from campaigns.commands import PledgePayment, ReceivePayment, AbortPayment
 
 """
 Check if everything connected to events and event sourcing (projections,
@@ -17,23 +17,22 @@ class TestTransactionCommands(object):
         perk_id = campaign.perks.all()[0].id
         return perk_id
 
-    def test_handle_begin_payment_event(self, campaign, transaction_id, perk_id):
-        BeginPayment(transaction_id, campaign.key, 23.0, 'test@example.com', perk_id,
+    def test_handle_pledge_payment_event(self, campaign, transaction_id, perk_id):
+        PledgePayment(transaction_id, campaign.key, 23.0, 'test@example.com', perk_id,
             'Henner Piffendeckel', True, 'braintree')
         t = Transaction.objects.get(transaction_id=transaction_id)
         assert t.amount == 23.0
-        # assert t.started == ev.created
-        assert t.state == Transaction.STATE_OPEN
+        assert t.state == Transaction.STATE_PLEDGED
         assert t.email == 'test@example.com'
 
     def test_handle_received_payment(self, campaign, transaction_id, perk_id, mock_request):
-        BeginPayment(transaction_id, campaign.key, 23.0, 'test@example.com', perk_id,
+        PledgePayment(transaction_id, campaign.key, 23.0, 'test@example.com', perk_id,
             'Henner Piffendeckel', True, 'braintree')
 
         # Send only half of the payable amount
         ReceivePayment(transaction_id, 11.5, mock_request)
         t = Transaction.objects.get(transaction_id=transaction_id)
-        assert t.state == Transaction.STATE_OPEN
+        assert t.state == Transaction.STATE_PLEDGED
 
         # Send the other half of the money
         ReceivePayment(transaction_id, 11.5, mock_request)
@@ -41,7 +40,7 @@ class TestTransactionCommands(object):
         assert t.state == Transaction.STATE_COMPLETE
 
     def test_abort_payment(self, campaign, transaction_id, perk_id):
-        BeginPayment(transaction_id, campaign.key, 23.0, 'test@example.com', perk_id,
+        PledgePayment(transaction_id, campaign.key, 23.0, 'test@example.com', perk_id,
             'Henner Piffendeckel', True, 'braintree')
 
         # Abort the payment process
@@ -59,7 +58,7 @@ class TestTransactionCommands(object):
 
         # add one supporter
 
-        BeginPayment(transaction_id, campaign.key, 20.0, 'test@example.com', perk_id,
+        PledgePayment(transaction_id, campaign.key, 20.0, 'test@example.com', perk_id,
             'Henner Piffendeckel', True, 'braintree')
         changed_campaign = Campaign.objects.get(id=campaign.id)
         assert changed_campaign.state.total_pledged == Decimal('20.0')
@@ -88,7 +87,7 @@ class TestTransactionCommands(object):
         """
         Check if the model shows the correct percentage
         """
-        BeginPayment(transaction_id, campaign.key, Decimal(10), 'test@example.com', perk_id,
+        PledgePayment(transaction_id, campaign.key, Decimal(10), 'test@example.com', perk_id,
             'Testuser', True, 'braintree')
         ReceivePayment(transaction_id, Decimal(10), mock_request)
         assert campaign.state.percent_funded == Decimal(50.0)
@@ -97,7 +96,7 @@ class TestTransactionCommands(object):
         """
         Check if the model shows the amount of pending amounts.
         """
-        BeginPayment(transaction_id, campaign.key, Decimal(10), 'test@example.com', perk_id,
+        PledgePayment(transaction_id, campaign.key, Decimal(10), 'test@example.com', perk_id,
             'Testuser', True, 'braintree')
         assert campaign.state.pending == Decimal(10)
         ReceivePayment(transaction_id, Decimal(10), mock_request)

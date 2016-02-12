@@ -177,7 +177,7 @@ class TransactionSerializer(serializers.ModelSerializer):
         return "braintree"
 
     def _get_pledged(self, obj):
-        return(obj.state == Transaction.STATE_OPEN)
+        return(obj.state == Transaction.STATE_PLEDGED)
 
     def _get_received(self, obj):
         return(obj.state == Transaction.STATE_COMPLETE)

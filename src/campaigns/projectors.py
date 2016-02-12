@@ -32,7 +32,7 @@ class Projector(object):
         event_type = event.get_real_instance_class()
         try:
             handler_func = self.registry[event_type]
-        except KeyError, e:
+        except KeyError as e:
             # raise HandlerNotFoundException()
             return
 
@@ -57,7 +57,7 @@ class TransactionProjector(Projector):
         trans = Transaction(
             campaign=campaign,
             transaction_id=event.data['transaction_id'],
-            state=Transaction.STATE_OPEN,
+            state=Transaction.STATE_PLEDGED,
             amount=event.data['amount'],
             amount_received=0,
             started=event.created,

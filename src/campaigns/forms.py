@@ -6,7 +6,7 @@ from django import forms
 from django.utils.translation import gettext_lazy as _
 from campaigns.utils import get_payment_methods, get_payment_method_names
 
-import models
+from . import models
 
 class SelectPaymentForm(forms.Form):
     def __init__(self, campaign, perk, *args, **kwargs):

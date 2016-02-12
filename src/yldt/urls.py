@@ -20,7 +20,7 @@ urlpatterns = patterns('',
     # Uncomment the next line to enable the admin:
     url(r'^$', 'campaigns.views.index', name='index'),
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^accounts/', include('registration.backends.default.urls')),
+    # url(r'^accounts/', include('registration.backends.default.urls')),
     url(r'^accounts/profile/$', 'campaigns.views.user_profile', name="user_profile"),
     url(r'^transaction/(?P<pk>\d+)/$', 'campaigns.views.transaction', name='transaction'),
     # url(r'^api/transaction/(?P<pk>\d+)/$', 'campaigns.views.transaction_api', name='transaction_api'),
@@ -40,7 +40,7 @@ for options in settings.YLDT_PAYMENT_METHODS:
     method = module.PaymentMethod(options)
     print('Found payment method %s' % options['module_name'])
     # create a url pattern for the plugin.
-    pattern = r'^pay/' + method.name.encode('string-escape') + r'/'
+    pattern = r'^pay/' + bytes(method.name, 'utf-8').decode('unicode-escape') + r'/'
     include_module = options['module_name'] + '.urls'
     sub_url = url(pattern, include(include_module), {'payment_method_name': method.name})
     urlpatterns.append(sub_url)

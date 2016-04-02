@@ -202,7 +202,7 @@ class PerkState(ReadModel):
 
     @property
     def perks_left(self):
-        return self.perk.available - self.total_pledgedx
+        return self.perk.available - self.total_pledged
 
 
 class Transaction(ReadModel):

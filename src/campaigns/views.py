@@ -22,7 +22,7 @@ from django.conf import settings
 
 from . import forms
 from .models import Campaign, Transaction, Perk
-from .commands import PledgePayment, ReceivePayment
+from .commands import PledgePaymentCommand, ReceivePayment
 from .serializers import TransactionSerializer, PerkSerializer, PaymentMethodSerializer, \
     CampaignSerializer, PaymentPOSTData
 
@@ -195,7 +195,7 @@ def select_payment(request, key):
             perk_id = None
             if perk != None:
                 perk_id = perk.id
-            PledgePayment(transaction_id, campaign.key, amount, email, perk_id,
+            PledgePaymentCommand(transaction_id, campaign.key, amount, email, perk_id,
                 name, show_name, payment_method_name)
 
             # Delegate the payment transaction to the pay() method of the selected
@@ -267,7 +267,7 @@ def post_transaction(request, key):
             perk_id = None
             # if perk != None:
             #     perk_id = perk.id
-            PledgePayment(transaction_id, key, amount, email, perk_id, name, show_name,
+            PledgePaymentCommand(transaction_id, key, amount, email, perk_id, name, show_name,
                     payment_method_name)
             transaction = Transaction.objects.get(transaction_id=transaction_id)
 

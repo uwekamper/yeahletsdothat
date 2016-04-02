@@ -55,7 +55,7 @@ class Command(object):
         self.post()
 
 
-class PledgePayment(Command):
+class PledgePaymentCommand(Command):
     """
     Begin a payment procedure.
     """
@@ -63,7 +63,7 @@ class PledgePayment(Command):
                  payment_method_name):
         self.data = dict(
             transaction_id=id,
-            campaign_key=campaign_key,
+            campaign_key=campaign_key.decode(),
             amount=str(amount),
             email=email,
             perk_id=str(perk_id),
@@ -71,7 +71,7 @@ class PledgePayment(Command):
             show_name=str(show_name),
             payment_method_name=payment_method_name
         )
-        super(PledgePayment, self).__init__()
+        super(PledgePaymentCommand, self).__init__()
 
     def main(self):
         yield BeginPaymentEvent(data=self.data)
@@ -106,13 +106,13 @@ class ReceivePayment(Command):
             send_payment_confirmation(campaign, transaction, template, self.campaign_url)
 
 
-class AbortPayment(Command):
+class AbortPaymentCommand(Command):
     """
     Stop the payment process for one transaction id.
     """
     def __init__(self, id):
         self.data = dict(transaction_id=str(id))
-        super(AbortPayment, self).__init__()
+        super(AbortPaymentCommand, self).__init__()
 
     def main(self):
         yield AbortPaymentEvent(data=self.data)

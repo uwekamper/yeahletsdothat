@@ -1,4 +1,4 @@
-import jsonrpclib
+# import jsonrpclib
 from model_mommy import mommy
 import pytest
 from campaigns.models import Transaction

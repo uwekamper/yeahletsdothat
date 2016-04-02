@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
-from decimal import Decimal
 import pytest
+from decimal import Decimal
 from django.core import mail
 
-from common import campaign
+from campaigns import commands
 from campaigns.models import Transaction
 from campaigns.mailing import send_payment_confirmation, render_mail_template
 
-from campaigns import commands
+from .common import campaign
 
 
 @pytest.mark.django_db(transaction=True)
@@ -23,7 +23,7 @@ class TestMailing(object):
         return perk_id
 
     def test_send_payment_confirmation(self, campaign, transaction_id, perk_id):
-        commands.PledgePayment(transaction_id, campaign.key, Decimal(20),
+        commands.PledgePaymentCommand(transaction_id, campaign.key, Decimal(20),
             'test@example.com', perk_id, "Henner Piffendeckel", False,
             'braintree')
         transaction = Transaction.objects.get(transaction_id=transaction_id)

@@ -1,9 +1,13 @@
+# -*- coding: utf-8 -*-
+
 import uuid
+import pytest
+
 from decimal import Decimal
 from model_mommy import mommy
-import pytest
-from common import *
-from campaigns.commands import PledgePayment, ReceivePayment
+from campaigns.commands import PledgePaymentCommand, ReceivePayment
+
+from .common import *
 
 pytestmark = pytest.mark.django_db
 

@@ -1,17 +1,19 @@
-#!/usr/bin/python
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
 """
 This file demonstrates writing tests using the unittest module. These will pass
 when you run "manage.py test".
 
 Replace this with more appropriate tests for your application.
 """
-from __future__ import unicode_literals
+
+import pytest
 import json
 from decimal import Decimal
-import pytest
 from lxml import html
 from django.core.urlresolvers import reverse
+
 from campaigns.utils import get_payment_methods
 # from django.contrib.auth.models import User
 # from django.test import TestCase
@@ -23,7 +25,8 @@ from campaigns.utils import get_payment_methods
 # from campaigns.payment_method import PaymentMethodDoesNotHaveName, BasePaymentMethod, method_registry
 # from common import CommonMethods
 
-from common import client, campaign
+from .common import client
+from .common import campaign
 
 @pytest.mark.django_db
 def test_select_payment(client, campaign):

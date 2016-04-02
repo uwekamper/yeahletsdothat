@@ -15,6 +15,7 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.RunSQL('create extension hstore;'),
         migrations.CreateModel(
             name='BaseEvent',
             fields=[

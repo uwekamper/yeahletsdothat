@@ -53,11 +53,11 @@ USE_TZ = True
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-#    'django.contrib.staticfiles.finders.DefaultStorageFinder',
-    'pipeline.finders.PipelineFinder',
+    'django.contrib.staticfiles.finders.DefaultStorageFinder',
+    # 'pipeline.finders.PipelineFinder',
 )
 
-STATICFILES_STORAGE = 'pipeline.storage.PipelineCachedStorage'
+# STATICFILES_STORAGE = 'pipeline.storage.PipelineCachedStorage'
 
 
 # Make this unique, and don't share it with anybody.
@@ -137,12 +137,12 @@ STATICFILES_DIRS = (
     os.path.realpath(os.path.join(REPOSITORY_ROOT, 'static')),
 )
 
-PIPELINE_COMPILERS = (
-    'pipeline.compilers.es6.ES6Compiler',
-    'pipeline_browserify.compiler.BrowserifyCompiler',
-)
+#PIPELINE_COMPILERS = (
+#    'pipeline.compilers.es6.ES6Compiler',
+#    'pipeline_browserify.compiler.BrowserifyCompiler',
+#)
 
-PIPELINE_BROWSERIFY_ARGUMENTS = '-d'
+# PIPELINE_BROWSERIFY_ARGUMENTS = '-d'
 
 # PIPELINE_JS = {
 #     'browserify': {

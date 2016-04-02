@@ -49,12 +49,12 @@
                         <ul class="dropdown-menu">
                             <li><a href="{% url 'user_profile' %}">Your profile</a></li>
                             <li class="divider"></li>
-                            <li><a href="{% url 'auth_logout' %}"><span class="glyphicon glyphicon-log-out"></span>
+                            <li><a href="{% url 'logout' %}"><span class="glyphicon glyphicon-log-out"></span>
                                 Sign out</a></li>
                         </ul>
                     </li>
                     {% else %}
-                    <li><a href="{% url 'auth_login' %}">Sign in</a></li>
+                    <li><a href="{% url 'login' %}">Sign in</a></li>
 
                     {% endif %}
                 </ul>

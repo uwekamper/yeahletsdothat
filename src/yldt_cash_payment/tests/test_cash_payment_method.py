@@ -42,7 +42,7 @@ class TestPaymentMethod:
 
     @pytest.mark.django_db
     def test_pay(self, payment_inst, campaign, transaction_id):
-        response = payment_inst.pay(campaign.key, transaction_id)
+        response = payment_inst.pay(None, campaign.key, transaction_id)
         url = reverse(yldt_cash_payment.views.payment_info, args=[transaction_id])
         assert isinstance(response, HttpResponseRedirect)
         assert response.url == url

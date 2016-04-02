@@ -4,7 +4,7 @@
 
 {% block container %}
     <h2>Sign in to your account</h2>
-    <form class="form-horizontal" action="{% url 'auth_login' %}" method="post" role="form">
+    <form class="form-horizontal" action="{% url 'login' %}" method="post" role="form">
         {% csrf_token %}
         <div class="form-group">
             <label class="col-lg-2 control-label" for="id_username">Username</label>

@@ -22,6 +22,7 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
     # url(r'^accounts/', include('registration.backends.default.urls')),
     url(r'^accounts/profile/$', 'campaigns.views.user_profile', name="user_profile"),
+    url(r'^accounts/', include('django.contrib.auth.urls')),
     url(r'^transaction/(?P<pk>\d+)/$', 'campaigns.views.transaction', name='transaction'),
     # url(r'^api/transaction/(?P<pk>\d+)/$', 'campaigns.views.transaction_api', name='transaction_api'),
 

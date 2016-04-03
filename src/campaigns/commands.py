@@ -4,7 +4,11 @@ from django.core.urlresolvers import reverse
 
 from django.db import transaction
 from .projectors import handle_event
-from campaigns.models import BeginPaymentEvent, ReceivePaymentEvent, AbortPaymentEvent, Transaction
+from campaigns.models import PledgePaymentEvent
+from campaigns.models import ReceivePaymentEvent
+from campaigns.models import AbortPaymentEvent
+from campaigns.models import UnverifyPaymentEvent
+from campaigns.models import Transaction
 from campaigns.mailing import send_payment_confirmation, PAYMENT_CONFIRMATION_TEMPLATE
 
 """
@@ -74,7 +78,19 @@ class PledgePaymentCommand(Command):
         super(PledgePaymentCommand, self).__init__()
 
     def main(self):
-        yield BeginPaymentEvent(data=self.data)
+        yield PledgePaymentEvent(data=self.data)
+
+
+class UnverifyPaymentCommand(Command):
+    """
+    Sets a transaction in the "unverified" state.
+    """
+    def __init__(self, id):
+        self.data = dict(transaction_id=id)
+        super(UnverifyPaymentCommand, self).__init__()
+
+    def main(self):
+        yield UnverifyPaymentEvent(data=self.data)
 
 
 class ReceivePayment(Command):

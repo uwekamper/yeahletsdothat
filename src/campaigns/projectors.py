@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from decimal import Decimal
-from campaigns.models import Campaign, Transaction, BeginPaymentEvent, \
+from campaigns.models import Campaign, Transaction, PledgePaymentEvent, \
     ReceivePaymentEvent, AbortPaymentEvent, CampaignState, Perk
 
 def is_true(value):
@@ -48,7 +48,7 @@ class TransactionProjector(Projector):
     """
     def __init__(self, *args, **kwargs):
         super(TransactionProjector, self).__init__()
-        self.register(BeginPaymentEvent, self.handle_begin_payment)
+        self.register(PledgePaymentEvent, self.handle_begin_payment)
         self.register(ReceivePaymentEvent, self.handle_received_payment)
         self.register(AbortPaymentEvent, self.handle_abort_payment)
 
@@ -98,7 +98,7 @@ class CampaignStateProjector(Projector):
     """
     def __init__(self, *args, **kwargs):
         super(CampaignStateProjector, self).__init__()
-        self.register(BeginPaymentEvent, self.handle_begin_payment)
+        self.register(PledgePaymentEvent, self.handle_begin_payment)
         self.register(ReceivePaymentEvent, self.handle_received_payment)
 
     def handle_begin_payment(self, event):
@@ -123,7 +123,7 @@ register_projector(CampaignStateProjector)
 class PerkStateProjector(Projector):
     def __init__(self, *args, **kwargs):
         super(PerkStateProjector, self).__init__()
-        self.register(BeginPaymentEvent, self.handle_begin_payment)
+        self.register(PledgePaymentEvent, self.handle_begin_payment)
         self.register(ReceivePaymentEvent, self.handle_received_payment)
 
     def handle_begin_payment(self, event):

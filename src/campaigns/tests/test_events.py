@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 
 from campaigns.models import *
-from campaigns.commands import PledgePaymentCommand, ReceivePayment, AbortPaymentCommand
+from campaigns.commands import PledgePaymentCommand
+from campaigns.commands import UnverifyPaymentCommand
+from campaigns.commands import ReceivePayment
+from campaigns.commands import AbortPaymentCommand
 from .common import campaign, transaction_id
 import pytest
 
@@ -14,27 +17,47 @@ def perk_id(campaign):
     perk_id = campaign.perks.all()[0].id
     return perk_id
 
+@pytest.fixture
+def transaction_pledged(campaign, transaction_id, perk_id):
+    PledgePaymentCommand(transaction_id, campaign.key, '23.0', 'test@example.com', perk_id,
+            'Henner Piffendeckel', True, 'braintree')
+    transaction = Transaction.objects.get(transaction_id=transaction_id)
+    return transaction
 
 @pytest.mark.django_db
 class TestPledgedState(object):
     """
     Test the PledgePaymentCommand and the AbortPaymentCommand in the "pledged" state.
     """
-    def test_pledge_payment(self, campaign, transaction_id, perk_id):
-        PledgePaymentCommand(transaction_id, campaign.key, '23.0', 'test@example.com', perk_id,
-            'Henner Piffendeckel', True, 'braintree')
-        t = Transaction.objects.get(transaction_id=transaction_id)
+    def test_pledge_payment(self, transaction_pledged):
+        t = transaction_pledged
         assert t.amount == 23.0
         assert t.state == Transaction.STATE_PLEDGED
         assert t.email == 'test@example.com'
 
-    def test_pledged_then_aborted(self, campaign, transaction_id, perk_id):
-        PledgePaymentCommand(transaction_id, campaign.key, '23.0', 'test@example.com', perk_id,
-            'Henner Piffendeckel', True, 'braintree')
+    def test_pledged_then_aborted(self, transaction_pledged, transaction_id):
         AbortPaymentCommand(transaction_id)
         t = Transaction.objects.get(transaction_id=transaction_id)
         assert t.state == Transaction.STATE_ABORTED
         assert t.email == 'test@example.com'
+
+
+@pytest.fixture
+def transaction_unverified(transaction_id, transaction_pledged):
+    UnverifyPaymentCommand(transaction_id, campaign.key)
+    transaction = Transaction.objects.get(transaction_id=transaction_id)
+    return transaction
+
+
+@pytest.mark.django_db
+class TestUnverifiedState(object):
+    """
+    Check if the transaction changes in to the "verified" state when the VerifyPaymentCommand is
+    issued and if the AbortPayment command works in the "verified" state.
+    """
+    def test_verify_payment(self, transaction_unverified, transaction_id):
+        # TODO: Implement this test
+        assert True == False
 
 
 @pytest.mark.django_db

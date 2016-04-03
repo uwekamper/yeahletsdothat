@@ -264,13 +264,17 @@ class BaseEvent(PolymorphicModel):
     def __str__(self):
         return '{} - {}: {}'.format(self.__class__.__name__, self.created, self.data)
 
-class BeginPaymentEvent(BaseEvent):
+class PledgePaymentEvent(BaseEvent):
     pass
     # schema = [
     #      {'name': 'transaction_id', 'class': 'CharField', 'kwargs': {'max_length': 36}},
     #      {'name': 'campaign_key', 'class': 'CharField', 'kwargs': {'max_length': 16}},
     #      {'name': 'amount', 'class': 'DecimalField', 'kwargs': {'decimal_places': 8, 'max_digits': 20}},
     # ]
+
+
+class UnverifyPaymentEvent(BaseEvent):
+    pass
 
 class ReceivePaymentEvent(BaseEvent):
     pass

@@ -266,22 +266,18 @@ class BaseEvent(PolymorphicModel):
 
 class PledgePaymentEvent(BaseEvent):
     pass
-    # schema = [
-    #      {'name': 'transaction_id', 'class': 'CharField', 'kwargs': {'max_length': 36}},
-    #      {'name': 'campaign_key', 'class': 'CharField', 'kwargs': {'max_length': 16}},
-    #      {'name': 'amount', 'class': 'DecimalField', 'kwargs': {'decimal_places': 8, 'max_digits': 20}},
-    # ]
-
 
 class UnverifyPaymentEvent(BaseEvent):
     pass
 
+class VerifyPaymentEvent(BaseEvent):
+    pass
+
+class ProcessPaymentEvent(BaseEvent):
+    pass
+
 class ReceivePaymentEvent(BaseEvent):
     pass
-    # schema = [
-    #      {'name': 'transaction_id', 'class': 'CharField', 'kwargs': {'max_length': 36}},
-    #      {'name': 'amount', 'class': 'DecimalField', 'kwargs': {'decimal_places': 8, 'max_digits': 20}},
-    # ]
 
 class AbortPaymentEvent(BaseEvent):
     pass

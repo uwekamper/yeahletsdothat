@@ -1,7 +1,18 @@
 # -*- coding: utf-8 -*-
 from decimal import Decimal
-from campaigns.models import Campaign, Transaction, PledgePaymentEvent, \
-    ReceivePaymentEvent, AbortPaymentEvent, CampaignState, Perk
+
+from campaigns.models import Campaign
+from campaigns.models import Transaction
+from campaigns.models import Perk
+
+from campaigns.models import PledgePaymentEvent
+from campaigns.models import UnverifyPaymentEvent
+from campaigns.models import VerifyPaymentEvent
+from campaigns.models import ProcessPaymentEvent
+
+from campaigns.models import ReceivePaymentEvent
+from campaigns.models import AbortPaymentEvent
+from campaigns.models import CampaignState
 
 def is_true(value):
     return value.lower() == 'true'
@@ -49,8 +60,13 @@ class TransactionProjector(Projector):
     def __init__(self, *args, **kwargs):
         super(TransactionProjector, self).__init__()
         self.register(PledgePaymentEvent, self.handle_begin_payment)
+        self.register(UnverifyPaymentEvent, self.handle_unverify_payment)
+        self.register(VerifyPaymentEvent, self.handle_verify_payment)
+        self.register(ProcessPaymentEvent, self.handle_process_payment)
+
         self.register(ReceivePaymentEvent, self.handle_received_payment)
         self.register(AbortPaymentEvent, self.handle_abort_payment)
+
 
     def handle_begin_payment(self, event):
         campaign = Campaign.objects.get(key=event.data['campaign_key'])
@@ -75,6 +91,23 @@ class TransactionProjector(Projector):
             pass
         except Perk.DoesNotExist:
             pass
+
+        trans._super_save()
+
+    def handle_unverify_payment(self, event):
+        trans = Transaction.objects.get(transaction_id=event.data['transaction_id'])
+        trans.state = Transaction.STATE_UNVERIFIED
+        trans._super_save()
+
+    def handle_verify_payment(self, event):
+        trans = Transaction.objects.get(transaction_id=event.data['transaction_id'])
+        trans.state = Transaction.STATE_VERIFIED
+        trans._super_save()
+
+    def handle_process_payment(self, event):
+        trans = Transaction.objects.get(transaction_id=event.data['transaction_id'])
+        trans.state = Transaction.STATE_PROCESSING
+        # TODO: Increment the retry-counter here
 
         trans._super_save()
 

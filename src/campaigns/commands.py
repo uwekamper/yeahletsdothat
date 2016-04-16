@@ -1,13 +1,17 @@
 # -*- coding: utf-8 -*-
+
 from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
-
 from django.db import transaction
+
 from .projectors import handle_event
 from campaigns.models import PledgePaymentEvent
 from campaigns.models import ReceivePaymentEvent
 from campaigns.models import AbortPaymentEvent
 from campaigns.models import UnverifyPaymentEvent
+from campaigns.models import VerifyPaymentEvent
+from campaigns.models import ProcessPaymentEvent
+
 from campaigns.models import Transaction
 from campaigns.mailing import send_payment_confirmation, PAYMENT_CONFIRMATION_TEMPLATE
 
@@ -91,6 +95,30 @@ class UnverifyPaymentCommand(Command):
 
     def main(self):
         yield UnverifyPaymentEvent(data=self.data)
+
+
+class VerifyPaymentCommand(Command):
+    """
+    Sets a transaction in the "unverified" state.
+    """
+    def __init__(self, id):
+        self.data = dict(transaction_id=id)
+        super(VerifyPaymentCommand, self).__init__()
+
+    def main(self):
+        yield VerifyPaymentEvent(data=self.data)
+
+
+class ProcessPaymentCommand(Command):
+    """
+    Start processing the payment and try to deduct the amount from the pledger's account.
+    """
+    def __init__(self, id):
+        self.data = dict(transaction_id=id)
+        super(ProcessPaymentCommand, self).__init__()
+
+    def main(self):
+        yield ProcessPaymentEvent(data=self.data)
 
 
 class ReceivePayment(Command):

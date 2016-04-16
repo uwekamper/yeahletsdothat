@@ -41,7 +41,8 @@ The following state graph shows the states which a transaction can go through.
 
                 +----------------------------------------------+
                 |                                              |
-            +---+---+                    +----------+          |
+                |        must select                           |
+            +---+---+   payment method   +----------+          |
     +------+|pledged|+-----------------> |unverified|+----+    |
     |       +-------+                    +----+-----+     |    |
     |                                         |           |    |
@@ -51,13 +52,13 @@ The following state graph shows the states which a transaction can go through.
     |         |     v                         v           |    |
     |       +-+--------+                 +--------+       |    |
     |       | payment  | <--------------+|verified|       |    |
-    |       |processing|                 +------+-+       |    |
-    |       +--+----+--+                        |         |    |
-    |          |    |    give up trying         |         |    |
-    |   success|    +--------------+            v         |    |
-    |          |                   |     +-------+        |    |
-    |          v                   +---> |aborted| <------+    |
-    |       +---------+                  +-------+             |
+    |       |processing|                 +----+---+       |    |
+    |       +--+----+--+                      |           |    |
+    |          |    |    give up trying       |           |    |
+    |   success|    +--------------+          v           |    |
+    |          |                   |      +-------+       |    |
+    |          v                   +----> |aborted| <-----+    |
+    |       +---------+                   +-------+            |
     +-----> |completed|                      ^                 |
             +---------+                      |                 |
                                              +-----------------+

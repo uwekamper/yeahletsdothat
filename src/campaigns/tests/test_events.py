@@ -1,12 +1,15 @@
 # -*- coding: utf-8 -*-
 
+import pytest
+
 from campaigns.models import *
 from campaigns.commands import PledgePaymentCommand
 from campaigns.commands import UnverifyPaymentCommand
+from campaigns.commands import VerifyPaymentCommand
+from campaigns.commands import ProcessPaymentCommand
 from campaigns.commands import ReceivePayment
 from campaigns.commands import AbortPaymentCommand
 from .common import campaign, transaction_id
-import pytest
 
 """
 Check if everything connected to events and event sourcing (projections,
@@ -23,6 +26,7 @@ def transaction_pledged(campaign, transaction_id, perk_id):
             'Henner Piffendeckel', True, 'braintree')
     transaction = Transaction.objects.get(transaction_id=transaction_id)
     return transaction
+
 
 @pytest.mark.django_db
 class TestPledgedState(object):
@@ -44,7 +48,7 @@ class TestPledgedState(object):
 
 @pytest.fixture
 def transaction_unverified(transaction_id, transaction_pledged):
-    UnverifyPaymentCommand(transaction_id, campaign.key)
+    UnverifyPaymentCommand(transaction_id)
     transaction = Transaction.objects.get(transaction_id=transaction_id)
     return transaction
 
@@ -55,9 +59,38 @@ class TestUnverifiedState(object):
     Check if the transaction changes in to the "verified" state when the VerifyPaymentCommand is
     issued and if the AbortPayment command works in the "verified" state.
     """
-    def test_verify_payment(self, transaction_unverified, transaction_id):
-        # TODO: Implement this test
-        assert True == False
+    def test_unverify_payment(self, transaction_unverified, transaction_id):
+        t = transaction_unverified
+        assert t.state == Transaction.STATE_UNVERIFIED
+
+
+@pytest.fixture
+def transaction_verified(transaction_id, transaction_unverified):
+    VerifyPaymentCommand(transaction_id)
+    transaction = Transaction.objects.get(transaction_id=transaction_id)
+    return transaction
+
+
+@pytest.mark.django_db
+class TestVerifiedState(object):
+    """
+    Check if we can verify a payment.
+    """
+    def test_verify_payment(self, transaction_verified, transaction_id):
+        t = transaction_verified
+        assert t.state == Transaction.STATE_VERIFIED
+
+
+@pytest.mark.django_db
+class TestProcessingState(object):
+    """
+    Check if we can process a payment.
+    """
+    def test_process_payment(self, transaction_verified, transaction_id):
+        ProcessPaymentCommand(transaction_id)
+        t = Transaction.objects.get(transaction_id=transaction_id)
+
+        assert t.state == Transaction.STATE_PROCESSING
 
 
 @pytest.mark.django_db

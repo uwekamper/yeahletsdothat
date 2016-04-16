@@ -22,7 +22,7 @@ from django.conf import settings
 
 from . import forms
 from .models import Campaign, Transaction, Perk
-from .commands import PledgePaymentCommand, ReceivePayment
+from .commands import PledgePaymentCommand, ReceivePaymentCommand
 from .serializers import TransactionSerializer, PerkSerializer, PaymentMethodSerializer, \
     CampaignSerializer, PaymentPOSTData
 
@@ -273,7 +273,7 @@ def post_transaction(request, key):
 
             if method.validate_nonce(amount, payment_nonce):
                 logger.debug('transaction is good')
-                ReceivePayment(transaction_id, amount, request)
+                ReceivePaymentCommand(transaction_id, amount, request)
                 return Response(TransactionSerializer(transaction).data)
             else:
                 logger.debug('transaction is bad')

@@ -121,7 +121,7 @@ class ProcessPaymentCommand(Command):
         yield ProcessPaymentEvent(data=self.data)
 
 
-class ReceivePayment(Command):
+class ReceivePaymentCommand(Command):
     """
     Process a payment received for a transaction.
     """
@@ -134,7 +134,7 @@ class ReceivePayment(Command):
         self.campaign_url = \
             request.build_absolute_uri(reverse('campaign_details', args=[campaign_key]))
 
-        super(ReceivePayment, self).__init__()
+        super(ReceivePaymentCommand, self).__init__()
 
     def main(self):
         self.data = dict(transaction_id=self.transaction_id, amount=str(self.amount))

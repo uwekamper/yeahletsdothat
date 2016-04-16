@@ -5,7 +5,7 @@ import pytest
 
 from decimal import Decimal
 from model_mommy import mommy
-from campaigns.commands import PledgePaymentCommand, ReceivePayment
+from campaigns.commands import PledgePaymentCommand, ReceivePaymentCommand
 
 from .common import *
 

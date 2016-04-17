@@ -29,6 +29,7 @@ def test_get_rpc_address():
     result = bitcoin.get_rpc_address(conf)
     assert result == 'http://bitcoinrpc:B726rKcomZz7rWVckYX2GsJfhRh7H6AfkDNrPHTByHRw@localhost:18332/'
 
+@pytest.mark.skipif(True, reason='Disabled')
 def test_transaction_api():
     """
     TODO

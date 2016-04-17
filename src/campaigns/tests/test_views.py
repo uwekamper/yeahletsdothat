@@ -15,16 +15,6 @@ from lxml import html
 from django.core.urlresolvers import reverse
 
 from campaigns.utils import get_payment_methods
-# from django.contrib.auth.models import User
-# from django.test import TestCase
-# from django.test.client import Client
-# from model_mommy import mommy
-#
-# from campaigns import views
-# from campaigns.models import Campaign, BankAccount, Transaction, pkgen
-# from campaigns.payment_method import PaymentMethodDoesNotHaveName, BasePaymentMethod, method_registry
-# from common import CommonMethods
-
 from .common import client
 from .common import campaign
 
@@ -86,19 +76,6 @@ def test_select_payment_with_right_amount(client, campaign):
     # should redirect to a payment page.
     assert resp.status_code == 200
 
-
-# class BankAccountTest(TestCase):
-#
-#     TEST_DESCRIPTION = 'testaccount'
-#
-#     def setUp(self):
-#         self.acc = mommy.make(BankAccount, description=self.TEST_DESCRIPTION)
-#
-#     def test_can_create_account(self):
-#         self.assertIsInstance(self.acc, BankAccount)
-#
-#     def test_get_unicode(self):
-#         self.assertEqual(str(self.acc), self.TEST_DESCRIPTION)
 
 
 

@@ -155,6 +155,11 @@ class AbortPaymentCommand(Command):
     Stop the payment process for one transaction id.
     """
     def __init__(self, id):
+        trans = Transaction.objects.get(transaction_id=id)
+        if trans.state == Transaction.STATE_COMPLETE:
+            raise CommandError('The transaction is already completed and cannot be aborted.'
+                               'Transaction ID: {}'.format(id))
+
         self.data = dict(transaction_id=str(id))
         super(AbortPaymentCommand, self).__init__()
 

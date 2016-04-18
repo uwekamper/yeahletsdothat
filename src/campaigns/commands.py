@@ -3,6 +3,7 @@
 from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
 from django.db import transaction
+from django.utils.timezone import now
 
 from .projectors import handle_event
 from campaigns.models import PledgePaymentEvent
@@ -11,6 +12,7 @@ from campaigns.models import AbortPaymentEvent
 from campaigns.models import UnverifyPaymentEvent
 from campaigns.models import VerifyPaymentEvent
 from campaigns.models import ProcessPaymentEvent
+from campaigns.models import PaymentRejectedEvent
 
 from campaigns.models import Transaction
 from campaigns.mailing import send_payment_confirmation, PAYMENT_CONFIRMATION_TEMPLATE
@@ -119,6 +121,23 @@ class ProcessPaymentCommand(Command):
 
     def main(self):
         yield ProcessPaymentEvent(data=self.data)
+
+
+class RejectPaymentAttemptCommand(Command):
+    """
+    The attempt to deduct the amount has failed and we need to try again later.
+    """
+    def __init__(self, id, attempted_datetime=None):
+        if attempted_datetime == None:
+            attempted_datetime = str(now())
+        else:
+            attempted_datetime = str(attempted_datetime)
+
+        self.data = dict(transaction_id=id, attempted_datetime=attempted_datetime)
+        super(RejectPaymentAttemptCommand, self).__init__()
+
+    def main(self):
+        yield PaymentRejectedEvent(data=self.data)
 
 
 class ReceivePaymentCommand(Command):

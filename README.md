@@ -42,25 +42,25 @@ The following state graph shows the states which a transaction can go through.
                 +----------------------------------------------+
                 |                                              |
                 |        must select                           |
-            +---+---+   payment method   +----------+          |
-    +------+|pledged|+-----------------> |unverified|+----+    |
-    |       +-------+                    +----+-----+     |    |
+          ******+****   payment method   +----------+          |
+    +----+| pledged |+-----------------> |unverified|+----+    |
+    |     ***********                    +----+-----+     |    |
     |                                         |           |    |
     |    payment was rejected                 |           |    |
-    |         +-----+                         |           |    |
+    |         +-----+                         |verify     |    |
     |         |     | try again!              |           |    |
     |         |     v                         v           |    |
-    |       +-+--------+                 +--------+       |    |
+    |       +-+--------+     try         +--------+       |    |
     |       | payment  | <--------------+|verified|       |    |
-    |       |processing|                 +----+---+       |    |
-    |       +--+----+--+                      |           |    |
-    |          |    |    give up trying       |           |    |
+    |       |processing|+--------------> +----+---+       |    |
+    |       +--+----+--+  partially paid      |           |    |
+    |          |    |                         |           |    |
     |   success|    +--------------+          v           |    |
-    |          |                   |      +-------+       |    |
-    |          v                   +----> |aborted| <-----+    |
-    |       +---------+                   +-------+            |
-    +-----> |completed|                      ^                 |
-            +---------+                      |                 |
+    |          |     give up trying|     ++=========++    |    |
+    |          v                   +---> || aborted || <--+    |
+    |       ++===========++              ++=========++         |
+    +-----> || completed ||                  ^                 |
+            ++===========++                  |                 |
                                              +-----------------+
 
 When a new transaction is created, it is immediately in the "pledged" state.

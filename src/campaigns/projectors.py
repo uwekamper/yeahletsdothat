@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from decimal import Decimal
+from django.utils.timezone import now
 
 from campaigns.models import Campaign
 from campaigns.models import Transaction
@@ -9,7 +10,7 @@ from campaigns.models import PledgePaymentEvent
 from campaigns.models import UnverifyPaymentEvent
 from campaigns.models import VerifyPaymentEvent
 from campaigns.models import ProcessPaymentEvent
-
+from campaigns.models import PaymentRejectedEvent
 from campaigns.models import ReceivePaymentEvent
 from campaigns.models import AbortPaymentEvent
 from campaigns.models import CampaignState
@@ -63,7 +64,7 @@ class TransactionProjector(Projector):
         self.register(UnverifyPaymentEvent, self.handle_unverify_payment)
         self.register(VerifyPaymentEvent, self.handle_verify_payment)
         self.register(ProcessPaymentEvent, self.handle_process_payment)
-
+        self.register(PaymentRejectedEvent, self.handle_rejected_payment)
         self.register(ReceivePaymentEvent, self.handle_received_payment)
         self.register(AbortPaymentEvent, self.handle_abort_payment)
 
@@ -107,8 +108,13 @@ class TransactionProjector(Projector):
     def handle_process_payment(self, event):
         trans = Transaction.objects.get(transaction_id=event.data['transaction_id'])
         trans.state = Transaction.STATE_PROCESSING
-        # TODO: Increment the retry-counter here
+        trans._super_save()
 
+    def handle_rejected_payment(self, event):
+        trans = Transaction.objects.get(transaction_id=event.data['transaction_id'])
+        trans.state = Transaction.STATE_PROCESSING
+        trans.times_rejected += 1
+        trans.last_rejected = event.data['attempted_datetime']
         trans._super_save()
 
     def handle_received_payment(self, event):

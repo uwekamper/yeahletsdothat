@@ -230,12 +230,15 @@ class Transaction(ReadModel):
 
     amount = models.DecimalField(decimal_places=10, max_digits=20)
     amount_received = models.DecimalField(decimal_places=10, max_digits=20)
-    # is_pending = models.BooleanField(default=False)
+
     started = models.DateTimeField()
     name = models.CharField(max_length=1024, default='')
     email = models.EmailField(null=True, blank=True)
     perk = models.ForeignKey('Perk', null=True, blank=True)
     show_name = models.BooleanField(default=False)
+
+    times_rejected = models.IntegerField(default=0, null=False, blank=False)
+    last_rejected = models.DateTimeField(null=True, blank=True)
 
     def get_actions(self):
         return get_actions_by_name(self.payment_method_name, self.transaction_id)
@@ -274,6 +277,9 @@ class VerifyPaymentEvent(BaseEvent):
     pass
 
 class ProcessPaymentEvent(BaseEvent):
+    pass
+
+class PaymentRejectedEvent(BaseEvent):
     pass
 
 class ReceivePaymentEvent(BaseEvent):

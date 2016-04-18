@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 
 import json
-from django.test import Client
-from django.core.urlresolvers import reverse
-from mock import Mock, MagicMock
-from lxml import html
 import pytest
 from decimal import Decimal
+from django.test import Client
+from django.core.urlresolvers import reverse
+from lxml import html
+from mock import Mock, MagicMock
 
 from campaigns.models import *
 from django.contrib.auth.models import User
@@ -16,13 +16,17 @@ TEST_PASSWORD = 'test1234'
 TEST_EMAIL = 'xyz@exampler.com'
 TEST_CREDENTIALS = {'username': TEST_USERNAME, 'password': TEST_PASSWORD}
 
-
 @pytest.fixture
 def campaign():
     campaign = Campaign.objects.create(title='TestCampaign', currency=0,
         goal=Decimal(20), start_date=timezone.now(), end_date=timezone.now())
     perk = Perk.objects.create(campaign=campaign, title='TestPerk', amount=Decimal('23.0'))
     return campaign
+
+@pytest.fixture
+def perk_id(campaign):
+    perk_id = campaign.perks.all()[0].id
+    return perk_id
 
 @pytest.fixture
 def transaction_id():
@@ -56,7 +60,6 @@ def mock_request():
     request = Mock()
     request.build_absolute_uri = MagicMock(return_value="http://example.com/")
     return request
-
 
 
 class CommonMethods(object):

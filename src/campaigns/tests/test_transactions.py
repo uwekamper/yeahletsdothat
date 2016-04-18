@@ -13,16 +13,12 @@ from campaigns.commands import ProcessPaymentCommand
 from campaigns.commands import ReceivePaymentCommand
 from campaigns.commands import AbortPaymentCommand
 from campaigns.commands import RejectPaymentAttemptCommand
-from .common import campaign, transaction_id, mock_request
+from .common import campaign, transaction_id, mock_request, perk_id
 
 """
 Check if everything connected to events and event sourcing (projections,
 denormalization, etc.) works as intended.
 """
-@pytest.fixture
-def perk_id(campaign):
-    perk_id = campaign.perks.all()[0].id
-    return perk_id
 
 @pytest.fixture
 def transaction_pledged(campaign, transaction_id, perk_id):

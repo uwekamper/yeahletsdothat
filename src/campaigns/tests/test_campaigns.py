@@ -4,10 +4,16 @@ import pytest
 from decimal import Decimal
 from django.utils.timezone import now, timedelta
 
-from .common import campaign, transaction_id, mock_request
+from .common import campaign
+from .common import transaction_id
+from .common import mock_request
+from .common import perk_id
+from campaigns.models import Campaign
+from campaigns.commands import PledgePaymentCommand
+from campaigns.commands import ReceivePaymentCommand
 
 @pytest.mark.django_db
-def test_campaign_state_percent(self, campaign, transaction_id, perk_id, mock_request):
+def test_campaign_state_percent(campaign, transaction_id, perk_id, mock_request):
     """
     Check if the model shows the correct percentage
     """
@@ -17,7 +23,7 @@ def test_campaign_state_percent(self, campaign, transaction_id, perk_id, mock_re
     assert campaign.state.percent_funded == Decimal(50.0)
 
 @pytest.mark.django_db
-def test_campaign_state_pending(self, campaign, transaction_id, perk_id, mock_request):
+def test_campaign_state_pending(campaign, transaction_id, perk_id, mock_request):
     """
     Check if the model shows the amount of pending amounts.
     """
@@ -32,7 +38,7 @@ def test_campaign_state_pending(self, campaign, transaction_id, perk_id, mock_re
 
 # TODO: repair this and maybe move to a better place
 @pytest.mark.django_db
-def test_campaign_state_completion(self, campaign, transaction_id, perk_id, mock_request):
+def test_campaign_state_completion(campaign, transaction_id, perk_id, mock_request):
     """
     Test if the campaign state goes to 'complete' if there are enough
     completed transactions.

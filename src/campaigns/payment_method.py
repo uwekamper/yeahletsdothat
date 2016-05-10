@@ -111,6 +111,8 @@ class BasePaymentMethod(object):
         """
         raise NotImplementedError()
 
+    def unverify(self, transaction_id):
+
     def verify(self, request, transaction_id):
         """
         Verify a transaction. Returns True if the verification went through.

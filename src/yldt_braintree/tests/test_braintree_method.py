@@ -1,5 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+
 from __future__ import unicode_literals
 
 import pytest
@@ -12,6 +13,9 @@ from django.conf import settings
 from campaigns.payment_method import get_method_by_name
 from yldt_braintree.views import store_customer_id
 
+from campaigns.tests.common import mock_request
+from campaigns.tests.common import transaction_id
+from campaigns.tests.common import campaign
 
 @pytest.fixture
 def braintree_method():
@@ -25,8 +29,14 @@ def mock_transaction():
     return transaction
 
 @pytest.mark.django_db
-def test_store_customer_id(braintree_method, mock_transaction):
+def test_pay(mock_request, braintree_method, campaign, transaction_id):
+    result = braintree_method.pay(mock_request, campaign.key, transaction_id)
+    assert result.url == '/pay/braintree/{}/'.format(transaction_id)
+
+
+@pytest.mark.django_db
+def test_verify(braintree_method, mock_transaction):
     result = store_customer_id(braintree_method, mock_transaction)
-    assert result == False
+    assert result == True
 
 

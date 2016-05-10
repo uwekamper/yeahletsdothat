@@ -35,6 +35,16 @@ class BrainTree(BasePaymentMethod):
         url = '/pay/' + self.name + '/' + str(transaction_id) + '/'
         return HttpResponseRedirect(url)
 
+
+
+    def verify(self, request, transaction_id):
+        """
+        Verify that the supplied credit card (represented by the payment method
+        nonce) can indeed be used to deduct money at the current time.
+        Will issue a VerifyPaymentAction.
+        """
+        return True
+
     def refund(self, campaign, transaction):
         pass
 

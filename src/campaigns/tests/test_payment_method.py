@@ -6,6 +6,16 @@ from campaigns.payment_method import BasePaymentMethod, PaymentMethodDoesNotHave
     PaymentMethodDoesNotHaveCurrencies, method_registry
 
 
+@pytest.fixture
+def method_options():
+    return {
+        'name': 'testpaymentmethod',
+        'fee_per_transaction': Decimal('0.30'),
+        'fee_percent': Decimal('2.9'),
+        'display_name': 'test_display_name',
+        'currencies': ['EUR']
+    }
+
 class TestPaymentMethod:
     """
     Base class for all the payment method.
@@ -19,7 +29,6 @@ class TestPaymentMethod:
             'currencies': ['EUR']
         })
         assert b.calculate_fee(Decimal('100')) == Decimal('3.2')
-
 
     def test_payment_method_without_name(self):
         """
@@ -58,3 +67,12 @@ class TestPaymentMethod:
         assert isinstance(instance, SuperPay)
         assert method_registry['superpay'] == instance
 
+    def test_verify(self, method_options):
+        b = BasePaymentMethod({
+            'name': 'testpaymentmethod',
+            'fee_per_transaction': Decimal('0.30'),
+            'fee_percent': Decimal('2.9'),
+            'display_name': 'test_display_name',
+            'currencies': ['EUR']
+        })
+        assert b.calculate_fee(Decimal('100')) == Decimal('3.2')

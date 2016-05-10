@@ -46,7 +46,6 @@ def test_campaign_state_completion(campaign, transaction_id, perk_id, mock_reque
     assert campaign.state.completed == False
     assert campaign.state.total_supporters == 0
 
-    # add
     PledgePaymentCommand(transaction_id, campaign.key, 20.0, 'test@example.com', perk_id,
         'Henner Piffendeckel', True, 'braintree')
     changed_campaign = Campaign.objects.get(id=campaign.id)

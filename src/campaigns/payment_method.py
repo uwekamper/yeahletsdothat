@@ -1,4 +1,3 @@
-#!/usr/bin/python
 # -*- coding: utf-8 -*-
 
 """
@@ -61,6 +60,10 @@ class PaymentMethodDoseNotExist(PaymentException):
     pass
 
 
+class PaymentVerificationError(PaymentException):
+    pass
+
+
 class BasePaymentMethod(object):
     """
     Basal payment method, contains the things that are common to all
@@ -108,6 +111,13 @@ class BasePaymentMethod(object):
         """
         raise NotImplementedError()
 
+    def verify(self, request, transaction_id):
+        """
+        Verify a transaction. Returns True if the verification went through.
+        Raises a PaymentVerificationError if there was a problem verifying the transaction.
+        """
+        raise NotImplementedError()
+
     def complete(self, campaign_key, transaction_id):
         """
         This method should be called, when the payment was successfully processed.
@@ -124,6 +134,15 @@ class BasePaymentMethod(object):
         raise NotImplementedError()
 
     def get_actions(self, transaction_id=None):
+        """
+        Actions are displayed as buttons next to a transaction in the administrative interface.
+        Using these actions administrative users can e.g. cancel a transaction manually.
+        An action is a tuple that consists of a (localized) string and a URL that points to a
+        view that facilitates the action.
+
+        Example:
+            [ ('Delete', '/example_payment/transactions/{}/delete/'.format(transaction_id)) ]
+        """
         return []
 
 

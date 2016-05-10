@@ -11,8 +11,11 @@ from campaigns.commands import ReceivePaymentCommand
 
 from campaigns.models import Transaction
 from campaigns.payment_method import get_method_by_name
-from forms import BrainTreeForm
-from yldt_braintree.models import BrainTreeTransaction
+from . forms import BrainTreeForm
+from . models import BrainTreeTransaction
+
+def store_customer_id(method, transaction):
+    return False
 
 def do_transaction(payment_method, transaction, form):
     """
@@ -87,7 +90,7 @@ def payment_form(request, transaction_id, payment_method_name):
 
         # The user entered invalid data
         else:
-            print form.errors
+            print('{}'.format(form.errors))
             context = {
                 'transaction': transact,
                 'amount': amount,

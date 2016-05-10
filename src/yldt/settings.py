@@ -106,7 +106,7 @@ INSTALLED_APPS = (
 
     # Own apps start here
     'campaigns',
-    #'yldt_braintree',
+    'yldt_braintree',
     #'yldt_cash_payment',
 )
 

@@ -34,6 +34,36 @@ def do_transaction(payment_method, transaction, form):
 
     return result
 
+def create_customer(request, transaction, payment_method_nonce):
+    """
+    Try to create a customer in the braintree database.
+    """
+    first_name, last_name = transaction.name.rsplit(' ', 1)
+    result = braintree.Customer.create({
+        "first_name": first_name,
+        "last_name": last_name,
+        "email": transaction.email,
+        "credit_card": {
+            "payment_method_nonce": payment_method_nonce,
+            "options": {
+                "verify_card": True
+            }
+        }
+    })
+    return result
+
+def store_verification_result(transaction_id, result):
+    """
+    Store the data from a successful credit card verification in the database
+    so that we can use the customer ID to get the money once the campaign is finished.
+    """
+    bt, created = BrainTreeTransaction.objects.get_or_create(transaction_id=transaction_id)
+    bt.braintree_customer_id = result.customer.id
+    print(result)
+    #bt.payment_method_token = result.payment_method_token
+    bt.save()
+    VerifyPaymentCommand(transaction_id)
+
 def payment_form(request, transaction_id, payment_method_name):
     """
     Show a payment form to the user.
@@ -42,11 +72,9 @@ def payment_form(request, transaction_id, payment_method_name):
     if transact.state != Transaction.STATE_UNVERIFIED:
         return render(request, 'yldt_braintree/transaction_error.html',
                 {'transaction': transact})
-    #payment_method_name = payment_method_name.decode('utf-8')
     payment_method = get_method_by_name(payment_method_name)
 
     first_name, last_name = transact.name.split(' ', 2)
-    email = transact.email
     amount = transact.amount
     fee = payment_method.calculate_fee(amount)
     total = amount + fee
@@ -55,33 +83,9 @@ def payment_form(request, transaction_id, payment_method_name):
     if request.method == "POST":
         form = BrainTreeForm(request.POST)
         if form.is_valid():
-            result = braintree.Customer.create({
-                "first_name": first_name,
-                "last_name": last_name,
-                "email": email,
-                "payment_method_nonce": form.cleaned_data['payment_method_nonce'],
-                # "options": {
-                #     "verify_card": True
-                # }
-
-                # "custom_fields": {
-                #     "yldt_campaign_key": transact.campaign.key,
-                #     "yldt_transaction_id": transact.transaction_id,
-                #     "yldt_amount": amount,
-                #     "yldt_perk_id": transact.perk.id if transact.perk != None else None,
-                # }
-            })
+            result = create_customer(request, transaction, nonce_from_the_client)
             if result.is_success:
-                bt, created = BrainTreeTransaction.objects.get_or_create(
-                    transaction_id=transact.transaction_id)
-
-                bt.braintree_customer_id = result.customer.id
-                print(result)
-                #bt.payment_method_token = result.payment_method_token
-                bt.save()
-                VerifyPaymentCommand(transaction_id)
-                # ReceivePaymentCommand(transaction_id, transact.amount, request)
-
+                store_verification_result(result)
                 url = '/pay/{}/{}/success/'.format(payment_method_name, transaction_id)
                 return HttpResponseRedirect(url)
             else:

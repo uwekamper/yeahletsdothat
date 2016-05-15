@@ -31,7 +31,7 @@ from polymorphic.models import PolymorphicModel, PolymorphicManager
 #             return _('Unnamed account')
 #from campaigns.payment_method import get_method_by_name
 from campaigns.payment_method import get_actions_by_name
-
+from campaigns.payment_method import PaymentMethodDoesNotExist
 
 def pkgen():
     """
@@ -246,7 +246,10 @@ class Transaction(ReadModel):
     last_rejected = models.DateTimeField(null=True, blank=True)
 
     def get_actions(self):
-        return get_actions_by_name(self.payment_method_name, self.transaction_id)
+        try:
+            return get_actions_by_name(self.payment_method_name, self.transaction_id)
+        except PaymentMethodDoesNotExist:
+            return []
 
 
 @python_2_unicode_compatible

@@ -23,7 +23,7 @@ def get_method_by_name(name):
             return method.PaymentMethod(payment_plugin)
 
     # This means someone is trying to access a method that does not work.
-    raise PaymentMethodDoseNotExist
+    raise PaymentMethodDoesNotExist
 
 
 def get_module_name_by_name(name):
@@ -56,7 +56,7 @@ class PaymentMethodDoesNotHaveCurrencies(PaymentException):
     pass
 
 
-class PaymentMethodDoseNotExist(PaymentException):
+class PaymentMethodDoesNotExist(PaymentException):
     pass
 
 

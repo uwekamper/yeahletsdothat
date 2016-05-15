@@ -112,6 +112,11 @@ class BasePaymentMethod(object):
         raise NotImplementedError()
 
     def unverify(self, transaction_id):
+        """
+        Base payment method. We will call this method whenever a payment transaction
+        is inverifed.
+        """
+        raise NotImplementedError()
 
     def verify(self, request, transaction_id):
         """

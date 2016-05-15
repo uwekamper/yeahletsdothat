@@ -60,7 +60,7 @@ class TransactionProjector(Projector):
     """
     def __init__(self, *args, **kwargs):
         super(TransactionProjector, self).__init__()
-        self.register(PledgePaymentEvent, self.handle_begin_payment)
+        self.register(PledgePaymentEvent, self.handle_pledge_payment)
         self.register(UnverifyPaymentEvent, self.handle_unverify_payment)
         self.register(VerifyPaymentEvent, self.handle_verify_payment)
         self.register(ProcessPaymentEvent, self.handle_process_payment)
@@ -69,7 +69,7 @@ class TransactionProjector(Projector):
         self.register(AbortPaymentEvent, self.handle_abort_payment)
 
 
-    def handle_begin_payment(self, event):
+    def handle_pledge_payment(self, event):
         campaign = Campaign.objects.get(key=event.data['campaign_key'])
         trans = Transaction(
             campaign=campaign,
@@ -81,7 +81,6 @@ class TransactionProjector(Projector):
             email=event.data['email'],
             name=event.data.get('name', ''),
             show_name=is_true(event.data.get('show_name', 'true')),
-            payment_method_name=event.data.get('payment_method_name', 'braintree')
         )
         try:
             perk = Perk.objects.get(pk=int(event.data['perk_id']))
@@ -98,6 +97,7 @@ class TransactionProjector(Projector):
     def handle_unverify_payment(self, event):
         trans = Transaction.objects.get(transaction_id=event.data['transaction_id'])
         trans.state = Transaction.STATE_UNVERIFIED
+        trans.payment_method_name=event.data.get('payment_method_name', 'braintree')
         trans._super_save()
 
     def handle_verify_payment(self, event):

@@ -22,7 +22,7 @@ from django.conf import settings
 
 from . import forms
 from .models import Campaign, Transaction, Perk
-from .commands import PledgePaymentCommand, ReceivePaymentCommand
+from .commands import PledgePaymentCommand, UnverifyPaymentCommand, ReceivePaymentCommand
 from .serializers import TransactionSerializer, PerkSerializer, PaymentMethodSerializer, \
     CampaignSerializer, PaymentPOSTData
 
@@ -85,7 +85,7 @@ def campaign_new(request):
 
 def campaign_details(request, key):
     """
-    View that shows a single activity.
+    View that shows a single campaign.
     """
     logger.debug("campaign details")
 
@@ -196,7 +196,8 @@ def select_payment(request, key):
             if perk != None:
                 perk_id = perk.id
             PledgePaymentCommand(transaction_id, campaign.key, amount, email, perk_id,
-                name, show_name, payment_method_name)
+                name, show_name)
+            UnverifyPaymentCommand(transaction_id, payment_method_name)
 
             # Delegate the payment transaction to the pay() method of the selected
             # payment method. The method will then redirect the user to the page it needs

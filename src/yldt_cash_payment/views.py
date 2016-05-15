@@ -38,7 +38,7 @@ def payment_edit(request, transaction_id, payment_method_name):
                 'campaign': transaction.campaign,
                 'form': form
             }
-        return render(request, 'yldt_cash_payment/cash_payment_edit.html', context)
+        return render(request, 'yldt_cash_paycment/cash_payment_edit.html', context)
 
     # GET request
     form = CashPaymentForm()

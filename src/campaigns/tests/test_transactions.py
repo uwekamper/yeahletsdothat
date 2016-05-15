@@ -23,7 +23,7 @@ denormalization, etc.) works as intended.
 @pytest.fixture
 def transaction_pledged(campaign, transaction_id, perk_id):
     PledgePaymentCommand(transaction_id, campaign.key, '23.0', 'test@example.com', perk_id,
-            'Henner Piffendeckel', True, 'braintree')
+            'Henner Piffendeckel', True)
     transaction = Transaction.objects.get(transaction_id=transaction_id)
     return transaction
 
@@ -48,7 +48,7 @@ class TestPledgedState(object):
 
 @pytest.fixture
 def transaction_unverified(transaction_id, transaction_pledged):
-    UnverifyPaymentCommand(transaction_id)
+    UnverifyPaymentCommand(transaction_id, 'braintree')
     transaction = Transaction.objects.get(transaction_id=transaction_id)
     return transaction
 

@@ -24,8 +24,8 @@ class TestMailing(object):
 
     def test_send_payment_confirmation(self, campaign, transaction_id, perk_id):
         commands.PledgePaymentCommand(transaction_id, campaign.key, Decimal(20),
-            'test@example.com', perk_id, "Henner Piffendeckel", False,
-            'braintree')
+            'test@example.com', perk_id, "Henner Piffendeckel", False)
+        commands.UnverifyPaymentEvent(transaction_id, 'braintree')
         transaction = Transaction.objects.get(transaction_id=transaction_id)
         send_payment_confirmation(campaign, transaction, 'test', 'http://test.de/')
 

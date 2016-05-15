@@ -7,7 +7,7 @@ from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
-from campaigns.commands import ReceivePaymentCommand
+from campaigns.commands import ReceivePaymentCommand, VerifyPaymentCommand
 
 from campaigns.models import Transaction
 from campaigns.payment_method import get_method_by_name
@@ -39,10 +39,10 @@ def payment_form(request, transaction_id, payment_method_name):
     Show a payment form to the user.
     """
     transact = get_object_or_404(Transaction, transaction_id=transaction_id)
-    if transact.state != Transaction.STATE_PLEDGED:
+    if transact.state != Transaction.STATE_UNVERIFIED:
         return render(request, 'yldt_braintree/transaction_error.html',
                 {'transaction': transact})
-
+    #payment_method_name = payment_method_name.decode('utf-8')
     payment_method = get_method_by_name(payment_method_name)
 
     first_name, last_name = transact.name.split(' ', 2)
@@ -60,6 +60,10 @@ def payment_form(request, transaction_id, payment_method_name):
                 "last_name": last_name,
                 "email": email,
                 "payment_method_nonce": form.cleaned_data['payment_method_nonce'],
+                # "options": {
+                #     "verify_card": True
+                # }
+
                 # "custom_fields": {
                 #     "yldt_campaign_key": transact.campaign.key,
                 #     "yldt_transaction_id": transact.transaction_id,
@@ -68,10 +72,15 @@ def payment_form(request, transaction_id, payment_method_name):
                 # }
             })
             if result.is_success:
-                bt, _ = BrainTreeTransaction.objects.get_or_create(transaction_id=transact.transaction_id)
+                bt, created = BrainTreeTransaction.objects.get_or_create(
+                    transaction_id=transact.transaction_id)
+
                 bt.braintree_customer_id = result.customer.id
+                print(result)
+                #bt.payment_method_token = result.payment_method_token
                 bt.save()
-                ReceivePaymentCommand(transaction_id, transact.amount, request)
+                VerifyPaymentCommand(transaction_id)
+                # ReceivePaymentCommand(transaction_id, transact.amount, request)
 
                 url = '/pay/{}/{}/success/'.format(payment_method_name, transaction_id)
                 return HttpResponseRedirect(url)

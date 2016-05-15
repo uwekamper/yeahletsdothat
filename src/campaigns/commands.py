@@ -69,17 +69,16 @@ class PledgePaymentCommand(Command):
     """
     Begin a payment procedure.
     """
-    def __init__(self, id, campaign_key, amount, email, perk_id, name, show_name,
-                 payment_method_name):
+    # TODO: Move paymentmethod, email and name to unverify payment command
+    def __init__(self, id, campaign_key, amount, email, perk_id, name, show_name):
         self.data = dict(
             transaction_id=id,
-            campaign_key=campaign_key.decode(),
+            campaign_key=campaign_key,
             amount=str(amount),
             email=email,
             perk_id=str(perk_id),
             name=name,
             show_name=str(show_name),
-            payment_method_name=payment_method_name
         )
         super(PledgePaymentCommand, self).__init__()
 
@@ -91,8 +90,11 @@ class UnverifyPaymentCommand(Command):
     """
     Sets a transaction in the "unverified" state.
     """
-    def __init__(self, id):
-        self.data = dict(transaction_id=id)
+    def __init__(self, transaction_id, payment_method_name):
+        self.data = dict(
+            transaction_id=transaction_id,
+            payment_method_name=payment_method_name
+        )
         super(UnverifyPaymentCommand, self).__init__()
 
     def main(self):
@@ -103,8 +105,8 @@ class VerifyPaymentCommand(Command):
     """
     Sets a transaction in the "unverified" state.
     """
-    def __init__(self, id):
-        self.data = dict(transaction_id=id)
+    def __init__(self, transaction_id):
+        self.data = dict(transaction_id=transaction_id)
         super(VerifyPaymentCommand, self).__init__()
 
     def main(self):

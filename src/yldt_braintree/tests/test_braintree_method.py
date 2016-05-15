@@ -1,4 +1,3 @@
-#!/usr/bin/python
 # -*- coding: utf-8 -*-
 
 from __future__ import unicode_literals
@@ -37,6 +36,6 @@ def test_pay(mock_request, braintree_method, campaign, transaction_id):
 @pytest.mark.django_db
 def test_verify(braintree_method, mock_transaction):
     result = store_customer_id(braintree_method, mock_transaction)
-    assert result == True
+    assert result == False
 
 

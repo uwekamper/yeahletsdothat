@@ -41,7 +41,12 @@ def pkgen():
         new_key = base64.urlsafe_b64encode(os.urandom(12))
         # TODO: Filter rude words from generated
         if Campaign.objects.filter(key=new_key).count() == 0:
-                return new_key
+            # If we do not decode than new_key is of type 'bytes' but we need to ensure that
+            # it is of type 'str' or there will be errors later when we try to put the campaign
+            # key into HSTORE objects:
+            # """No operator matches the given name and argument type(s)"""
+            new_key = new_key.decode('utf-8')
+            return new_key
 
 CURRENCY_EUR = (0, _('EUR'))
 CURRENCY_USD = (1, _('USD'))
@@ -225,7 +230,7 @@ class Transaction(ReadModel):
     # transaction holds the UUID for this transaction
     campaign = models.ForeignKey('Campaign', null=True, blank=True)
     transaction_id = models.CharField(max_length=1024)
-    payment_method_name = models.CharField(max_length=1024)
+    payment_method_name = models.CharField(max_length=1024, null=True, blank=True)
     state = models.IntegerField(choices=STATES)
 
     amount = models.DecimalField(decimal_places=10, max_digits=20)

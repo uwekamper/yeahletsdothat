@@ -9,17 +9,18 @@ from .common import transaction_id
 from .common import mock_request
 from .common import perk_id
 from campaigns.models import Campaign
-from campaigns.commands import PledgePaymentCommand
-from campaigns.commands import ReceivePaymentCommand
+from campaigns import commands
 
 @pytest.mark.django_db
 def test_campaign_state_percent(campaign, transaction_id, perk_id, mock_request):
     """
     Check if the model shows the correct percentage
     """
-    PledgePaymentCommand(transaction_id, campaign.key, Decimal(10), 'test@example.com', perk_id,
-        'Testuser', True, 'braintree')
-    ReceivePaymentCommand(transaction_id, Decimal(10), mock_request)
+    commands.PledgePaymentCommand(transaction_id, campaign.key, Decimal(10), 'test@example.com',
+        perk_id, 'Testuser', str(True))
+    commands.UnverifyPaymentCommand(transaction_id, 'braintree')
+
+    commands.ReceivePaymentCommand(transaction_id, Decimal(10), mock_request)
     assert campaign.state.percent_funded == Decimal(50.0)
 
 @pytest.mark.django_db
@@ -27,10 +28,12 @@ def test_campaign_state_pending(campaign, transaction_id, perk_id, mock_request)
     """
     Check if the model shows the amount of pending amounts.
     """
-    PledgePaymentCommand(transaction_id, campaign.key, Decimal(10), 'test@example.com', perk_id,
-        'Testuser', True, 'braintree')
+    commands.PledgePaymentCommand(transaction_id, campaign.key, Decimal(10), 'test@example.com',
+        perk_id, 'Testuser', True)
+    commands.UnverifyPaymentCommand(transaction_id, 'braintree')
+
     assert campaign.state.pending == Decimal(10)
-    ReceivePaymentCommand(transaction_id, Decimal(10), mock_request)
+    commands.ReceivePaymentCommand(transaction_id, Decimal(10), mock_request)
 
     changed_campaign = Campaign.objects.get(id=campaign.id)
     assert changed_campaign.state.pending == Decimal(0)
@@ -46,8 +49,9 @@ def test_campaign_state_completion(campaign, transaction_id, perk_id, mock_reque
     assert campaign.state.completed == False
     assert campaign.state.total_supporters == 0
 
-    PledgePaymentCommand(transaction_id, campaign.key, 20.0, 'test@example.com', perk_id,
-        'Henner Piffendeckel', True, 'braintree')
+    commands.PledgePaymentCommand(transaction_id, campaign.key, 20.0, 'test@example.com', perk_id,
+        'Henner Piffendeckel', True)
+    commands.UnverifyPaymentCommand(transaction_id, 'braintree')
     changed_campaign = Campaign.objects.get(id=campaign.id)
     assert changed_campaign.state.total_pledged == Decimal('20.0')
     assert changed_campaign.state.total_received == Decimal('0.0')
@@ -59,7 +63,7 @@ def test_campaign_state_completion(campaign, transaction_id, perk_id, mock_reque
     assert perk.state.total_received == 0
 
     # Complete the payment
-    ReceivePaymentCommand(transaction_id, 20.0, mock_request)
+    commands.ReceivePaymentCommand(transaction_id, 20.0, mock_request)
 
     # check everything on  the completed campaign.
     changed_campaign = Campaign.objects.get(id=campaign.id)

@@ -47,7 +47,7 @@ class TestPledgedState(object):
 
 
 @pytest.fixture
-def transaction_unverified(transaction_id, transaction_pledged):
+def transaction_unverified(transaction_id, campaign, transaction_pledged):
     UnverifyPaymentCommand(transaction_id, 'braintree')
     transaction = Transaction.objects.get(transaction_id=transaction_id)
     return transaction

@@ -16,6 +16,11 @@ from yldt_braintree.braintree_method import BrainTreeTransactionNotVerifiedExcep
 from campaigns.tests.common import mock_request
 from campaigns.tests.common import transaction_id
 from campaigns.tests.common import campaign
+from campaigns.tests.common import perk_id
+
+from campaigns.tests.test_transactions import transaction_pledged
+from campaigns.tests.test_transactions import transaction_unverified
+
 
 @pytest.fixture
 @pytest.mark.django_db
@@ -37,7 +42,7 @@ def test_pay(mock_request, braintree_method, campaign, transaction_id):
     assert result.url == '/pay/braintree/{}/'.format(transaction_id)
 
 @pytest.mark.django_db
-def test_charge_unverified(transaction_id, mock_transaction, braintree_method):
+def test_charge_unverified(braintree_method, campaign, transaction_id, transaction_unverified):
     """
     Charging an unverified transaction should result in an error.
     """

@@ -27,6 +27,7 @@ from yldt_braintree.views import create_customer
 from yldt_braintree.views import store_verification_result
 from yldt_braintree.models import BrainTreeTransaction
 
+@pytest.mark.django_db
 @pytest.fixture
 def transaction_braintree_selected(transaction_id, transaction_pledged):
     UnverifyPaymentCommand(transaction_id, 'braintree')
@@ -56,8 +57,9 @@ def test_create_customer(mock_request, transaction_id, transaction_braintree_sel
     result = create_customer(mock_request, transaction_braintree_selected,
         'fake-valid-visa-nonce')
     assert result.is_success == True
+    assert result.customer.id != None
+    assert len(result.customer.payment_methods) > 0
 
-    #
     result_fail = create_customer(mock_request, transaction_braintree_selected,
         'fake-processor-declined-visa-nonce')
     assert result_fail.is_success == False

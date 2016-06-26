@@ -31,6 +31,7 @@ def test_campaign_state_pending(campaign, transaction_id, perk_id, mock_request)
     commands.PledgePaymentCommand(transaction_id, campaign.key, Decimal(10), 'test@example.com',
         perk_id, 'Testuser', True)
     commands.UnverifyPaymentCommand(transaction_id, 'braintree')
+    commands.VerifyPaymentCommand(transaction_id)
 
     assert campaign.state.pending == Decimal(10)
     commands.ReceivePaymentCommand(transaction_id, Decimal(10), mock_request)
@@ -52,6 +53,8 @@ def test_campaign_state_completion(campaign, transaction_id, perk_id, mock_reque
     commands.PledgePaymentCommand(transaction_id, campaign.key, 20.0, 'test@example.com', perk_id,
         'Henner Piffendeckel', True)
     commands.UnverifyPaymentCommand(transaction_id, 'braintree')
+    commands.VerifyPaymentCommand(transaction_id)
+
     changed_campaign = Campaign.objects.get(id=campaign.id)
     assert changed_campaign.state.total_pledged == Decimal('20.0')
     assert changed_campaign.state.total_received == Decimal('0.0')

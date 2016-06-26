@@ -16,10 +16,12 @@ def method_options():
         'currencies': ['EUR']
     }
 
+@pytest.mark.django_db
 class TestPaymentMethod:
     """
     Base class for all the payment method.
     """
+    @pytest.mark.django_db
     def test_payment_method_fees(self):
         b = BasePaymentMethod({
             'name': 'testpaymentmethod',
@@ -30,6 +32,7 @@ class TestPaymentMethod:
         })
         assert b.calculate_fee(Decimal('100')) == Decimal('3.2')
 
+    @pytest.mark.django_db
     def test_payment_method_without_name(self):
         """
         Creating a payment class without a 'name' member variable should raise
@@ -41,6 +44,7 @@ class TestPaymentMethod:
                 'currencies': ['EUR']
             })
 
+    @pytest.mark.django_db
     def test_payment_method_without_currencies(self):
         """
         Creating a payment class without a 'currencies' member variable should raise
@@ -52,6 +56,7 @@ class TestPaymentMethod:
                 'display_name': 'test_display_name'
             })
 
+    @pytest.mark.django_db
     def test_concrete_payment_method_creation(self):
         """
         Create a concrete example of a payment method.
@@ -67,6 +72,7 @@ class TestPaymentMethod:
         assert isinstance(instance, SuperPay)
         assert method_registry['superpay'] == instance
 
+    @pytest.mark.django_db
     def test_verify(self, method_options):
         b = BasePaymentMethod({
             'name': 'testpaymentmethod',

@@ -107,7 +107,7 @@ INSTALLED_APPS = (
     # Own apps start here
     'campaigns',
     'yldt_braintree',
-    #'yldt_cash_payment',
+    # 'yldt_cash_payment',
 )
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.

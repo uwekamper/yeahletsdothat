@@ -5,6 +5,7 @@ from django.conf.urls import patterns, include, url
 from django.contrib import admin
 from django.conf import settings
 from django.conf.urls.static import static
+from campaigns.utils import import_payment_method_class
 
 admin.autodiscover()
 import campaigns.views
@@ -37,11 +38,12 @@ urlpatterns = patterns('',
 ) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 for options in settings.YLDT_PAYMENT_METHODS:
-    module = __import__(options['module_name'])
-    method = module.PaymentMethod(options)
+    Klass = import_payment_method_class(options['module_name'])
+    method = Klass(options)
     print('Found payment method %s' % options['module_name'])
     # create a url pattern for the plugin.
     pattern = r'^pay/' + bytes(method.name, 'utf-8').decode('unicode-escape') + r'/'
-    include_module = options['module_name'] + '.urls'
+    app_name = options['module_name'].split('.', 1)[0]
+    include_module = app_name + '.urls'
     sub_url = url(pattern, include(include_module), {'payment_method_name': method.name})
     urlpatterns.append(sub_url)

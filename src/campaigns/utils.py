@@ -6,6 +6,12 @@ from django.shortcuts import get_object_or_404
 
 from campaigns.models import Campaign
 
+def import_payment_method_class(full_module_name):
+    module_name, class_name = full_module_name.rsplit('.', 1)
+    module = __import__(module_name, fromlist=[class_name, ])
+    klass = getattr(module, class_name)
+    return klass
+
 
 def get_campaign_or_404(request, key):
     """
@@ -17,9 +23,8 @@ def get_campaign_or_404(request, key):
 def get_payment_methods():
     methods = []
     for options in settings.YLDT_PAYMENT_METHODS:
-        module_name = options['module_name']
-        module = __import__(module_name)
-        instance = module.PaymentMethod(options=options)
+        klass = import_payment_method_class(options['module_name'])
+        instance = klass(options=options)
         methods.append(instance)
     return methods
 

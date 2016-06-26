@@ -5,7 +5,15 @@ import braintree
 from django.http import HttpResponseRedirect
 
 from campaigns.payment_method import BasePaymentMethod
+from campaigns.payment_method import PaymentException
+from campaigns.models import Transaction
 
+
+class BrainTreeException(PaymentException):
+    pass
+
+class BrainTreeTransactionNotVerifiedException(BrainTreeException):
+    pass
 
 class BrainTree(BasePaymentMethod):
 
@@ -42,8 +50,21 @@ class BrainTree(BasePaymentMethod):
         nonce) can indeed be used to deduct money at the current time.
         Will issue a VerifyPaymentAction.
         """
-        # TODO: Exception handling for DoesNotExists
         braintree_trans = BrainTreeTransaction.objects.get(transaction_id)
+
+    def charge(self, transaction_id):
+        """
+        We get the Braintree customer object and try to charge the customer's credit card.
+        """
+        braintree.Configuration.configure(self.braintree_environment,
+            merchant_id=self.merchant_id,
+            public_key=self.public_key,
+            private_key=self.private_key)
+
+        transaction = Transaction.objects.get(transaction_id=transaction_id)
+        if transaction.state != Transaction.STATE_VERIFIED:
+            raise BrainTreeTransactionNotVerifiedException('Transaction {} is '
+                    'not in the verified state.'.format(transaction_id))
 
     def refund(self, campaign, transaction):
         pass
@@ -68,3 +89,5 @@ class BrainTree(BasePaymentMethod):
             'client_token': self.get_client_token(),
         }
         return result
+
+

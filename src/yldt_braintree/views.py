@@ -59,7 +59,6 @@ def store_verification_result(transaction_id, result):
     """
     bt, created = BrainTreeTransaction.objects.get_or_create(transaction_id=transaction_id)
     bt.braintree_customer_id = result.customer.id
-    print(result)
     #bt.payment_method_token = result.payment_method_token
     bt.save()
     VerifyPaymentCommand(transaction_id)

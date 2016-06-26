@@ -8,8 +8,24 @@ from __future__ import unicode_literals
 from django.conf import settings
 from decimal import Decimal
 
+from .utils import import_payment_method_class
+
+
 # TODO: Remove the registry, probably don't need it anyway
 method_registry = {}
+
+#
+# def get_actions(transaction_id):
+#     """
+#
+#     """
+#     try:
+#         transaction = Transaction.objects.get(transaction_id=transaction_id)
+#         return get_actions_by_name(payment_method_name, transaction_id)
+#     except Transaction.DoesNotExist:
+#         return []
+#     except PaymentMethodDoesNotExist:
+#         return []
 
 def get_method_by_name(name):
     """
@@ -19,8 +35,8 @@ def get_method_by_name(name):
     for payment_plugin in settings.YLDT_PAYMENT_METHODS:
         method_name = payment_plugin['name']
         if method_name == name:
-            method = __import__(payment_plugin['module_name'])
-            return method.PaymentMethod(payment_plugin)
+            Klass = import_payment_method_class(payment_plugin['module_name'])
+            return Klass(payment_plugin)
 
     # This means someone is trying to access a method that does not work.
     raise PaymentMethodDoesNotExist
@@ -86,6 +102,9 @@ class BasePaymentMethod(object):
 
         self.display_name = options['display_name']
 
+    def get_transaction(self, transaction_id):
+        pass
+
     def calculate_fee(self, amount):
         """
         This method shall return the payment fee that is added on top.
@@ -132,6 +151,12 @@ class BasePaymentMethod(object):
         the person who payed for the transaction.
         """
         pass
+
+    def charge(self, transaction_id):
+        """
+        This method is called whenever we want to try to charge the customer's account.
+        """
+        raise NotImplementedError()
 
     def refund(self, campaign_key, transaction_id):
         """

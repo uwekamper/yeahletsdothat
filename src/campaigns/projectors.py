@@ -137,14 +137,25 @@ class CampaignStateProjector(Projector):
     """
     def __init__(self, *args, **kwargs):
         super(CampaignStateProjector, self).__init__()
-        self.register(PledgePaymentEvent, self.handle_begin_payment)
+        self.register(PledgePaymentEvent, self.handle_pledge_payment)
+        self.register(VerifyPaymentEvent, self.handle_verify_payment)
         self.register(ReceivePaymentEvent, self.handle_received_payment)
 
-    def handle_begin_payment(self, event):
+    def handle_pledge_payment(self, event):
         amount = event.data['amount']
         transaction_id = event.data['transaction_id']
-        state = Transaction.objects.get(transaction_id=transaction_id).campaign.state
-        state.total_pledged += Decimal(amount)
+
+        # TODO: Do we need this handler at all?
+        #state = Transaction.objects.get(transaction_id=transaction_id).campaign.state
+        #state.total_pledged += Decimal(amount)
+        #state.total_pledgers += 1
+        #state._super_save()
+
+    def handle_verify_payment(self, event):
+        transaction_id = event.data['transaction_id']
+        transaction = Transaction.objects.get(transaction_id=transaction_id)
+        state = transaction.campaign.state
+        state.total_pledged += Decimal(transaction.amount)
         state.total_pledgers += 1
         state._super_save()
 

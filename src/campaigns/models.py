@@ -13,10 +13,6 @@ from django.utils.encoding import python_2_unicode_compatible
 from django.contrib.postgres.fields import HStoreField
 from polymorphic.models import PolymorphicModel, PolymorphicManager
 
-from .payment_method import get_method_by_name
-from .payment_method import get_actions_by_name
-from .payment_method import PaymentMethodDoesNotExist
-
 def pkgen():
     """
     Generates the primary key codes for the Campaign class.
@@ -228,12 +224,6 @@ class Transaction(ReadModel):
 
     times_rejected = models.IntegerField(default=0, null=False, blank=False)
     last_rejected = models.DateTimeField(null=True, blank=True)
-
-    def get_actions(self):
-        try:
-            return get_actions_by_name(self.payment_method_name, self.transaction_id)
-        except PaymentMethodDoesNotExist:
-            return []
 
 
 @python_2_unicode_compatible

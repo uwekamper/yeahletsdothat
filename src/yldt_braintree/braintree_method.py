@@ -50,7 +50,8 @@ class BrainTree(BasePaymentMethod):
         nonce) can indeed be used to deduct money at the current time.
         Will issue a VerifyPaymentAction.
         """
-        braintree_trans = BrainTreeTransaction.objects.get(transaction_id)
+        braintree_trans = BrainTreeTransaction.objects.get(transaction_id=transaction_id)
+        t = Transaction.objects.get(transaction_id=transaction_id)
 
     def charge(self, transaction_id):
         """

@@ -36,10 +36,12 @@ def mock_transaction():
     transaction.amount = Decimal('23.42')
     return transaction
 
+
 @pytest.mark.django_db
 def test_pay(mock_request, braintree_method, campaign, transaction_id):
     result = braintree_method.pay(mock_request, campaign.key, transaction_id)
     assert result.url == '/pay/braintree/{}/'.format(transaction_id)
+
 
 @pytest.mark.django_db
 def test_charge_unverified(braintree_method, campaign, transaction_id, transaction_unverified):
@@ -49,16 +51,18 @@ def test_charge_unverified(braintree_method, campaign, transaction_id, transacti
     with pytest.raises(BrainTreeTransactionNotVerifiedException):
         result = braintree_method.charge(transaction_id)
 
-# @pytest.mark.django_db
-# def test_charge_verified(mock_request, transaction_id, mock_transaction, braintree_method):
-#     """
-#     Try to charge a credit card.
-#     """
-#     api_result = create_customer(mock_request, transaction, nonce_from_the_client)
-#
-#     store_verification_result(transaction_id, api_result)
-#     result = braintree_method.charge(transaction_id)
-#
+
+@pytest.mark.django_db
+def test_charge_verified(mock_request, transaction_id, mock_transaction, transaction_unverified,
+            braintree_method):
+    """
+    Try to charge a credit card.
+    """
+    braintree_method.verify(transaction_id)
+    api_result = create_customer(mock_request, transaction, nonce_from_the_client)
+
+    store_verification_result(transaction_id, api_result)
+    result = braintree_method.charge(transaction_id)
 
 
 @pytest.mark.django_db

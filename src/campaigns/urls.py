@@ -8,7 +8,7 @@ from .models import Campaign, Perk
 from rest_framework import viewsets, routers
 from campaigns.serializers import CampaignSerializer, PerkSerializer
 from rest_framework.response import Response
-
+from . import views
 
 class CampaignsViewSet(viewsets.ModelViewSet):
     queryset = Campaign.objects.all()
@@ -37,13 +37,13 @@ router = routers.DefaultRouter(trailing_slash=False)
 router.register(r'campaigns', CampaignsViewSet)
 router.register(r'perks', PerksViewSet)
 
-urlpatterns = patterns('',
-    url(r'^$', 'campaigns.views.campaign_index', name='campaign_index'),
+urlpatterns = [
+    url(r'^$', views.campaign_index, name='campaign_index'),
     url(r'^rest/', include(router.urls)),
-    url(r'^(?P<key>[\w=-]+)/pay/$', 'campaigns.views.select_payment', name='select_payment'),
-    url(r'^new/$', 'campaigns.views.campaign_new', name='campaign_new'),
-    url(r'^(?P<key>[\w=-]+)/$', 'campaigns.views.campaign_details', name='campaign_details'),
-    url(r'^(?P<key>[\w=-]+)/transactions/$', 'campaigns.views.campaign_show_transactions',
+    url(r'^(?P<key>[\w=-]+)/pay/$', views.select_payment, name='select_payment'),
+    url(r'^new/$', views.campaign_new, name='campaign_new'),
+    url(r'^(?P<key>[\w=-]+)/$', views.campaign_details, name='campaign_details'),
+    url(r'^(?P<key>[\w=-]+)/transactions/$', views.campaign_show_transactions,
         name='campaign_show_transactions'),
-    url(r'^(?P<key>[\w=-]+)/edit/$', 'campaigns.views.campaign_edit', name='campaign_edit'),
-)
+    url(r'^(?P<key>[\w=-]+)/edit/$', views.campaign_edit, name='campaign_edit'),
+]

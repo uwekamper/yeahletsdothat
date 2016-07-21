@@ -10,7 +10,7 @@ from campaigns.utils import import_payment_method_class
 admin.autodiscover()
 import campaigns.views
 
-urlpatterns = patterns('',
+urlpatterns = [
     # Examples:
     # url(r'^$', 'yldt.views.home', name='home'),
     # url(r'^yldt/', include('yldt.foo.urls')),
@@ -19,12 +19,12 @@ urlpatterns = patterns('',
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
     # Uncomment the next line to enable the admin:
-    url(r'^$', 'campaigns.views.index', name='index'),
+    url(r'^$', campaigns.views.index, name='index'),
     url(r'^admin/', include(admin.site.urls)),
     # url(r'^accounts/', include('registration.backends.default.urls')),
-    url(r'^accounts/profile/$', 'campaigns.views.user_profile', name="user_profile"),
+    url(r'^accounts/profile/$', campaigns.views.user_profile, name="user_profile"),
     url(r'^accounts/', include('django.contrib.auth.urls')),
-    url(r'^transaction/(?P<pk>\d+)/$', 'campaigns.views.transaction', name='transaction'),
+    url(r'^transaction/(?P<pk>\d+)/$', campaigns.views.transaction, name='transaction'),
     # url(r'^api/transaction/(?P<pk>\d+)/$', 'campaigns.views.transaction_api', name='transaction_api'),
 
     url(r'^yeah/', include('campaigns.urls')),
@@ -33,9 +33,7 @@ urlpatterns = patterns('',
     url(r'^api/v1/campaigns/(?P<key>[\w=-]+)/pay_with/(?P<name>[\w=-\_]+)/$', campaigns.views.pay_with),
     url(r'^api/v1/campaigns/(?P<key>[\w=-]+)/transactions/$', campaigns.views.post_transaction),
 
-
-
-) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 for options in settings.YLDT_PAYMENT_METHODS:
     Klass = import_payment_method_class(options['module_name'])

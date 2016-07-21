@@ -73,7 +73,7 @@ def payment_form(request, transaction_id, payment_method_name):
                 {'transaction': transact})
     payment_method = get_method_by_name(payment_method_name)
 
-    first_name, last_name = transact.name.split(' ', 2)
+    first_name, last_name = transact.name.split(' ', 1)
     amount = transact.amount
     fee = payment_method.calculate_fee(amount)
     total = amount + fee

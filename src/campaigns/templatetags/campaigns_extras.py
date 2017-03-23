@@ -1,12 +1,10 @@
 # -*- coding: utf-8 -*-
-
 from django import template
 from django.template.defaultfilters import truncatewords, striptags
 from django.utils.safestring import mark_safe
 import mistune
 import re
 import copy
-
 
 register = template.Library()
 
@@ -48,6 +46,19 @@ class MyRenderer(mistune.Renderer):
             return '%s />' % html
         return '%s>' % html
 
+    def table(self, header, body):
+        """Rendering table element - additionally add class "table" because of Bootstrap.
+        Wrap header and body in it.
+
+        :param header: header part of the table.
+        :param body: body part of the table.
+        """
+        return (
+            '<table class="table">\n<thead>%s</thead>\n'
+            '<tbody>\n%s</tbody>\n</table>\n'
+        ) % (header, body)
+
+
 class MyInlineGrammar(mistune.InlineGrammar):
     # regex for embeded Vimeo videos
     # ![:vimeo 600x400](13697303)
@@ -68,6 +79,7 @@ class MyInlineGrammar(mistune.InlineGrammar):
         r'\]'                               # ]
         r'\(([\s\S]+?)\)'                   # (youtube_id)
     )
+
 
 class MyInlineLexer(mistune.InlineLexer):
     default_rules = copy.copy(mistune.InlineLexer.default_rules)
@@ -106,9 +118,11 @@ class MyInlineLexer(mistune.InlineLexer):
     def output_youtube_link(self, m):
         return self.create_embedded_video(m, self.renderer.youtube_link)
 
+
 renderer = MyRenderer()
 inline=MyInlineLexer(renderer)
 markdown_render = mistune.Markdown(renderer, inline=inline)
+
 
 @register.filter(name='markdown', is_safe=True)
 def markdown(value):
@@ -117,6 +131,7 @@ def markdown(value):
     except TypeError:
         # TypeError is raised when the text value is e.g. None object.
         return ''
+
 
 @register.filter(name='markdownexcerpt', is_safe=True)
 def markdown_excerpt(value):
